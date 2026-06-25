@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <link rel="icon" type="image/png" href="logo-arrow.png" />
   <title>My Account | Ambangan Fast Print</title>
   <meta name="description" content="Customer portal — sign up, track your printing orders, and manage your account." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/services.css" />
+  <link rel="stylesheet" href="services.css" />
   <style>
     body { padding-bottom: 4rem; }
 
@@ -70,7 +70,7 @@
   <div class="auth-shell" id="auth-view">
     <div class="auth-card glass">
       <div class="auth-logo">
-        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <img src="logo-arrow.png" alt="Ambangan Fast Print" />
         <div>
           <div class="t">Ambangan Fast Print</div>
           <div class="b">Customer Portal</div>
@@ -100,7 +100,7 @@
         <button type="submit" class="checkout-btn" style="width:100%;">Create Account</button>
       </form>
 
-      <a href="/" class="auth-back">← Back to website</a>
+      <a href="./" class="auth-back">← Back to website</a>
     </div>
   </div>
 
@@ -112,7 +112,7 @@
         <div class="cd-sub" id="cust-contact">—</div>
       </div>
       <div class="cd-actions">
-        <a href="/services-photostat.html" class="btn-pill primary">+ Place New Order</a>
+        <a href="services-photostat.html" class="btn-pill primary">+ Place New Order</a>
         <button class="btn-pill" id="logout-btn">Logout</button>
       </div>
     </div>
@@ -127,7 +127,7 @@
     <div class="my-orders" id="my-orders"></div>
   </div>
 
-  <script src="/afp.js"></script>
+  <script src="afp.js"></script>
   <script>
     var authView = document.getElementById('auth-view');
     var dashView = document.getElementById('dash-view');
@@ -199,11 +199,11 @@
       var el = document.getElementById('my-orders');
       if (!orders.length) {
         el.innerHTML = '<div class="empty glass"><div class="big">📭</div>You have no orders yet.<br>' +
-          '<a href="/services-photostat.html" style="color:var(--teal);text-decoration:none;font-weight:700;">Browse our services →</a></div>';
+          '<a href="services-photostat.html" style="color:var(--teal);text-decoration:none;font-weight:700;">Browse our services →</a></div>';
         return;
       }
       el.innerHTML = orders.map(function (o) {
-        return '<a class="mo-card glass" href="/track.html?id=' + encodeURIComponent(o.id) + '">' +
+        return '<a class="mo-card glass" href="track.html?id=' + encodeURIComponent(o.id) + '">' +
           '<div><div class="mo-id">' + o.id + '</div><div class="mo-svc">' + escapeHtml(o.service) + '</div></div>' +
           '<div class="mo-total">' + escapeHtml(o.total || '—') + '</div>' +
           '<div class="mo-meta"><span class="' + AFP.statusClass(o.status) + '">' + o.status + '</span>' +

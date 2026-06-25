@@ -41,15 +41,15 @@ export default function Navbar() {
   }, []);
 
   const navItems = [
-    { name: "Services", href: "/services-photostat.html" },
+    { name: "Services", href: "services-photostat.html" },
     { name: "Gallery", href: "#gallery" },
-    { name: "About Us", href: "/about.html" },
+    { name: "About Us", href: "about.html" },
   ];
 
   const accounts = [
-    { label: "Customer Portal", desc: "Sign up · track & manage orders", href: "/customer.html", Icon: ShoppingBag },
-    { label: "Staff Login", desc: "Process incoming orders", href: "/staff.html", Icon: Briefcase },
-    { label: "Admin / Owner", desc: "Full dashboard & reports", href: "/staff.html", Icon: ShieldCheck },
+    { label: "Customer Portal", desc: "Sign up · track & manage orders", href: "customer.html", Icon: ShoppingBag },
+    { label: "Staff Login", desc: "Process incoming orders", href: "staff.html", Icon: Briefcase },
+    { label: "Admin / Owner", desc: "Full dashboard & reports", href: "staff.html", Icon: ShieldCheck },
   ];
 
   return (
@@ -68,7 +68,7 @@ export default function Navbar() {
         <a href="#" className="flex items-center gap-3 group">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden bg-white/5 border border-white/10 group-hover:border-white/30 transition-all duration-300">
             <img
-              src="/logo-arrow.png"
+              src="logo-arrow.png"
               alt="Ambangan Fast Print"
               className="w-8 h-8 object-contain"
             />

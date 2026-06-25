@@ -527,7 +527,7 @@
           "<h3>Order Submitted!</h3>" +
           "<p>Thank you, " + esc(order.customer.name) + ". Your order is now in the queue and our staff have been notified. Save your Order ID to track its progress.</p>" +
           '<div class="afp-orderid">' + esc(order.id) + "</div>" +
-          '<a class="afp-btn" href="/track.html?id=' + encodeURIComponent(order.id) + '">Track My Order</a>' +
+          '<a class="afp-btn" href="track.html?id=' + encodeURIComponent(order.id) + '">Track My Order</a>' +
           '<button class="afp-btn afp-btn-ghost" data-afp-close>Close</button>' +
         "</div>";
     }
@@ -566,9 +566,9 @@
       var portal = document.createElement("div");
       portal.className = "afp-portal";
       portal.innerHTML =
-        '<a href="/customer.html">👤 My Account</a>' +
-        '<a href="/track.html">📦 Track Your Order</a>' +
-        '<a href="/staff.html">🔒 Staff Portal</a>';
+        '<a href="customer.html">👤 My Account</a>' +
+        '<a href="track.html">📦 Track Your Order</a>' +
+        '<a href="staff.html">🔒 Staff Portal</a>';
       footer.appendChild(portal);
     }
   }

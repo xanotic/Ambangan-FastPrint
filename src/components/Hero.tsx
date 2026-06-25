@@ -89,7 +89,7 @@ export default function Hero() {
             className="flex flex-col sm:flex-row gap-4"
           >
             <a
-              href="/services-photostat.html"
+              href="services-photostat.html"
               className="bg-white hover:bg-white/95 text-black px-8 py-4 rounded-full text-sm font-bold tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-2 group shadow-xl shadow-white/5"
             >
               View Services

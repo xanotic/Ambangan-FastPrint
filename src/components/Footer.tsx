@@ -17,7 +17,7 @@ export default function Footer() {
           <div className="md:col-span-5 space-y-6">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center overflow-hidden bg-white/5 border border-white/10">
-                <img src="/logo-arrow.png" alt="Ambangan Fast Print" className="w-8 h-8 object-contain" />
+                <img src="logo-arrow.png" alt="Ambangan Fast Print" className="w-8 h-8 object-contain" />
               </div>
               <div>
                 <span className="font-sans text-sm tracking-wider font-bold block text-white uppercase">Ambangan</span>
@@ -85,8 +85,8 @@ export default function Footer() {
         <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-white/30 tracking-wider uppercase font-mono">
           <p>© {currentYear} Ambangan Fast Print · FA Sinar Fajar Enterprise (AS0395296-D). All Rights Reserved.</p>
           <div className="flex gap-6">
-            <a href="/track.html" className="hover:text-[#29b6d8] transition-colors">Track Order</a>
-            <a href="/staff.html" className="hover:text-[#29b6d8] transition-colors">Staff Portal</a>
+            <a href="track.html" className="hover:text-[#29b6d8] transition-colors">Track Order</a>
+            <a href="staff.html" className="hover:text-[#29b6d8] transition-colors">Staff Portal</a>
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
           </div>
         </div>

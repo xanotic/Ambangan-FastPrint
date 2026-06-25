@@ -15,7 +15,7 @@ export default function ShowcaseGrid() {
     {
       title: "Event & Promo Banners",
       category: "Large Format Printing",
-      image: "/banner_portfolioshowcase.jpg",
+      image: "banner_portfolioshowcase.jpg",
       stock: "Outdoor Vinyl Tarpaulin",
       finish: "Brass Eyelets + Hemmed Edges",
       colSpan: "md:col-span-8",
@@ -23,7 +23,7 @@ export default function ShowcaseGrid() {
     {
       title: "Custom Label Stickers",
       category: "Die-Cut Stickers",
-      image: "/sticker_portfolioshowcase.jpg",
+      image: "sticker_portfolioshowcase.jpg",
       stock: "Waterproof PP Vinyl",
       finish: "Kiss-Cut Sticker Sheets",
       colSpan: "md:col-span-4",
@@ -31,7 +31,7 @@ export default function ShowcaseGrid() {
     {
       title: "Company Rubber Stamps",
       category: "Rubber Stamp (Chop)",
-      image: "/chop_portfolioshowcase.jpg",
+      image: "chop_portfolioshowcase.jpg",
       stock: "Self-Inking Mount",
       finish: "Black / Blue / Red Ink",
       colSpan: "md:col-span-4",
@@ -39,7 +39,7 @@ export default function ShowcaseGrid() {
     {
       title: "Certificates & Sijil",
       category: "Event & School Printing",
-      image: "/sijil_portfolioshowcase.jpg",
+      image: "sijil_portfolioshowcase.jpg",
       stock: "260gsm Art Card",
       finish: "Full-Colour Gloss",
       colSpan: "md:col-span-4",
@@ -47,7 +47,7 @@ export default function ShowcaseGrid() {
     {
       title: "Receipt & Invoice Books",
       category: "Business Stationery",
-      image: "/receipt_portfolioshowcase.jpg",
+      image: "receipt_portfolioshowcase.jpg",
       stock: "NCR Carbonless Paper",
       finish: "Numbered + Perforated",
       colSpan: "md:col-span-4",
@@ -55,7 +55,7 @@ export default function ShowcaseGrid() {
     {
       title: "Wedding Invitations",
       category: "Kad Kahwin",
-      image: "/kad_kahwinportfolioshowcase.jpg",
+      image: "kad_kahwinportfolioshowcase.jpg",
       stock: "Pearl Shimmer Card",
       finish: "Hot Foil + Envelope Set",
       colSpan: "md:col-span-6",
@@ -63,7 +63,7 @@ export default function ShowcaseGrid() {
     {
       title: "Custom Calendars",
       category: "Yearly Calendar Printing",
-      image: "/calender_portfolioshowcase.jpg",
+      image: "calender_portfolioshowcase.jpg",
       stock: "Art Card + Wire-O Bind",
       finish: "Desk & Wall Formats",
       colSpan: "md:col-span-6",

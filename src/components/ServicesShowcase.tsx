@@ -17,8 +17,8 @@ export default function ServicesShowcase() {
       id: "photostat",
       name: "Photostat Service",
       description: "High-speed document reproduction and scanning. Options for A4/A3 copier papers, color modes, and multi-style binding finishes.",
-      url: "/services-photostat.html",
-      image: "/photostate_service.jpeg",
+      url: "services-photostat.html",
+      image: "photostate_service.jpeg",
       badge: "Fast Copier",
       highlights: ["A4 & A3 Copier", "B&W or Full Color", "Comb & Wire-O Binding"]
     },
@@ -26,8 +26,8 @@ export default function ServicesShowcase() {
       id: "banner",
       name: "Banner Printing",
       description: "Large format tarpaulins and outdoor vinyl banners. Weatherproof materials, high-res ink, and custom accessories like PVC pipes or eyelets.",
-      url: "/services-banner.html",
-      image: "/banner_printing.jpeg",
+      url: "services-banner.html",
+      image: "banner_printing.jpeg",
       badge: "Wide Format",
       highlights: ["Up to 4x12 feet", "Heavy Duty Vinyl", "Brass Grommets & Pipes"]
     },
@@ -35,8 +35,8 @@ export default function ServicesShowcase() {
       id: "business-card",
       name: "Business Card Printing",
       description: "Premium business cards that leave an impression. Keep our signature Letterpress styling with hot foil, spot UV, and luxury textured cotton stocks.",
-      url: "/services-business-card.html",
-      image: "/businesscard.jpg",
+      url: "services-business-card.html",
+      image: "businesscard.jpg",
       badge: "Signature Craft",
       highlights: ["24K Gold Stamping", "600 GSM Cotton Paper", "Spot UV Gloss Finish"]
     },
@@ -44,8 +44,8 @@ export default function ServicesShowcase() {
       id: "rubber-stamp",
       name: "Rubber Stamp Production",
       description: "Custom self-inking, wooden, and flash pre-inked stamps. Personalize names, addresses, or corporate seals in multiple ink colors.",
-      url: "/services-rubber-stamp.html",
-      image: "/rubberstamp.jpeg",
+      url: "services-rubber-stamp.html",
+      image: "rubberstamp.jpeg",
       badge: "Precision Seal",
       highlights: ["Pre-Inked Flash Stamp", "Self-Inking Mechanics", "Black, Blue & Red Ink"]
     },
@@ -53,8 +53,8 @@ export default function ServicesShowcase() {
       id: "name-tag",
       name: "Name Tag Manufacturing",
       description: "Corporate and school name tags built to last. Premium acrylic, brushed metal brass, or epoxy dome with strong magnetic backings.",
-      url: "/services-name-tag.html",
-      image: "/nametag.png",
+      url: "services-name-tag.html",
+      image: "nametag.png",
       badge: "Professional Identity",
       highlights: ["Brushed Gold/Silver", "Engraved Acrylic", "Magnetic Plate Backs"]
     },
@@ -62,8 +62,8 @@ export default function ServicesShowcase() {
       id: "custom-print",
       name: "Custom Printing Services",
       description: "Bespoke marketing collateral, labels, and decals. Die-cut waterproof sticker sheets, flyers, booklets, and folded brochures.",
-      url: "/services-custom.html",
-      image: "/customservice.jpg",
+      url: "services-custom.html",
+      image: "customservice.jpg",
       badge: "Fully Custom",
       highlights: ["Waterproof PP Stickers", "A5 & A4 Flyers", "Kiss-Cut Sticker Sheets"]
     }
