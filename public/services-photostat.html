@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>Photostat Service Configurator | Ambangan Fast Print</title>
+  <meta name="description" content="Configure and order high-speed photocopying and document printing. Select dimensions, paper thickness, binding accessories, and color settings." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <div class="nav-wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <div class="nav-logo-text">
+          <div class="top">Ambangan</div>
+          <div class="bottom">Fast Print</div>
+        </div>
+      </a>
+      <a href="/" class="nav-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.25rem;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- ── APPLE-STYLE SERVICE SWITCHER ── -->
+  <div class="sub-nav">
+    <div class="sub-nav-inner">
+      <a href="/services-photostat.html" class="sub-nav-item active">Photostat</a>
+      <a href="/services-banner.html" class="sub-nav-item">Banners</a>
+      <a href="/services-business-card.html" class="sub-nav-item">Business Cards</a>
+      <a href="/services-rubber-stamp.html" class="sub-nav-item">Rubber Stamps</a>
+      <a href="/services-name-tag.html" class="sub-nav-item">Name Tags</a>
+      <a href="/services-custom.html" class="sub-nav-item">Custom Print</a>
+      <a href="/services-wedding-card.html" class="sub-nav-item">Wedding Cards</a>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONFIGURATOR AREA ── -->
+  <main class="builder-section">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-grid"></div>
+
+    <!-- LEFT: 3D Visual Preview -->
+    <div class="preview-container fade-up">
+      <div class="preview-card-wrap" id="card-wrapper">
+        <!-- Visual stacked sheets with spiral/comb spines -->
+        <div class="preview-card photostat-card" id="preview-card">
+          <div class="paper-grain"></div>
+          <div class="glare-overlay" id="glare-overlay"></div>
+          
+          <!-- Binding spine representation -->
+          <div class="photostat-ring-spine" id="spine-rings">
+            <div class="photostat-ring"></div>
+            <div class="photostat-ring"></div>
+            <div class="photostat-ring"></div>
+            <div class="photostat-ring"></div>
+            <div class="photostat-ring"></div>
+            <div class="photostat-ring"></div>
+            <div class="photostat-ring"></div>
+          </div>
+
+          <div class="preview-details">
+            <div class="preview-logo">
+              <img src="/logo-arrow.png" alt="Logo" style="filter: invert(1);" />
+              <div style="font-size:0.6rem; font-weight:800; letter-spacing:0.1em; color:#111;">AMBANGAN / DOC PRINT</div>
+            </div>
+            <h3 class="preview-title" id="prev-title">Document Copy</h3>
+            <p id="prev-subtitle" style="font-size:0.65rem; font-weight:700; color:#555; margin-top:0.4rem; letter-spacing:0.05em; text-transform:uppercase;">A4 Standard · 70 GSM Copier</p>
+          </div>
+
+          <div class="preview-footer" style="border-color: rgba(0,0,0,0.1);">
+            <div>
+              <div class="preview-meta-label" style="color: #666;">Printing Mode</div>
+              <div class="preview-meta-val" id="prev-mode" style="color: #111;">Black &amp; White</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="preview-meta-label" style="color: #666;">Finishing Style</div>
+              <div class="preview-meta-val" id="prev-binding" style="color: #111;">Stapled &amp; Taped</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-help-text">
+        <div class="dot"></div>
+        Hover &amp; move mouse to inspect document texture
+      </div>
+    </div>
+
+    <!-- RIGHT: Settings Panel -->
+    <div class="settings-panel fade-up delay-1">
+      
+      <!-- 1. Select Size -->
+      <section>
+        <h3 class="settings-section-title"><span>01.</span> Select Document Dimensions</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-size="a4" data-modifier="0">
+            <div class="option-card-header">
+              <span class="option-card-title">A4 Standard</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">210 × 297 mm. The default format for essays, office forms, and thesis scripts.</span>
+            <span class="option-card-meta">Base Price</span>
+          </div>
+
+          <div class="option-card glass" data-size="a3" data-modifier="0.15">
+            <div class="option-card-header">
+              <span class="option-card-title">A3 Large</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">297 × 420 mm. Excellent size for booklets, architectural layouts, and charts.</span>
+            <span class="option-card-meta">+RM 0.15 / page</span>
+          </div>
+
+          <div class="option-card glass" data-size="a5" data-modifier="-0.02">
+            <div class="option-card-header">
+              <span class="option-card-title">A5 Compact</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">148 × 210 mm. Booklet half-size, handy for instruction sheets or compact documents.</span>
+            <span class="option-card-meta">-RM 0.02 / page</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Select Paper Weight -->
+      <section>
+        <h3 class="settings-section-title"><span>02.</span> Select Paper Stock Weight</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-stock="70g" data-modifier="0">
+            <div class="option-card-header">
+              <span class="option-card-title">70 GSM Budget</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Standard daily weight. Economic and lightweight copier paper.</span>
+            <span class="option-card-meta">Base Cost</span>
+          </div>
+
+          <div class="option-card glass" data-stock="80g" data-modifier="0.02">
+            <div class="option-card-header">
+              <span class="option-card-title">80 GSM Premium</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Double-A class copier sheets. Increased thickness and opacity.</span>
+            <span class="option-card-meta">+RM 0.02 / page</span>
+          </div>
+
+          <div class="option-card glass" data-stock="100g" data-modifier="0.05">
+            <div class="option-card-header">
+              <span class="option-card-title">100 GSM Executive</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Heavyweight ultra-bright paper. Perfect for thesis cover sheets and presentations.</span>
+            <span class="option-card-meta">+RM 0.05 / page</span>
+          </div>
+
+          <div class="option-card glass" data-stock="240g" data-modifier="0.15">
+            <div class="option-card-header">
+              <span class="option-card-title">240 GSM Soft Card</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Very thick board stock. Suitable for dividers, cover bindings, or drawing copies.</span>
+            <span class="option-card-meta">+RM 0.15 / page</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Choose Printing Color Mode -->
+      <section>
+        <h3 class="settings-section-title"><span>03.</span> Choose Ink Color Mode</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-mode="bw" data-base-price="0.10">
+            <div class="option-card-header">
+              <span class="option-card-title">Black &amp; White</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Monochrome carbon black copying. Recommended for text-heavy sheets and standard drafts.</span>
+            <span class="option-card-meta">RM 0.10 / page</span>
+          </div>
+
+          <div class="option-card glass" data-mode="color" data-base-price="0.60">
+            <div class="option-card-header">
+              <span class="option-card-title">Full Color</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Vibrant digital laser multi-color replication. Crucial for diagrams, graphics, and logos.</span>
+            <span class="option-card-meta">RM 0.60 / page</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Binding Style -->
+      <section>
+        <h3 class="settings-section-title"><span>04.</span> Select Binding Style</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-binding="stapled" data-flat-cost="1.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Stapled &amp; Taped</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Stapled corner or side seam wrapped in neat textured cloth binding tape.</span>
+            <span class="option-card-meta">+RM 1.00</span>
+          </div>
+
+          <div class="option-card glass" data-binding="comb" data-flat-cost="3.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Plastic Comb Binding</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Flexible plastic rings allowing sheets to open 180° flat. Includes transparent covers.</span>
+            <span class="option-card-meta">+RM 3.00</span>
+          </div>
+
+          <div class="option-card glass" data-binding="wire" data-flat-cost="5.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Wire-O Spiral Binding</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Premium metal wire spirals. Exceptional durability and clean professional layout.</span>
+            <span class="option-card-meta">+RM 5.00</span>
+          </div>
+
+          <div class="option-card glass" data-binding="hardcover" data-flat-cost="15.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Hardcover Gold Lettering</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Rigid bound casing with gold foiled title lettering on cover. Thesis standard.</span>
+            <span class="option-card-meta">+RM 15.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Select Pages Run -->
+      <section>
+        <h3 class="settings-section-title"><span>05.</span> Select Run Pages</h3>
+        <div class="slider-wrap glass">
+          <div class="slider-header">
+            <span class="slider-title">Total Sheet Count</span>
+            <div class="slider-val-box"><span id="quantity-val">100</span> Pages</div>
+          </div>
+          <div class="slider-input-row">
+            <input type="range" id="quantity-slider" class="slider-control" min="10" max="500" value="100" step="5" />
+          </div>
+          <div class="slider-ticks">
+            <span class="slider-tick">10 pgs</span>
+            <span class="slider-tick">250 pgs</span>
+            <span class="slider-tick">500 pgs</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Pricing Summary & CTA -->
+      <section>
+        <div class="pricing-wrap glass">
+          <div class="price-row">
+            <div>
+              <span class="price-label">Price breakdown</span>
+              <div class="price-unit" id="price-unit-text">RM 0.10 / page</div>
+            </div>
+            <div class="price-val-box">
+              <span class="price-label" style="text-align: right; display:block;">Estimated Total</span>
+              <div class="price-total" id="price-total-text">RM 11.00</div>
+            </div>
+          </div>
+          <button class="checkout-btn" id="whatsapp-cta">
+            Initialize Copy Order
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>
+      &copy; <span id="year"></span> Ambangan Fast Print ·
+      <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">FA Sinar Fajar Enterprise (AS0395296-D)</a> ·
+      All Rights Reserved.
+    </p>
+  </footer>
+
+  <script src="/services-common.js"></script>
+  <script src="/afp.js"></script>
+  <script>
+    // 3D TILT TRIGGER
+    init3DTilt('card-wrapper', 'preview-card', 'glare-overlay');
+
+    // CONFIGURATION MANAGEMENT
+    const quantitySlider = document.getElementById('quantity-slider');
+    const quantityVal = document.getElementById('quantity-val');
+    const prevSubtitle = document.getElementById('prev-subtitle');
+    const prevMode = document.getElementById('prev-mode');
+    const prevBinding = document.getElementById('prev-binding');
+    const spineRings = document.getElementById('spine-rings');
+    const previewCard = document.getElementById('preview-card');
+    const priceUnitText = document.getElementById('price-unit-text');
+    const priceTotalText = document.getElementById('price-total-text');
+    const whatsappCta = document.getElementById('whatsapp-cta');
+
+    let size = 'a4';
+    let sizeModifier = 0;
+    let stock = '70g';
+    let stockModifier = 0;
+    let mode = 'bw';
+    let modeBase = 0.10;
+    let binding = 'stapled';
+    let bindingFlat = 1.00;
+    let quantity = 100;
+
+    function calculatePrice() {
+      // Unit price = mode base + size modifier + stock modifier
+      const unitPrice = modeBase + sizeModifier + stockModifier;
+      // Total price = (unit price * quantity) + binding flat cost
+      const total = (unitPrice * quantity) + bindingFlat;
+
+      priceUnitText.textContent = `RM ${unitPrice.toFixed(2)} / page`;
+      priceTotalText.textContent = `RM ${total.toFixed(2)}`;
+
+      // Update Visual Preview Labels
+      let sizeLabel = 'A4 Standard';
+      if (size === 'a3') sizeLabel = 'A3 Large';
+      if (size === 'a5') sizeLabel = 'A5 Booklet';
+
+      let stockLabel = '70 GSM Copier';
+      if (stock === '80g') stockLabel = '80 GSM Premium';
+      if (stock === '100g') stockLabel = '100 GSM Executive';
+      if (stock === '240g') stockLabel = '240 GSM Soft Card';
+
+      prevSubtitle.textContent = `${sizeLabel} · ${stockLabel}`;
+
+      let modeLabel = 'Black & White';
+      if (mode === 'color') {
+        modeLabel = 'Full Color';
+        previewCard.classList.remove('color-mode-bw');
+      } else {
+        previewCard.classList.add('color-mode-bw');
+      }
+      prevMode.textContent = modeLabel;
+
+      let bindingLabel = 'Stapled & Taped';
+      spineRings.style.display = 'none';
+      if (binding === 'comb') {
+        bindingLabel = 'Plastic Comb';
+      } else if (binding === 'wire') {
+        bindingLabel = 'Wire-O Spiral';
+        spineRings.style.display = 'flex'; // show ring visuals
+      } else if (binding === 'hardcover') {
+        bindingLabel = 'Hardcover Gold';
+      }
+      prevBinding.textContent = bindingLabel;
+
+      // Update WhatsApp link
+      const text = `Hello Ambangan Fast Print! I want to configure a Photostat Order:\n\n` +
+                   `- Size: ${sizeLabel}\n` +
+                   `- Paper Stock: ${stockLabel}\n` +
+                   `- Mode: ${modeLabel}\n` +
+                   `- Binding style: ${bindingLabel}\n` +
+                   `- Page Count: ${quantity} pages\n` +
+                   `- Estimated price: RM ${total.toFixed(2)}`;
+      
+      whatsappCta.setAttribute('href', `https://wa.me/60126949147?text=${encodeURIComponent(text)}`);
+    }
+
+    // Set up option listeners
+    document.querySelectorAll('[data-size]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-size]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        size = card.getAttribute('data-size');
+        sizeModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-stock]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-stock]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        stock = card.getAttribute('data-stock');
+        stockModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-mode]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-mode]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        mode = card.getAttribute('data-mode');
+        modeBase = parseFloat(card.getAttribute('data-base-price'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-binding]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-binding]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        binding = card.getAttribute('data-binding');
+        bindingFlat = parseFloat(card.getAttribute('data-flat-cost'));
+        calculatePrice();
+      });
+    });
+
+    // Slider listener
+    quantitySlider.addEventListener('input', () => {
+      quantity = parseInt(quantitySlider.value);
+      quantityVal.textContent = quantity;
+      calculatePrice();
+    });
+
+    // Initial setup
+    calculatePrice();
+    
+    // WhatsApp click redirection
+    whatsappCta.addEventListener('click', () => {
+      window.open(whatsappCta.getAttribute('href'), '_blank');
+    });
+  </script>
+</body>
+</html>

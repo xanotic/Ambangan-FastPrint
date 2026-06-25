@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>Wedding Card Configurator | Ambangan Fast Print</title>
+  <meta name="description" content="Configure custom wedding invitation cards. Choose pearl shimmer cards, premium colored envelopes, wax seals, floral lace sleeves, and gold hot stamping." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+  <style>
+    /* Styling for the Wedding Invitation preview element */
+    .wedding-card {
+      transition: all 0.5s ease;
+      box-shadow: 0 15px 35px rgba(85,67,60,0.08);
+    }
+    .wedding-card.paper-pearl {
+      background: #fdfbf7 !important;
+      color: #55433c !important;
+      border: 1px solid rgba(85,67,60,0.1);
+      box-shadow: 0 15px 35px rgba(239,228,215,0.3);
+    }
+    .wedding-card.paper-linen {
+      background: #fcf9f3 !important;
+      color: #3b2c26 !important;
+      border: 1px dashed rgba(85,67,60,0.2);
+    }
+    .wedding-card.paper-kraft {
+      background: #dfc19c !important;
+      color: #4a3424 !important;
+      border: 1px solid #c09f7a;
+    }
+    .wedding-card.paper-white {
+      background: #ffffff !important;
+      color: #111111 !important;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    /* Envelope & Hot stamp visuals */
+    .finish-border-gold .wedding-border-inner {
+      border: 2px solid #d4af37 !important;
+      box-shadow: 0 0 8px rgba(212,175,55,0.3);
+    }
+    .finish-lace-sleeve {
+      border-left: 25px double rgba(85,67,60,0.1) !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <div class="nav-wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <div class="nav-logo-text">
+          <div class="top">Ambangan</div>
+          <div class="bottom">Fast Print</div>
+        </div>
+      </a>
+      <a href="/" class="nav-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.25rem;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- ── APPLE-STYLE SERVICE SWITCHER ── -->
+  <div class="sub-nav">
+    <div class="sub-nav-inner">
+      <a href="/services-photostat.html" class="sub-nav-item">Photostat</a>
+      <a href="/services-banner.html" class="sub-nav-item">Banners</a>
+      <a href="/services-business-card.html" class="sub-nav-item">Business Cards</a>
+      <a href="/services-rubber-stamp.html" class="sub-nav-item">Rubber Stamps</a>
+      <a href="/services-name-tag.html" class="sub-nav-item">Name Tags</a>
+      <a href="/services-custom.html" class="sub-nav-item">Custom Print</a>
+      <a href="/services-wedding-card.html" class="sub-nav-item active">Wedding Cards</a>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONFIGURATOR AREA ── -->
+  <main class="builder-section">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-grid"></div>
+
+    <!-- LEFT: 3D Visual Preview (Wedding Card design) -->
+    <div class="preview-container fade-up">
+      <div class="preview-card-wrap" id="card-wrapper">
+        <div class="preview-card wedding-card paper-pearl" id="preview-card">
+          <div class="paper-grain"></div>
+          <div class="glare-overlay" id="glare-overlay"></div>
+          
+          <div class="wedding-border">
+            <div class="wedding-border-inner" id="wedding-border-inner"></div>
+          </div>
+
+          <div class="preview-details" style="text-align:center; z-index:10;">
+            <div style="font-size:0.5rem; letter-spacing:0.18em; font-weight:700; text-transform:uppercase; opacity:0.8;">WALIMATUL URUS</div>
+            <div class="wedding-monogram" id="prev-initials-text">A &amp; Z</div>
+            <div style="font-size:0.42rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; opacity:0.7; margin-top:0.4rem;" id="prev-date-text">Save the Date</div>
+          </div>
+
+          <div class="preview-footer" style="border-color:rgba(85,67,60,0.1); justify-content:center; gap:1.5rem; font-size:0.52rem; z-index:10; font-weight:600;">
+            <span id="prev-paper-text" style="letter-spacing:0.05em; text-transform:uppercase;">Pearl Shimmer</span>
+            <span style="opacity:0.25;">|</span>
+            <span id="prev-envelope-text" style="letter-spacing:0.05em; text-transform:uppercase;">Standard Envelope</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-help-text">
+        <div class="dot"></div>
+        Hover &amp; move mouse to inspect invitation textures &amp; borders
+      </div>
+    </div>
+
+    <!-- RIGHT: Settings Panel -->
+    <div class="settings-panel fade-up delay-1">
+      
+      <!-- Option upload pic (Added based on user request) -->
+      <section>
+        <h3 class="settings-section-title"><span>01.</span> Upload Design or Reference</h3>
+        <div class="upload-wrap glass" id="design-upload">
+          <div class="upload-icon">📁</div>
+          <div class="upload-title">Drag &amp; drop design here</div>
+          <div class="upload-desc">Supports JPG, PNG, PDF or AI formats (Max 50MB)</div>
+          <div class="upload-file-details" id="upload-details"></div>
+          <input type="file" class="upload-input" accept="image/*,application/pdf,.ai" />
+        </div>
+      </section>
+
+      <!-- 2. Customize Monogram / Initials -->
+      <section>
+        <h3 class="settings-section-title"><span>02.</span> Customize Monogram Initials</h3>
+        <div class="slider-wrap glass" style="padding:1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
+          <input type="text" id="wedding-initials" value="A &amp; Z" placeholder="Enter initials (e.g., A &amp; Z)" style="width:100%; padding:0.85rem 1.25rem; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--white-10); color:#fff; font-family:var(--font-sans); font-size:0.85rem; font-weight:600; outline:none; transition:border-color 0.25s;" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--white-10)'" />
+          <input type="text" id="wedding-date" value="SAVE THE DATE" placeholder="Custom date / cover note" style="width:100%; padding:0.85rem 1.25rem; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--white-10); color:#fff; font-family:var(--font-sans); font-size:0.85rem; font-weight:600; outline:none; transition:border-color 0.25s;" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--white-10)'" />
+        </div>
+      </section>
+
+      <!-- 3. Choose Card Size & Format -->
+      <section>
+        <h3 class="settings-section-title"><span>03.</span> Choose Card Size &amp; Format</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-size="a6-single" data-base-price="1.20">
+            <div class="option-card-header">
+              <span class="option-card-title">Single Card A6 (105x148mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Compact double sided card. Simple, modern and elegant budget layout.</span>
+            <span class="option-card-meta">RM 1.20 / card</span>
+          </div>
+
+          <div class="option-card glass" data-size="a5-single" data-base-price="1.50">
+            <div class="option-card-header">
+              <span class="option-card-title">Postcard Standard A5 (148x210mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Larger card format. Offers high layout clarity and accommodates details easily.</span>
+            <span class="option-card-meta">RM 1.50 / card</span>
+          </div>
+
+          <div class="option-card glass" data-size="square" data-base-price="1.40">
+            <div class="option-card-header">
+              <span class="option-card-title">Elegant Square (140x140mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Unique square format. Trendy layout, fits square custom envelopes perfectly.</span>
+            <span class="option-card-meta">RM 1.40 / card</span>
+          </div>
+
+          <div class="option-card glass" data-size="folded" data-base-price="1.70">
+            <div class="option-card-header">
+              <span class="option-card-title">Folded Invitation (A5 to A6)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Four-page folding layout. Classic invitation style with mapping and RSVP slots inside.</span>
+            <span class="option-card-meta">RM 1.70 / card</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Paper Stock Selection -->
+      <section>
+        <h3 class="settings-section-title"><span>04.</span> Select Fine Paper Stock</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-paper="pearl" data-modifier="0">
+            <div class="option-card-header">
+              <span class="option-card-title">Pearl Shimmer (250 GSM)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Ornate pearlescent coating that reflects a beautiful warm metallic sparkle under light.</span>
+            <span class="option-card-meta">Base Paper</span>
+          </div>
+
+          <div class="option-card glass" data-paper="linen" data-modifier="0.15">
+            <div class="option-card-header">
+              <span class="option-card-title">Premium Cotton Linen (260 GSM)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Classic cross-hatch linen texture. Tactile uncoated feel for premium elegance.</span>
+            <span class="option-card-meta">+RM 0.15 / card</span>
+          </div>
+
+          <div class="option-card glass" data-paper="kraft" data-modifier="0.05">
+            <div class="option-card-header">
+              <span class="option-card-title">Organic Kraft Card (280 GSM)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Rustic brown recycled fiberboard. Suitable for eco-themed, boho or country style events.</span>
+            <span class="option-card-meta">+RM 0.05 / card</span>
+          </div>
+
+          <div class="option-card glass" data-paper="white" data-modifier="0.10">
+            <div class="option-card-header">
+              <span class="option-card-title">Super White Matte (300 GSM)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Ultra-thick white board with premium uncoated matte finish. Extreme stiffness and opacity.</span>
+            <span class="option-card-meta">+RM 0.10 / card</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Envelopes & Specialty Embellishments -->
+      <section>
+        <h3 class="settings-section-title"><span>05.</span> Envelopes &amp; Embellishments</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-emb="none" data-modifier="0" data-label="Standard Envelope">
+            <div class="option-card-header">
+              <span class="option-card-title">Standard Envelope</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Includes basic white/cream pocket envelope. Clean and simple.</span>
+            <span class="option-card-meta">Free / Default</span>
+          </div>
+
+          <div class="option-card glass" data-emb="wax-seal" data-modifier="0.50" data-label="Colored Envelope + Wax Seal">
+            <div class="option-card-header">
+              <span class="option-card-title">Premium Envelope + Wax Seal</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Premium heavyweight colored envelope sealed with physical custom hot wax monogram.</span>
+            <span class="option-card-meta">+RM 0.50 / card</span>
+          </div>
+
+          <div class="option-card glass" data-emb="border-gold" data-modifier="0.40" data-label="Standard Envelope + Gold Stamping">
+            <div class="option-card-header">
+              <span class="option-card-title">24K Gold Stamped Borders</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Invites margins gilded with metallic gold hot stamping. Catchy reflection.</span>
+            <span class="option-card-meta">+RM 0.40 / card</span>
+          </div>
+
+          <div class="option-card glass" data-emb="lace-sleeve" data-modifier="0.80" data-label="Laser Cut Lace Sleeve">
+            <div class="option-card-header">
+              <span class="option-card-title">Floral Laser-Cut Lace Sleeve</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Intricate laser cut lace sleeve wrapping the card. High craftsmanship index.</span>
+            <span class="option-card-meta">+RM 0.80 / card</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Select Run Quantity -->
+      <section>
+        <h3 class="settings-section-title"><span>06.</span> Select Run Quantity</h3>
+        <div class="slider-wrap glass">
+          <div class="slider-header">
+            <span class="slider-title">Quantity</span>
+            <div class="slider-val-box"><span id="quantity-val">200</span> Cards</div>
+          </div>
+          <div class="slider-input-row">
+            <input type="range" id="quantity-slider" class="slider-control" min="100" max="1000" value="200" step="50" />
+          </div>
+          <div class="slider-ticks">
+            <span class="slider-tick">100</span>
+            <span class="slider-tick">500</span>
+            <span class="slider-tick">1000</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Pricing Summary & CTA -->
+      <section>
+        <div class="pricing-wrap glass">
+          <div class="price-row">
+            <div>
+              <span class="price-label">Price per card</span>
+              <div class="price-unit" id="price-unit-text">RM 1.20</div>
+            </div>
+            <div class="price-val-box">
+              <span class="price-label" style="text-align: right; display:block;">Estimated Total</span>
+              <div class="price-total" id="price-total-text">RM 240.00</div>
+            </div>
+          </div>
+          <button class="checkout-btn" id="whatsapp-cta">
+            Initialize Wedding Card Spec
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>
+      &copy; <span id="year"></span> Ambangan Fast Print ·
+      <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">FA Sinar Fajar Enterprise (AS0395296-D)</a> ·
+      All Rights Reserved.
+    </p>
+  </footer>
+
+  <script src="/services-common.js"></script>
+  <script src="/afp.js"></script>
+  <script>
+    // 3D TILT TRIGGER
+    init3DTilt('card-wrapper', 'preview-card', 'glare-overlay');
+
+    // CONFIGURATION MANAGEMENT
+    const quantitySlider = document.getElementById('quantity-slider');
+    const quantityVal = document.getElementById('quantity-val');
+    const previewCard = document.getElementById('preview-card');
+    const borderInner = document.getElementById('wedding-border-inner');
+    const initialsInput = document.getElementById('wedding-initials');
+    const dateInput = document.getElementById('wedding-date');
+    const prevInitialsText = document.getElementById('prev-initials-text');
+    const prevDateText = document.getElementById('prev-date-text');
+    const prevPaperText = document.getElementById('prev-paper-text');
+    const prevEnvelopeText = document.getElementById('prev-envelope-text');
+    const priceUnitText = document.getElementById('price-unit-text');
+    const priceTotalText = document.getElementById('price-total-text');
+    const whatsappCta = document.getElementById('whatsapp-cta');
+    const uploadInput = document.querySelector('.upload-input');
+
+    let size = 'a6-single';
+    let sizeBase = 1.20;
+    let paper = 'pearl';
+    let paperModifier = 0;
+    let emb = 'none';
+    let embModifier = 0;
+    let embLabelText = 'Standard Envelope';
+    let quantity = 200;
+
+    function calculatePrice() {
+      // Unit price = size base + paper modifier + emb modifier
+      const unitPrice = sizeBase + paperModifier + embModifier;
+      // Total price = unit price * quantity
+      const total = unitPrice * quantity;
+
+      priceUnitText.textContent = `RM ${unitPrice.toFixed(2)}`;
+      priceTotalText.textContent = `RM ${total.toFixed(2)}`;
+
+      // Live text inputs
+      prevInitialsText.textContent = initialsInput.value || 'A & Z';
+      prevDateText.textContent = dateInput.value || 'SAVE THE DATE';
+
+      // Update paper style visual classes
+      previewCard.className = 'preview-card wedding-card'; // reset
+      previewCard.classList.add(`paper-${paper}`);
+
+      // Paper label update
+      let paperLabel = 'Pearl Shimmer';
+      if (paper === 'linen') paperLabel = 'Premium Linen';
+      if (paper === 'kraft') paperLabel = 'Organic Kraft';
+      if (paper === 'white') paperLabel = 'Super White Matte';
+      prevPaperText.textContent = paperLabel;
+
+      // Update embellishments visuals
+      borderInner.style.border = '2px solid rgba(85,67,60,0.06)'; // reset default
+      borderInner.style.boxShadow = 'none';
+      if (emb === 'border-gold') {
+        previewCard.classList.add('finish-border-gold');
+      } else if (emb === 'lace-sleeve') {
+        previewCard.classList.add('finish-lace-sleeve');
+      }
+
+      prevEnvelopeText.textContent = embLabelText;
+
+      let sizeLabel = 'Single Card A6';
+      if (size === 'a5-single') sizeLabel = 'Postcard Standard A5';
+      if (size === 'square') sizeLabel = 'Elegant Square';
+      if (size === 'folded') sizeLabel = 'Folded Invitation';
+
+      // Check file upload status
+      let fileAttached = "None (Will email/WhatsApp file later)";
+      if (uploadInput.files && uploadInput.files.length > 0) {
+        fileAttached = uploadInput.files[0].name;
+      }
+
+      // Update WhatsApp link
+      const text = `Hello Ambangan Fast Print! I want to configure custom Wedding Invitation Cards:\n\n` +
+                   `- Cover Text: "${initialsInput.value || 'A & Z'}"\n` +
+                   `- Sub-text / Date: "${dateInput.value || 'SAVE THE DATE'}"\n` +
+                   `- Card Size/Format: ${sizeLabel}\n` +
+                   `- Paper Stock: ${paperLabel}\n` +
+                   `- Envelopes / Accessories: ${embLabelText}\n` +
+                   `- Quantity: ${quantity} cards\n` +
+                   `- Attached File: ${fileAttached}\n` +
+                   `- Estimated price: RM ${total.toFixed(2)}`;
+      
+      whatsappCta.setAttribute('href', `https://wa.me/60126949147?text=${encodeURIComponent(text)}`);
+    }
+
+    // Set up option listeners
+    document.querySelectorAll('[data-size]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-size]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        size = card.getAttribute('data-size');
+        sizeBase = parseFloat(card.getAttribute('data-base-price'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-paper]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-paper]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        paper = card.getAttribute('data-paper');
+        paperModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-emb]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-emb]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        emb = card.getAttribute('data-emb');
+        embModifier = parseFloat(card.getAttribute('data-modifier'));
+        embLabelText = card.getAttribute('data-label');
+        calculatePrice();
+      });
+    });
+
+    // Inputs listeners
+    initialsInput.addEventListener('input', calculatePrice);
+    dateInput.addEventListener('input', calculatePrice);
+    quantitySlider.addEventListener('input', () => {
+      quantity = parseInt(quantitySlider.value);
+      quantityVal.textContent = quantity;
+      calculatePrice();
+    });
+
+    // File change recalculate
+    uploadInput.addEventListener('change', () => {
+      calculatePrice();
+    });
+
+    // Initial setup
+    calculatePrice();
+    
+    // WhatsApp click redirection
+    whatsappCta.addEventListener('click', () => {
+      window.open(whatsappCta.getAttribute('href'), '_blank');
+    });
+  </script>
+</body>
+</html>

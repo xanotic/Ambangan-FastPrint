@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>Rubber Stamp Production Configurator | Ambangan Fast Print</title>
+  <meta name="description" content="Configure custom corporate seals, address stamps, and pre-inked flash stamps. Customize shapes, sizes, mechanism styles, and ink colors." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <div class="nav-wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <div class="nav-logo-text">
+          <div class="top">Ambangan</div>
+          <div class="bottom">Fast Print</div>
+        </div>
+      </a>
+      <a href="/" class="nav-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.25rem;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- ── APPLE-STYLE SERVICE SWITCHER ── -->
+  <div class="sub-nav">
+    <div class="sub-nav-inner">
+      <a href="/services-photostat.html" class="sub-nav-item">Photostat</a>
+      <a href="/services-banner.html" class="sub-nav-item">Banners</a>
+      <a href="/services-business-card.html" class="sub-nav-item">Business Cards</a>
+      <a href="/services-rubber-stamp.html" class="sub-nav-item active">Rubber Stamps</a>
+      <a href="/services-name-tag.html" class="sub-nav-item">Name Tags</a>
+      <a href="/services-custom.html" class="sub-nav-item">Custom Print</a>
+      <a href="/services-wedding-card.html" class="sub-nav-item">Wedding Cards</a>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONFIGURATOR AREA ── -->
+  <main class="builder-section">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-grid"></div>
+
+    <!-- LEFT: 3D Visual Preview (Stamp Impression) -->
+    <div class="preview-container fade-up">
+      <div class="preview-card-wrap" id="card-wrapper">
+        <div class="preview-card" id="preview-card" style="background:#f7f6f2; color:#1e3a8a; border-color: rgba(0,0,0,0.1); justify-content:center; align-items:center;">
+          <div class="paper-grain"></div>
+          <div class="glare-overlay" id="glare-overlay"></div>
+
+          <!-- Circular or Rectangular stamp impression -->
+          <div class="stamp-impression-container">
+            <div class="stamp-impression" id="prev-stamp-impression">
+              <div style="font-size:0.5rem; letter-spacing:0.15em; font-weight:700; opacity:0.85;">AMBANGAN FAST PRINT</div>
+              <div id="prev-stamp-title" style="margin:0.2rem 0; font-weight:800;">APPROVED</div>
+              <div style="font-size:0.45rem; letter-spacing:0.05em; font-weight:600; opacity:0.7;" id="prev-stamp-date">BEDONG, KEDAH</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-help-text">
+        <div class="dot"></div>
+        Hover &amp; move mouse to inspect ink impression texture
+      </div>
+    </div>
+
+    <!-- RIGHT: Settings Panel -->
+    <div class="settings-panel fade-up delay-1">
+      
+      <!-- 1. Customize Stamp Text -->
+      <section>
+        <h3 class="settings-section-title"><span>01.</span> Customize Stamp Title</h3>
+        <div class="slider-wrap glass" style="padding:1.25rem;">
+          <input type="text" id="stamp-text-input" value="APPROVED" placeholder="Enter stamp center text (e.g. RECEIVED, PAID)" style="width:100%; padding:0.85rem 1.25rem; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid var(--white-10); color:#fff; font-family:var(--font-sans); font-size:0.85rem; font-weight:600; outline:none; transition:border-color 0.25s;" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--white-10)'" />
+        </div>
+      </section>
+
+      <!-- 2. Choose Stamp Shape & Size -->
+      <section>
+        <h3 class="settings-section-title"><span>02.</span> Select Stamp Shape &amp; Size</h3>
+        <div class="options-grid">
+          <div class="option-card glass" data-size="pocket" data-base-price="18.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Pocket Oval (10 × 30 mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Compact oval layout. Highly portable size, fits in breast pockets easily.</span>
+            <span class="option-card-meta">RM 18.00</span>
+          </div>
+
+          <div class="option-card glass active" data-size="standard" data-base-price="25.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Standard Rect (18 × 47 mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">The standard office size. Best for single validation titles (APPROVED/PAID) with date.</span>
+            <span class="option-card-meta">RM 25.00</span>
+          </div>
+
+          <div class="option-card glass" data-size="large" data-base-price="38.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Large Address (30 × 65 mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Extended rectangular layout. Suitable for company addresses, tax codes, or multi-line details.</span>
+            <span class="option-card-meta">RM 38.00</span>
+          </div>
+
+          <div class="option-card glass" data-size="circular" data-base-price="32.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Circular Seal (Ø 30 mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Circular company seal format. Imparts a high-credibility validation mark.</span>
+            <span class="option-card-meta">RM 32.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Stamp Mechanism Style -->
+      <section>
+        <h3 class="settings-section-title"><span>03.</span> Select Stamp Mechanism</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-mech="wood" data-modifier="0">
+            <div class="option-card-header">
+              <span class="option-card-title">Traditional Wood Handle</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Classic wooden hand mount. Requires a separate desktop ink pad. Durable design.</span>
+            <span class="option-card-meta">Base Cost</span>
+          </div>
+
+          <div class="option-card glass" data-mech="self" data-modifier="8.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Self-Inking Spring Mount</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Integrated cartridge. Flips internally to ink itself before stamping. Clean and quick.</span>
+            <span class="option-card-meta">+RM 8.00</span>
+          </div>
+
+          <div class="option-card glass" data-mech="flash" data-modifier="15.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Flash Pre-Inked (HD)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">State of the art foam seal. Inked internally, produces razor-sharp detailed impressions.</span>
+            <span class="option-card-meta">+RM 15.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Select Ink Color -->
+      <section>
+        <h3 class="settings-section-title"><span>04.</span> Select Ink Impression Color</h3>
+        <div class="color-options-row">
+          <button class="color-circle-btn active" data-color="blue" style="background-color: #1e3a8a;">
+            <span class="color-circle-inner" style="color:#fff;">BLU</span>
+          </button>
+          <button class="color-circle-btn" data-color="black" style="background-color: #111;">
+            <span class="color-circle-inner" style="color:#fff;">BLK</span>
+          </button>
+          <button class="color-circle-btn" data-color="red" style="background-color: #b91c1c;">
+            <span class="color-circle-inner" style="color:#fff;">RED</span>
+          </button>
+          <button class="color-circle-btn" data-color="purple" style="background-color: #6b21a8;">
+            <span class="color-circle-inner" style="color:#fff;">PUR</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 5. Quantity Run -->
+      <section>
+        <h3 class="settings-section-title"><span>05.</span> Select Quantity</h3>
+        <div class="slider-wrap glass">
+          <div class="slider-header">
+            <span class="slider-title">Copies</span>
+            <div class="slider-val-box"><span id="quantity-val">1</span> Stamp</div>
+          </div>
+          <div class="slider-input-row">
+            <input type="range" id="quantity-slider" class="slider-control" min="1" max="10" value="1" step="1" />
+          </div>
+          <div class="slider-ticks">
+            <span class="slider-tick">1</span>
+            <span class="slider-tick">5</span>
+            <span class="slider-tick">10</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Pricing Summary & CTA -->
+      <section>
+        <div class="pricing-wrap glass">
+          <div class="price-row">
+            <div>
+              <span class="price-label">Price per stamp</span>
+              <div class="price-unit" id="price-unit-text">RM 25.00</div>
+            </div>
+            <div class="price-val-box">
+              <span class="price-label" style="text-align: right; display:block;">Estimated Total</span>
+              <div class="price-total" id="price-total-text">RM 25.00</div>
+            </div>
+          </div>
+          <button class="checkout-btn" id="whatsapp-cta">
+            Initialize Stamp Order
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>
+      &copy; <span id="year"></span> Ambangan Fast Print ·
+      <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">FA Sinar Fajar Enterprise (AS0395296-D)</a> ·
+      All Rights Reserved.
+    </p>
+  </footer>
+
+  <script src="/services-common.js"></script>
+  <script src="/afp.js"></script>
+  <script>
+    // 3D TILT TRIGGER
+    init3DTilt('card-wrapper', 'preview-card', 'glare-overlay');
+
+    // CONFIGURATION MANAGEMENT
+    const quantitySlider = document.getElementById('quantity-slider');
+    const quantityVal = document.getElementById('quantity-val');
+    const previewCard = document.getElementById('preview-card');
+    const stampText = document.getElementById('stamp-text-input');
+    const prevStampTitle = document.getElementById('prev-stamp-title');
+    const prevStampImpression = document.getElementById('prev-stamp-impression');
+    const priceUnitText = document.getElementById('price-unit-text');
+    const priceTotalText = document.getElementById('price-total-text');
+    const whatsappCta = document.getElementById('whatsapp-cta');
+
+    let size = 'standard';
+    let sizeBase = 25.00;
+    let mech = 'wood';
+    let mechModifier = 0;
+    let inkColor = 'blue';
+    let quantity = 1;
+
+    function calculatePrice() {
+      // Unit price = size base + mech modifier
+      const unitPrice = sizeBase + mechModifier;
+      // Total price = unit price * quantity
+      const total = unitPrice * quantity;
+
+      priceUnitText.textContent = `RM ${unitPrice.toFixed(2)}`;
+      priceTotalText.textContent = `RM ${total.toFixed(2)}`;
+
+      // Update Stamp text dynamically
+      prevStampTitle.textContent = stampText.value.toUpperCase() || 'APPROVED';
+
+      // Shape styling
+      prevStampImpression.className = 'stamp-impression'; // reset
+      if (size === 'circular') {
+        prevStampImpression.classList.add('stamp-circle');
+      }
+
+      // Ink color styling
+      let hexColor = '#1e3a8a'; // default blue
+      let colorLabel = 'Royal Blue';
+      if (inkColor === 'black') {
+        hexColor = '#111111';
+        colorLabel = 'Deep Black';
+      } else if (inkColor === 'red') {
+        hexColor = '#b91c1c';
+        colorLabel = 'Crimson Red';
+      } else if (inkColor === 'purple') {
+        hexColor = '#6b21a8';
+        colorLabel = 'Violet Purple';
+      }
+      previewCard.style.color = hexColor;
+
+      let sizeLabel = 'Standard Rect (18x47mm)';
+      if (size === 'pocket') sizeLabel = 'Pocket Oval (10x30mm)';
+      if (size === 'large') sizeLabel = 'Large Address (30x65mm)';
+      if (size === 'circular') sizeLabel = 'Circular Seal (Ø30mm)';
+
+      let mechLabel = 'Traditional Wood Handle';
+      if (mech === 'self') mechLabel = 'Self-Inking Spring Mount';
+      if (mech === 'flash') mechLabel = 'Flash Pre-Inked';
+
+      // Update WhatsApp link
+      const text = `Hello Ambangan Fast Print! I want to configure a Custom Rubber Stamp:\n\n` +
+                   `- Text: "${stampText.value.toUpperCase() || 'APPROVED'}"\n` +
+                   `- Shape/Size: ${sizeLabel}\n` +
+                   `- Mechanism: ${mechLabel}\n` +
+                   `- Ink Color: ${colorLabel}\n` +
+                   `- Quantity: ${quantity} units\n` +
+                   `- Estimated price: RM ${total.toFixed(2)}`;
+      
+      whatsappCta.setAttribute('href', `https://wa.me/60126949147?text=${encodeURIComponent(text)}`);
+    }
+
+    // Set up option listeners
+    document.querySelectorAll('[data-size]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-size]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        size = card.getAttribute('data-size');
+        sizeBase = parseFloat(card.getAttribute('data-base-price'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-mech]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-mech]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        mech = card.getAttribute('data-mech');
+        mechModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-color]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-color]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        inkColor = btn.getAttribute('data-color');
+        calculatePrice();
+      });
+    });
+
+    // Inputs listener
+    stampText.addEventListener('input', calculatePrice);
+    quantitySlider.addEventListener('input', () => {
+      quantity = parseInt(quantitySlider.value);
+      quantityVal.textContent = quantity;
+      calculatePrice();
+    });
+
+    // Initial setup
+    calculatePrice();
+    
+    // WhatsApp click redirection
+    whatsappCta.addEventListener('click', () => {
+      window.open(whatsappCta.getAttribute('href'), '_blank');
+    });
+  </script>
+</body>
+</html>

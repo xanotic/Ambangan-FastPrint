@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>Custom Printing Configurator | Ambangan Fast Print</title>
+  <meta name="description" content="Configure custom sticker sheets, flyers, promotional leaflets, and packaging labels. Select waterproof materials, die-cuts, and folding options." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <div class="nav-wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <div class="nav-logo-text">
+          <div class="top">Ambangan</div>
+          <div class="bottom">Fast Print</div>
+        </div>
+      </a>
+      <a href="/" class="nav-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.25rem;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- ── APPLE-STYLE SERVICE SWITCHER ── -->
+  <div class="sub-nav">
+    <div class="sub-nav-inner">
+      <a href="/services-photostat.html" class="sub-nav-item">Photostat</a>
+      <a href="/services-banner.html" class="sub-nav-item">Banners</a>
+      <a href="/services-business-card.html" class="sub-nav-item">Business Cards</a>
+      <a href="/services-rubber-stamp.html" class="sub-nav-item">Rubber Stamps</a>
+      <a href="/services-name-tag.html" class="sub-nav-item">Name Tags</a>
+      <a href="/services-custom.html" class="sub-nav-item active">Custom Print</a>
+      <a href="/services-wedding-card.html" class="sub-nav-item">Wedding Cards</a>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONFIGURATOR AREA ── -->
+  <main class="builder-section">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-grid"></div>
+
+    <!-- LEFT: 3D Visual Preview (Circular Sticker templates) -->
+    <div class="preview-container fade-up">
+      <div class="preview-card-wrap" id="card-wrapper">
+        <div class="preview-card" id="preview-card" style="background:#0f172a; border-color: rgba(255,255,255,0.06); display:flex; flex-direction:column; justify-content:center; align-items:center; gap:1.25rem;">
+          <div class="paper-grain"></div>
+          <div class="glare-overlay" id="glare-overlay"></div>
+
+          <!-- Circular Die-cut stickers grid -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;" id="stickers-visual-grid">
+            <div class="sticker-item" id="sticker-1">AFP Print</div>
+            <div class="sticker-item" id="sticker-2">AFP Print</div>
+            <div class="sticker-item" id="sticker-3">AFP Print</div>
+            <div class="sticker-item" id="sticker-4">AFP Print</div>
+          </div>
+          
+          <div id="prev-sticker-title" style="font-size:0.58rem; font-weight:800; letter-spacing:0.2em; text-transform:uppercase; color:var(--teal);">Waterproof PP Stickers</div>
+        </div>
+      </div>
+
+      <div class="preview-help-text">
+        <div class="dot"></div>
+        Hover &amp; move mouse to tilt custom sticker layout
+      </div>
+    </div>
+
+    <!-- RIGHT: Settings Panel -->
+    <div class="settings-panel fade-up delay-1">
+      
+      <!-- Option upload pic (Added based on user request) -->
+      <section>
+        <h3 class="settings-section-title"><span>01.</span> Upload Design or Reference</h3>
+        <div class="upload-wrap glass" id="design-upload">
+          <div class="upload-icon">📁</div>
+          <div class="upload-title">Drag &amp; drop design here</div>
+          <div class="upload-desc">Supports JPG, PNG, PDF or AI formats (Max 50MB)</div>
+          <div class="upload-file-details" id="upload-details"></div>
+          <input type="file" class="upload-input" accept="image/*,application/pdf,.ai" />
+        </div>
+      </section>
+
+      <!-- 2. Choose Service Type & Size -->
+      <section>
+        <h3 class="settings-section-title"><span>02.</span> Choose Custom Service Type</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-type="stickers-50" data-base-price="8.00" data-label="Stickers A4 Sheet (20pcs)">
+            <div class="option-card-header">
+              <span class="option-card-title">Circular Stickers (50mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Printed on A4 sticker sheets. Ideal for product labelling, sealing envelopes, or logo labels.</span>
+            <span class="option-card-meta">RM 8.00 / sheet</span>
+          </div>
+
+          <div class="option-card glass" data-type="stickers-60" data-base-price="9.00" data-label="Packaging Labels A4 Sheet (15pcs)">
+            <div class="option-card-header">
+              <span class="option-card-title">Square Labels (60mm)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Larger decals on A4 sheets. Suitable for food jar branding or mailing boxes.</span>
+            <span class="option-card-meta">RM 9.00 / sheet</span>
+          </div>
+
+          <div class="option-card glass" data-type="flyers-a5" data-base-price="0.30" data-label="A5 Promo Flyers">
+            <div class="option-card-header">
+              <span class="option-card-title">A5 Promo Flyers</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">148 × 210 mm. Economic hand flyers printed double sided. Best for bulk advertising campaign.</span>
+            <span class="option-card-meta">RM 0.30 / piece</span>
+          </div>
+
+          <div class="option-card glass" data-type="leaflets-a4" data-base-price="0.60" data-label="A4 Folded Leaflets">
+            <div class="option-card-header">
+              <span class="option-card-title">A4 Folded Leaflets</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">297 × 210 mm. Tri-fold or half-fold corporate catalogs. High detail imagery print.</span>
+            <span class="option-card-meta">RM 0.60 / piece</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Substrate & Material -->
+      <section>
+        <h3 class="settings-section-title"><span>03.</span> Select Substrate / Material</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-material="mirrorcoat" data-modifier="0">
+            <div class="option-card-header">
+              <span class="option-card-title">Mirrorcoat Sticker Paper</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Glossy coated paper sticker. Economic and bright. Recommended for dry items.</span>
+            <span class="option-card-meta">Base Material</span>
+          </div>
+
+          <div class="option-card glass" data-material="pp" data-modifier="2.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Waterproof Synthetic PP</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Matt waterproof synthetic film. Highly stretchable, freeze-safe and oil-resistant.</span>
+            <span class="option-card-meta">+RM 2.00 / sheet</span>
+          </div>
+
+          <div class="option-card glass" data-material="transparent" data-modifier="3.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Transparent Decal Film</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Clear plastic stickers. Integrates seamlessly on glass jars or metallic wraps.</span>
+            <span class="option-card-meta">+RM 3.00 / sheet</span>
+          </div>
+
+          <div class="option-card glass" data-material="artpaper" data-modifier="0">
+            <div class="option-card-header">
+              <span class="option-card-title">Art Paper 128gsm</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Glossy standard brochures paper. Great detail, lightweight. Ideal for flyers/leaflets.</span>
+            <span class="option-card-meta">Flyers Default</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Cut & Folding finishes -->
+      <section>
+        <h3 class="settings-section-title"><span>04.</span> Select Cut &amp; Finish Style</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-cut="kiss" data-modifier="0">
+            <div class="option-card-header">
+              <span class="option-card-title">Kiss-Cut Sheet</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Stickers cut to shape on backing sheets. Standard and easy to peel off.</span>
+            <span class="option-card-meta">Base / Free</span>
+          </div>
+
+          <div class="option-card glass" data-cut="die" data-modifier="1.50">
+            <div class="option-card-header">
+              <span class="option-card-title">Die-Cut Individual</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Stickers cut all the way through backing into separate pieces. Great for giveaways.</span>
+            <span class="option-card-meta">+RM 1.50 / sheet</span>
+          </div>
+
+          <div class="option-card glass" data-cut="fold" data-modifier="0.05">
+            <div class="option-card-header">
+              <span class="option-card-title">Half-Fold Machine</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Precise machine scoring and folding for leaflets. Perfect alignment.</span>
+            <span class="option-card-meta">+RM 0.05 / piece</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Quantity Run -->
+      <section>
+        <h3 class="settings-section-title"><span>05.</span> Select Quantity</h3>
+        <div class="slider-wrap glass">
+          <div class="slider-header">
+            <span class="slider-title">Total Sheets / Pieces</span>
+            <div class="slider-val-box"><span id="quantity-val">50</span> Units</div>
+          </div>
+          <div class="slider-input-row">
+            <input type="range" id="quantity-slider" class="slider-control" min="10" max="500" value="50" step="10" />
+          </div>
+          <div class="slider-ticks">
+            <span class="slider-tick">10</span>
+            <span class="slider-tick">250</span>
+            <span class="slider-tick">500</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Pricing Summary & CTA -->
+      <section>
+        <div class="pricing-wrap glass">
+          <div class="price-row">
+            <div>
+              <span class="price-label">Price per unit</span>
+              <div class="price-unit" id="price-unit-text">RM 8.00</div>
+            </div>
+            <div class="price-val-box">
+              <span class="price-label" style="text-align: right; display:block;">Estimated Total</span>
+              <div class="price-total" id="price-total-text">RM 400.00</div>
+            </div>
+          </div>
+          <button class="checkout-btn" id="whatsapp-cta">
+            Initialize Custom Order
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>
+      &copy; <span id="year"></span> Ambangan Fast Print ·
+      <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">FA Sinar Fajar Enterprise (AS0395296-D)</a> ·
+      All Rights Reserved.
+    </p>
+  </footer>
+
+  <script src="/services-common.js"></script>
+  <script src="/afp.js"></script>
+  <script>
+    // 3D TILT TRIGGER
+    init3DTilt('card-wrapper', 'preview-card', 'glare-overlay');
+
+    // CONFIGURATION MANAGEMENT
+    const quantitySlider = document.getElementById('quantity-slider');
+    const quantityVal = document.getElementById('quantity-val');
+    const prevStickerTitle = document.getElementById('prev-sticker-title');
+    const stickersVisualGrid = document.getElementById('stickers-visual-grid');
+    const priceUnitText = document.getElementById('price-unit-text');
+    const priceTotalText = document.getElementById('price-total-text');
+    const whatsappCta = document.getElementById('whatsapp-cta');
+    const uploadInput = document.querySelector('.upload-input');
+
+    let type = 'stickers-50';
+    let typeBase = 8.00;
+    let typeLabelText = 'Circular Stickers (50mm)';
+    let material = 'mirrorcoat';
+    let materialModifier = 0;
+    let cut = 'kiss';
+    let cutModifier = 0;
+    let quantity = 50;
+
+    function calculatePrice() {
+      // Is it flyers or sticker sheets?
+      const isSticker = type.startsWith('stickers');
+      
+      // Unit price = type base + material modifier
+      const unitPrice = typeBase + materialModifier;
+      // Total price = (unit price + cut modifier) * quantity
+      const total = (unitPrice + cutModifier) * quantity;
+
+      priceUnitText.textContent = `RM ${unitPrice.toFixed(2)} / unit`;
+      priceTotalText.textContent = `RM ${total.toFixed(2)}`;
+
+      // Update Visual Preview
+      let matLabel = 'Mirrorcoat Sticker';
+      if (material === 'pp') matLabel = 'PP Waterproof Sticker';
+      if (material === 'transparent') matLabel = 'Transparent Decal';
+      if (material === 'artpaper') matLabel = 'Art Paper 128g';
+
+      prevStickerTitle.textContent = `${typeLabelText} · ${matLabel}`;
+
+      // Sticker visual cues
+      if (isSticker) {
+        stickersVisualGrid.style.display = 'grid';
+        document.querySelectorAll('.sticker-item').forEach(item => {
+          item.textContent = 'AFP Print';
+          if (type === 'stickers-60') {
+            item.style.borderRadius = '8px'; // Square stickers
+            item.style.width = '100px';
+            item.style.height = '100px';
+          } else {
+            item.style.borderRadius = '50%'; // Circular stickers
+            item.style.width = '90px';
+            item.style.height = '90px';
+          }
+        });
+      } else {
+        stickersVisualGrid.style.display = 'flex';
+        stickersVisualGrid.innerHTML = `
+          <div style="width:180px; height:120px; border:1px solid rgba(41,182,216,0.3); border-radius:4px; background:rgba(255,255,255,0.02); display:flex; align-items:center; justify-content:center; font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--teal);">
+            ${typeLabelText}
+          </div>
+        `;
+      }
+
+      let cutLabel = 'Kiss-Cut Sheet';
+      if (cut === 'die') cutLabel = 'Die-Cut Individual';
+      if (cut === 'fold') cutLabel = 'Machine Half-Fold';
+
+      // Check file upload status
+      let fileAttached = "None (Will email/WhatsApp file later)";
+      if (uploadInput.files && uploadInput.files.length > 0) {
+        fileAttached = uploadInput.files[0].name;
+      }
+
+      // Update WhatsApp link
+      const text = `Hello Ambangan Fast Print! I want to configure a Custom Printing Order:\n\n` +
+                   `- Service / Size: ${typeLabelText}\n` +
+                   `- Material: ${matLabel}\n` +
+                   `- Cut / Fold Style: ${cutLabel}\n` +
+                   `- Quantity: ${quantity} units\n` +
+                   `- Attached File: ${fileAttached}\n` +
+                   `- Estimated price: RM ${total.toFixed(2)}`;
+      
+      whatsappCta.setAttribute('href', `https://wa.me/60126949147?text=${encodeURIComponent(text)}`);
+    }
+
+    // Set up option listeners
+    document.querySelectorAll('[data-type]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-type]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        type = card.getAttribute('data-type');
+        typeBase = parseFloat(card.getAttribute('data-base-price'));
+        typeLabelText = card.getAttribute('data-label');
+        
+        // Auto-select artpaper for flyers, mirrorcoat for stickers
+        if (type.startsWith('flyers') || type.startsWith('leaflets')) {
+          document.querySelectorAll('[data-material]').forEach(c => {
+            if (c.getAttribute('data-material') === 'artpaper') c.click();
+          });
+          document.querySelectorAll('[data-cut]').forEach(c => {
+            if (c.getAttribute('data-cut') === 'fold') c.click();
+          });
+        } else {
+          document.querySelectorAll('[data-material]').forEach(c => {
+            if (c.getAttribute('data-material') === 'mirrorcoat') c.click();
+          });
+          document.querySelectorAll('[data-cut]').forEach(c => {
+            if (c.getAttribute('data-cut') === 'kiss') c.click();
+          });
+        }
+
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-material]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-material]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        material = card.getAttribute('data-material');
+        materialModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-cut]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-cut]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        cut = card.getAttribute('data-cut');
+        cutModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    // Slider listener
+    quantitySlider.addEventListener('input', () => {
+      quantity = parseInt(quantitySlider.value);
+      quantityVal.textContent = quantity;
+      calculatePrice();
+    });
+
+    // File change recalculate
+    uploadInput.addEventListener('change', () => {
+      calculatePrice();
+    });
+
+    // Initial setup
+    calculatePrice();
+    
+    // WhatsApp click redirection
+    whatsappCta.addEventListener('click', () => {
+      window.open(whatsappCta.getAttribute('href'), '_blank');
+    });
+  </script>
+</body>
+</html>

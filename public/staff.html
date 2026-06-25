@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>Staff Dashboard | Ambangan Fast Print</title>
+  <meta name="description" content="Internal staff & owner dashboard to manage, track and process print orders." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+  <style>
+    body { padding-bottom: 4rem; }
+
+    /* ── LOGIN ── */
+    .login-shell {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 2rem; position: relative;
+    }
+    .login-card {
+      width: 100%; max-width: 420px; border-radius: var(--radius);
+      padding: 2.5rem; position: relative; z-index: 2;
+    }
+    .login-logo { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1.8rem; }
+    .login-logo img { width: 40px; height: 40px; border-radius: 10px; background: var(--white-5); border: 1px solid var(--white-10); padding: 3px; }
+    .login-logo .t { font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.9rem; }
+    .login-logo .b { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--teal); }
+    .login-card h1 { font-family: var(--font-serif); font-size: 1.7rem; margin-bottom: 0.4rem; }
+    .login-card .sub { font-size: 0.8rem; color: var(--white-60); margin-bottom: 1.8rem; }
+    .lf-field { margin-bottom: 1.1rem; }
+    .lf-field label { display:block; font-size:0.62rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#7fd4e8; margin-bottom:0.45rem; }
+    .lf-field input { width:100%; background:var(--white-5); border:1px solid var(--white-10); border-radius:12px; padding:0.85rem 1rem; color:#fff; font-size:0.9rem; font-family:inherit; outline:none; transition:var(--transition); }
+    .lf-field input:focus { border-color: var(--teal-border); background: var(--teal-dim); }
+    .login-err { color:#f87171; font-size:0.75rem; font-weight:600; margin-bottom:1rem; display:none; }
+    .login-hint { margin-top:1.4rem; padding:0.9rem 1rem; background:var(--teal-dim); border:1px solid var(--teal-border); border-radius:12px; font-size:0.72rem; color:var(--white-70); line-height:1.6; }
+    .login-hint b { color: var(--teal); }
+    .login-back { display:block; text-align:center; margin-top:1.4rem; font-size:0.72rem; color:var(--white-40); text-decoration:none; }
+    .login-back:hover { color: var(--white-70); }
+
+    /* ── DASHBOARD ── */
+    .dash { display: none; max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem 2rem; }
+    .dash-top {
+      display:flex; align-items:center; justify-content:space-between; gap:1rem;
+      padding:1.2rem 0 1.5rem; border-bottom:1px solid var(--white-5); flex-wrap:wrap;
+    }
+    .dash-brand { display:flex; align-items:center; gap:0.8rem; }
+    .dash-brand img { width:40px; height:40px; border-radius:10px; background:var(--white-5); border:1px solid var(--white-10); padding:3px; }
+    .dash-brand .t { font-weight:800; letter-spacing:0.08em; text-transform:uppercase; font-size:0.9rem; line-height:1.1; }
+    .dash-brand .b { font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--teal); }
+    .dash-user { display:flex; align-items:center; gap:1rem; }
+    .dash-user .who { text-align:right; }
+    .dash-user .who .n { font-size:0.85rem; font-weight:700; }
+    .dash-user .who .r { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--teal); }
+    .btn-logout { border:1px solid var(--white-10); background:var(--white-5); color:var(--white-70); border-radius:50px; padding:0.55rem 1.1rem; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
+    .btn-logout:hover { color:#fff; border-color:#f8717155; background:rgba(248,113,113,0.08); }
+
+    /* stats */
+    .stats { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin:1.6rem 0; }
+    @media(max-width:880px){ .stats{ grid-template-columns:repeat(2,1fr);} }
+    .stat { border-radius:var(--radius-sm); padding:1.2rem 1.3rem; }
+    .stat .v { font-family:var(--font-serif); font-size:1.9rem; font-weight:800; line-height:1; }
+    .stat .l { font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--white-40); margin-top:0.5rem; }
+    .stat.s-pending .v{ color:#f5b945; } .stat.s-ready .v{ color:#29b6d8; }
+    .stat.s-done .v{ color:#34d399; } .stat.s-rev .v{ color:#fff; } .stat.s-total .v{ color:#fff; }
+
+    /* filters */
+    .filters { display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.3rem; }
+    .filter-btn { border:1px solid var(--white-10); background:transparent; color:var(--white-60); border-radius:50px; padding:0.5rem 1.1rem; font-size:0.68rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
+    .filter-btn:hover { color:#fff; background:var(--white-5); }
+    .filter-btn.active { color:#000; background:var(--teal); border-color:var(--teal); }
+    .filter-btn .count { opacity:0.65; margin-left:0.35rem; }
+
+    /* order list */
+    .orders { display:flex; flex-direction:column; gap:0.8rem; }
+    .order-card { border-radius:var(--radius-sm); padding:1.1rem 1.3rem; cursor:pointer; transition:var(--transition); display:grid; grid-template-columns: 1.4fr 1.6fr 1fr auto; gap:1rem; align-items:center; }
+    @media(max-width:760px){ .order-card{ grid-template-columns:1fr 1fr; } }
+    .order-card:hover { border-color:var(--teal-border); background:rgba(41,182,216,0.03); }
+    .oc-id { font-family:monospace; font-weight:800; color:var(--teal); font-size:0.85rem; }
+    .oc-service { font-size:0.72rem; color:var(--white-60); margin-top:0.2rem; }
+    .oc-cust { font-size:0.85rem; font-weight:600; }
+    .oc-phone { font-size:0.72rem; color:var(--white-40); margin-top:0.2rem; }
+    .oc-total { font-family:var(--font-serif); font-weight:700; font-size:1rem; }
+    .oc-meta { display:flex; flex-direction:column; gap:0.4rem; align-items:flex-end; }
+    .oc-time { font-size:0.65rem; color:var(--white-40); }
+    .empty { text-align:center; padding:4rem 1rem; color:var(--white-40); }
+    .empty .big { font-size:2.5rem; margin-bottom:1rem; }
+
+    /* view tabs */
+    .view-tabs { display:flex; gap:0.4rem; margin:1.6rem 0 0.2rem; border-bottom:1px solid var(--white-5); }
+    .view-tab { background:transparent; border:none; border-bottom:2px solid transparent; color:rgba(255,255,255,0.5); padding:0.75rem 1.1rem; font-size:0.75rem; font-weight:700; letter-spacing:0.04em; cursor:pointer; transition:var(--transition); }
+    .view-tab:hover { color:#fff; }
+    .view-tab.active { color:var(--teal); border-bottom-color:var(--teal); }
+
+    /* reports + customers */
+    .report-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin:1.6rem 0; }
+    @media(max-width:880px){ .report-grid{ grid-template-columns:repeat(2,1fr);} }
+    .report-kpi { border-radius:var(--radius-sm); padding:1.3rem; }
+    .report-kpi .v { font-family:var(--font-serif); font-size:1.7rem; font-weight:800; color:#fff; }
+    .report-kpi .l { font-size:0.6rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--white-40); margin-top:0.45rem; }
+    .report-panels { display:grid; grid-template-columns:1fr 1fr; gap:1.3rem; }
+    @media(max-width:880px){ .report-panels{ grid-template-columns:1fr;} }
+    .panel { border-radius:var(--radius-sm); padding:1.5rem; }
+    .panel h4 { font-size:0.62rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--white-40); margin-bottom:1rem; }
+    .afp-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+    .afp-table th { text-align:left; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--white-40); font-weight:700; padding:0.5rem 0.4rem; border-bottom:1px solid var(--white-10); }
+    .afp-table td { padding:0.6rem 0.4rem; border-bottom:1px solid var(--white-5); color:var(--white-70); }
+    .afp-table td.num, .afp-table th.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .afp-table tr:last-child td { border-bottom:none; }
+    .cust-search { width:100%; background:var(--white-5); border:1px solid var(--white-10); border-radius:50px; padding:0.85rem 1.3rem; color:#fff; font-size:0.85rem; font-family:inherit; outline:none; margin:1.4rem 0 1rem; }
+    .cust-search:focus { border-color:var(--teal-border); }
+    .cust-row { cursor:pointer; }
+    .cust-row:hover td { color:#fff; }
+    .cust-orders { background:rgba(255,255,255,0.02); }
+    .cust-orders td { font-size:0.75rem; color:var(--white-60); }
+    .reg-badge { display:inline-block; font-size:0.55rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--teal); background:var(--teal-dim); border:1px solid var(--teal-border); border-radius:50px; padding:0.1rem 0.5rem; margin-left:0.4rem; }
+
+    /* detail drawer */
+    .drawer-overlay { position:fixed; inset:0; z-index:9998; background:rgba(3,5,9,0.7); backdrop-filter:blur(6px); opacity:0; pointer-events:none; transition:opacity 0.3s; }
+    .drawer-overlay.show { opacity:1; pointer-events:auto; }
+    .drawer { position:fixed; top:0; right:0; bottom:0; width:480px; max-width:92vw; z-index:9999; background:#0a0e16; border-left:1px solid var(--white-10); transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.25,0.1,0.25,1); overflow-y:auto; }
+    .drawer.show { transform:translateX(0); }
+    .drawer-head { padding:1.6rem 1.7rem 1.3rem; border-bottom:1px solid var(--white-5); position:sticky; top:0; background:#0a0e16; z-index:2; }
+    .drawer-head .row { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+    .drawer-id { font-family:monospace; font-size:1.3rem; font-weight:800; color:var(--teal); }
+    .drawer-x { width:32px; height:32px; border-radius:50%; border:1px solid var(--white-10); background:var(--white-5); color:var(--white-60); cursor:pointer; font-size:1rem; }
+    .drawer-x:hover { color:#fff; }
+    .drawer-svc { font-size:0.78rem; color:var(--white-60); margin-top:0.3rem; }
+    .drawer-body { padding:1.5rem 1.7rem 3rem; }
+    .d-section { margin-bottom:1.7rem; }
+    .d-section h4 { font-size:0.62rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--white-40); margin-bottom:0.8rem; }
+    .d-spec { display:flex; justify-content:space-between; gap:1rem; font-size:0.8rem; padding:0.4rem 0; border-bottom:1px solid var(--white-5); }
+    .d-spec span:first-child { color:var(--white-40); } .d-spec span:last-child { color:#fff; font-weight:600; text-align:right; }
+    .d-contact { background:var(--white-5); border:1px solid var(--white-10); border-radius:12px; padding:1rem 1.1rem; font-size:0.82rem; line-height:1.8; }
+    .d-contact a { color:var(--teal); text-decoration:none; }
+    .d-file { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.78rem; color:#34d399; background:rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.2); border-radius:50px; padding:0.5rem 1rem; }
+    .d-total { font-family:var(--font-serif); font-size:1.8rem; font-weight:800; color:var(--teal); }
+
+    .status-actions { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+    .sa-btn { border:1px solid var(--white-10); background:var(--white-5); color:var(--white-70); border-radius:10px; padding:0.75rem; font-size:0.7rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
+    .sa-btn:hover { color:#fff; border-color:var(--teal-border); }
+    .sa-btn.current { background:var(--teal); color:#000; border-color:var(--teal); cursor:default; }
+    .sa-btn.cancel:hover { color:#f87171; border-color:#f8717155; background:rgba(248,113,113,0.08); }
+
+    .pay-box { display:flex; align-items:center; justify-content:space-between; gap:1rem; background:var(--white-5); border:1px solid var(--white-10); border-radius:12px; padding:1rem 1.1rem; }
+    .pay-methods { display:flex; gap:0.5rem; margin-top:0.7rem; flex-wrap:wrap; }
+    .pay-btn { border:1px solid var(--white-10); background:transparent; color:var(--white-70); border-radius:50px; padding:0.5rem 0.95rem; font-size:0.68rem; font-weight:700; cursor:pointer; transition:var(--transition); }
+    .pay-btn:hover { color:#000; background:var(--teal); border-color:var(--teal); }
+
+    .timeline { position:relative; padding-left:1.3rem; }
+    .timeline::before { content:''; position:absolute; left:4px; top:4px; bottom:4px; width:2px; background:var(--white-10); }
+    .tl-item { position:relative; padding-bottom:1.1rem; }
+    .tl-item::before { content:''; position:absolute; left:-1.3rem; top:3px; width:10px; height:10px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px rgba(41,182,216,0.15); }
+    .tl-note { font-size:0.8rem; font-weight:600; color:#fff; }
+    .tl-time { font-size:0.68rem; color:var(--white-40); margin-top:0.15rem; }
+
+    .invoice-btn { width:100%; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; border:1px solid var(--white-10); background:var(--white-5); color:var(--white-70); border-radius:50px; padding:0.85rem; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
+    .invoice-btn:hover { color:#fff; border-color:var(--teal-border); }
+  </style>
+</head>
+<body>
+
+  <!-- ════════ LOGIN VIEW ════════ -->
+  <div class="login-shell" id="login-view">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="login-card glass">
+      <div class="login-logo">
+        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <div>
+          <div class="t">Ambangan Fast Print</div>
+          <div class="b">Staff Portal</div>
+        </div>
+      </div>
+      <h1>Internal Dashboard</h1>
+      <p class="sub">Sign in to manage, track and process customer orders.</p>
+
+      <form id="login-form">
+        <div class="lf-field">
+          <label>Username</label>
+          <input type="text" id="login-user" placeholder="owner or staff" autocomplete="username" />
+        </div>
+        <div class="lf-field">
+          <label>Password</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <div class="login-err" id="login-err">Invalid username or password.</div>
+        <button type="submit" class="checkout-btn" style="width:100%;">Sign In</button>
+      </form>
+
+      <div class="login-hint">
+        <b>Demo accounts</b> — Owner: <b>owner / admin123</b> &nbsp;·&nbsp; Staff: <b>staff / staff123</b>
+      </div>
+      <a href="/" class="login-back">← Back to website</a>
+    </div>
+  </div>
+
+  <!-- ════════ DASHBOARD VIEW ════════ -->
+  <div class="dash" id="dash-view">
+    <div class="dash-top">
+      <div class="dash-brand">
+        <img src="/logo-arrow.png" alt="" />
+        <div>
+          <div class="t">Order Management</div>
+          <div class="b">Ambangan Fast Print</div>
+        </div>
+      </div>
+      <div class="dash-user">
+        <div class="who">
+          <div class="n" id="user-name">—</div>
+          <div class="r" id="user-role">—</div>
+        </div>
+        <button class="btn-logout" id="logout-btn">Logout</button>
+      </div>
+    </div>
+
+    <!-- View tabs — Reports & Customers are Owner/Admin only -->
+    <div class="view-tabs" id="view-tabs">
+      <button class="view-tab active" data-view="orders">📋 Orders</button>
+      <button class="view-tab manager-only" data-view="reports">📊 Reports</button>
+      <button class="view-tab manager-only" data-view="customers">👥 Customers</button>
+    </div>
+
+    <!-- ORDERS VIEW (all roles) -->
+    <div id="view-orders">
+      <div class="stats">
+        <div class="stat glass s-total"><div class="v" id="st-total">0</div><div class="l">Total Orders</div></div>
+        <div class="stat glass s-pending"><div class="v" id="st-pending">0</div><div class="l">Pending</div></div>
+        <div class="stat glass s-ready"><div class="v" id="st-ready">0</div><div class="l">Ready to Pick Up</div></div>
+        <div class="stat glass s-done"><div class="v" id="st-done">0</div><div class="l">Completed</div></div>
+        <div class="stat glass s-rev"><div class="v" id="st-rev">RM 0</div><div class="l">Revenue (Paid)</div></div>
+      </div>
+
+      <div class="filters" id="filters"></div>
+      <div class="orders" id="orders"></div>
+    </div>
+
+    <!-- REPORTS VIEW (Owner/Admin only) -->
+    <div id="view-reports" style="display:none;"></div>
+
+    <!-- CUSTOMERS VIEW (Owner/Admin only) -->
+    <div id="view-customers" style="display:none;"></div>
+  </div>
+
+  <!-- ════════ ORDER DETAIL DRAWER ════════ -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div class="row">
+        <div>
+          <div class="drawer-id" id="dr-id">—</div>
+          <div class="drawer-svc" id="dr-svc">—</div>
+        </div>
+        <button class="drawer-x" id="dr-close">&times;</button>
+      </div>
+      <div style="margin-top:1rem;" id="dr-badge"></div>
+    </div>
+    <div class="drawer-body" id="dr-body"></div>
+  </div>
+
+  <script src="/afp.js"></script>
+  <script>
+    var loginView = document.getElementById('login-view');
+    var dashView  = document.getElementById('dash-view');
+    var activeFilter = 'All';
+    var currentId = null;
+
+    /* ---- AUTH ---- */
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var u = document.getElementById('login-user').value.trim();
+      var p = document.getElementById('login-pass').value;
+      var sess = AFP.login(u, p);
+      if (!sess) { document.getElementById('login-err').style.display = 'block'; return; }
+      enterDash(sess);
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      AFP.logout();
+      dashView.style.display = 'none';
+      loginView.style.display = 'flex';
+    });
+
+    var IS_MANAGER = false;
+
+    function enterDash(sess) {
+      loginView.style.display = 'none';
+      dashView.style.display = 'block';
+      document.getElementById('user-name').textContent = sess.name;
+      document.getElementById('user-role').textContent = sess.role;
+
+      IS_MANAGER = AFP.isManager(sess.role);
+      // Show/hide Owner/Admin-only tabs
+      document.querySelectorAll('.manager-only').forEach(function (el) {
+        el.style.display = IS_MANAGER ? '' : 'none';
+      });
+      switchView('orders');
+      render();
+    }
+
+    /* ---- VIEW SWITCHER ---- */
+    function switchView(name) {
+      if (!IS_MANAGER && name !== 'orders') name = 'orders';
+      ['orders', 'reports', 'customers'].forEach(function (v) {
+        var el = document.getElementById('view-' + v);
+        if (el) el.style.display = (v === name) ? '' : 'none';
+      });
+      document.querySelectorAll('.view-tab').forEach(function (t) {
+        t.classList.toggle('active', t.getAttribute('data-view') === name);
+      });
+      if (name === 'reports') renderReports();
+      if (name === 'customers') renderCustomers();
+    }
+    document.querySelectorAll('.view-tab').forEach(function (t) {
+      t.addEventListener('click', function () { switchView(t.getAttribute('data-view')); });
+    });
+
+    /* ---- RENDER LIST + STATS + FILTERS ---- */
+    function render() {
+      var orders = AFP.getOrders();
+
+      var counts = { All: orders.length };
+      AFP.STATUSES.forEach(function (s) { counts[s] = 0; });
+      var revenue = 0;
+      orders.forEach(function (o) {
+        counts[o.status] = (counts[o.status] || 0) + 1;
+        if (o.payment.status === 'Paid') revenue += parsePrice(o.total);
+      });
+
+      document.getElementById('st-total').textContent = orders.length;
+      document.getElementById('st-pending').textContent = counts['Pending'] || 0;
+      document.getElementById('st-ready').textContent = counts['Ready to Pick Up'] || 0;
+      document.getElementById('st-done').textContent = counts['Completed'] || 0;
+      document.getElementById('st-rev').textContent = 'RM ' + revenue.toFixed(0);
+
+      // filters
+      var fEl = document.getElementById('filters');
+      var tabs = ['All'].concat(AFP.STATUSES);
+      fEl.innerHTML = tabs.map(function (t) {
+        return '<button class="filter-btn' + (t === activeFilter ? ' active' : '') +
+          '" data-filter="' + t + '">' + t +
+          '<span class="count">' + (counts[t] || 0) + '</span></button>';
+      }).join('');
+      fEl.querySelectorAll('.filter-btn').forEach(function (b) {
+        b.addEventListener('click', function () { activeFilter = b.getAttribute('data-filter'); render(); });
+      });
+
+      // list
+      var list = activeFilter === 'All' ? orders : orders.filter(function (o) { return o.status === activeFilter; });
+      var oEl = document.getElementById('orders');
+      if (!list.length) {
+        oEl.innerHTML = '<div class="empty"><div class="big">📭</div>' +
+          (orders.length ? 'No orders in this category.' :
+            'No orders yet. Place a test order from a service page to see it appear here.') + '</div>';
+        return;
+      }
+      oEl.innerHTML = list.map(function (o) {
+        return '<div class="order-card glass" data-id="' + o.id + '">' +
+          '<div><div class="oc-id">' + o.id + '</div><div class="oc-service">' + escapeHtml(o.service) + '</div></div>' +
+          '<div><div class="oc-cust">' + escapeHtml(o.customer.name || '—') + '</div><div class="oc-phone">' + escapeHtml(o.customer.phone || '') + '</div></div>' +
+          '<div class="oc-total">' + escapeHtml(o.total || '—') + '</div>' +
+          '<div class="oc-meta"><span class="' + AFP.statusClass(o.status) + '">' + o.status + '</span>' +
+          '<span class="oc-time">' + AFP.fmtDate(o.createdAt) + '</span></div>' +
+          '</div>';
+      }).join('');
+      oEl.querySelectorAll('.order-card').forEach(function (c) {
+        c.addEventListener('click', function () { openDrawer(c.getAttribute('data-id')); });
+      });
+    }
+
+    /* ---- DETAIL DRAWER ---- */
+    var drawer = document.getElementById('drawer');
+    var drawerOverlay = document.getElementById('drawer-overlay');
+    document.getElementById('dr-close').addEventListener('click', closeDrawer);
+    drawerOverlay.addEventListener('click', closeDrawer);
+
+    function openDrawer(id) {
+      currentId = id;
+      var o = AFP.getOrder(id);
+      if (!o) return;
+      document.getElementById('dr-id').textContent = o.id;
+      document.getElementById('dr-svc').textContent = o.service + ' · ' + AFP.fmtDate(o.createdAt);
+      document.getElementById('dr-badge').innerHTML = '<span class="' + AFP.statusClass(o.status) + '">' + o.status + '</span>';
+
+      var specs = (o.specs || []).map(function (s) {
+        var i = s.indexOf(':');
+        var l = i > -1 ? s.slice(0, i) : s;
+        var v = i > -1 ? s.slice(i + 1).trim() : '';
+        return '<div class="d-spec"><span>' + escapeHtml(l) + '</span><span>' + escapeHtml(v) + '</span></div>';
+      }).join('');
+
+      var statusBtns = AFP.STATUSES.map(function (s) {
+        if (s === 'Cancelled') return '';
+        return '<button class="sa-btn' + (o.status === s ? ' current' : '') + '" data-status="' + s + '">' + s + '</button>';
+      }).join('') + '<button class="sa-btn cancel" data-status="Cancelled">Cancel Order</button>';
+
+      var paid = o.payment.status === 'Paid';
+
+      document.getElementById('dr-body').innerHTML =
+        '<div class="d-section"><h4>Order Specifications</h4>' + (specs || '<p style="color:var(--white-40);font-size:0.8rem;">No specs recorded.</p>') +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;">' +
+          '<span style="font-size:0.62rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--white-40);">Total</span>' +
+          '<span class="d-total">' + escapeHtml(o.total || '—') + '</span></div></div>' +
+
+        (o.fileName ? '<div class="d-section"><h4>Customer Design File</h4><span class="d-file">📎 ' + escapeHtml(o.fileName) + '</span></div>' : '') +
+
+        '<div class="d-section"><h4>Customer Contact</h4><div class="d-contact">' +
+          '<div><b>' + escapeHtml(o.customer.name || '—') + '</b></div>' +
+          '<div>📞 <a href="tel:' + escapeHtml(o.customer.phone) + '">' + escapeHtml(o.customer.phone || '—') + '</a></div>' +
+          (o.customer.email ? '<div>✉️ <a href="mailto:' + escapeHtml(o.customer.email) + '">' + escapeHtml(o.customer.email) + '</a></div>' : '') +
+          (o.notes ? '<div style="margin-top:0.5rem;color:var(--white-60);">📝 ' + escapeHtml(o.notes) + '</div>' : '') +
+        '</div></div>' +
+
+        '<div class="d-section"><h4>Update Order Status</h4><div class="status-actions">' + statusBtns + '</div></div>' +
+
+        '<div class="d-section"><h4>Payment</h4><div class="pay-box">' +
+          '<div><div style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--white-40);">Status</div>' +
+          '<div style="font-weight:800;font-size:1rem;" class="' + (paid ? 'afp-pay-paid' : 'afp-pay-unpaid') + '">' +
+          (paid ? 'Paid · ' + escapeHtml(o.payment.method) : 'Unpaid') + '</div></div>' +
+          (paid ? '<span style="font-size:0.7rem;color:var(--white-40);">' + AFP.fmtDate(o.payment.paidAt) + '</span>' : '') +
+        '</div>' +
+        (paid ? '' : '<div class="pay-methods">' +
+          '<button class="pay-btn" data-pay="Cash">Record Cash</button>' +
+          '<button class="pay-btn" data-pay="Online Transfer">Online Transfer</button>' +
+          '<button class="pay-btn" data-pay="QR Pay">QR Pay</button></div>') +
+        '</div>' +
+
+        '<div class="d-section"><h4>Order Timeline</h4><div class="timeline">' +
+          (o.history || []).slice().reverse().map(function (h) {
+            return '<div class="tl-item"><div class="tl-note">' + escapeHtml(h.note) + '</div>' +
+              '<div class="tl-time">' + AFP.fmtDate(h.at) + '</div></div>';
+          }).join('') +
+        '</div></div>' +
+
+        '<button class="invoice-btn" id="gen-invoice">🧾 Generate Invoice</button>';
+
+      // wire status buttons
+      document.querySelectorAll('#dr-body .sa-btn').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var s = b.getAttribute('data-status');
+          if (s === o.status) return;
+          AFP.setStatus(o.id, s);
+          openDrawer(o.id); render();
+        });
+      });
+      // wire payment buttons
+      document.querySelectorAll('#dr-body .pay-btn').forEach(function (b) {
+        b.addEventListener('click', function () {
+          AFP.recordPayment(o.id, b.getAttribute('data-pay'));
+          openDrawer(o.id); render();
+        });
+      });
+      document.getElementById('gen-invoice').addEventListener('click', function () { printInvoice(o.id); });
+
+      drawer.classList.add('show');
+      drawerOverlay.classList.add('show');
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('show');
+      drawerOverlay.classList.remove('show');
+      currentId = null;
+    }
+
+    /* ---- INVOICE ---- */
+    function printInvoice(id) {
+      var o = AFP.getOrder(id);
+      if (!o) return;
+      var rows = (o.specs || []).map(function (s) {
+        var i = s.indexOf(':');
+        var l = i > -1 ? s.slice(0, i) : s, v = i > -1 ? s.slice(i + 1).trim() : '';
+        return '<tr><td>' + escapeHtml(l) + '</td><td>' + escapeHtml(v) + '</td></tr>';
+      }).join('');
+      var w = window.open('', '_blank', 'width=620,height=760');
+      w.document.write(
+        '<html><head><title>Invoice ' + o.id + '</title><style>' +
+        'body{font-family:Arial,sans-serif;color:#111;padding:40px;max-width:600px;margin:0 auto;}' +
+        'h1{font-size:20px;margin:0;} .muted{color:#777;font-size:12px;}' +
+        'table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;}' +
+        'td{padding:8px;border-bottom:1px solid #eee;} td:last-child{text-align:right;font-weight:600;}' +
+        '.head{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:14px;}' +
+        '.total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;margin-top:14px;border-top:2px solid #111;padding-top:14px;}' +
+        '.badge{display:inline-block;padding:3px 10px;border-radius:20px;background:#eee;font-size:11px;font-weight:700;}' +
+        '</style></head><body>' +
+        '<div class="head"><div><h1>AMBANGAN FAST PRINT</h1><div class="muted">FA Sinar Fajar Enterprise (AS0395296-D)<br>Merbok, Kedah</div></div>' +
+        '<div style="text-align:right;"><h1>INVOICE</h1><div class="muted">' + o.id + '<br>' + AFP.fmtDate(o.createdAt) + '</div></div></div>' +
+        '<p style="margin-top:18px;font-size:13px;"><b>Bill To:</b><br>' + escapeHtml(o.customer.name) + '<br>' + escapeHtml(o.customer.phone) +
+          (o.customer.email ? '<br>' + escapeHtml(o.customer.email) : '') + '</p>' +
+        '<p style="font-size:13px;"><b>Service:</b> ' + escapeHtml(o.service) +
+          ' &nbsp; <span class="badge">' + o.status + '</span> &nbsp; <span class="badge">' +
+          (o.payment.status === 'Paid' ? 'PAID · ' + escapeHtml(o.payment.method) : 'UNPAID') + '</span></p>' +
+        '<table>' + rows + '</table>' +
+        '<div class="total"><span>TOTAL</span><span>' + escapeHtml(o.total || '—') + '</span></div>' +
+        '<p class="muted" style="margin-top:30px;text-align:center;">Thank you for your order! · Prototype invoice for ISP500 project.</p>' +
+        '<script>window.onload=function(){window.print();}<\/script>' +
+        '</body></html>');
+      w.document.close();
+    }
+
+    /* ════════ OWNER/ADMIN: REPORTS ════════ */
+    function fmtRM(n) { return 'RM ' + (n || 0).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function monthName(key) { var p = key.split('-'); return new Date(parseInt(p[0]), parseInt(p[1]) - 1, 1).toLocaleString('en-MY', { month: 'long', year: 'numeric' }); }
+
+    function reportData() {
+      var orders = AFP.getOrders();
+      var paid = orders.filter(function (o) { return o.payment.status === 'Paid'; });
+      var revenue = paid.reduce(function (s, o) { return s + parsePrice(o.total); }, 0);
+      var unpaid = orders.filter(function (o) { return o.payment.status !== 'Paid'; }).reduce(function (s, o) { return s + parsePrice(o.total); }, 0);
+      var avg = paid.length ? revenue / paid.length : 0;
+      var byMonth = {}, bySvc = {}, byStatus = {};
+      AFP.STATUSES.forEach(function (s) { byStatus[s] = 0; });
+      orders.forEach(function (o) {
+        var d = new Date(o.createdAt), mk = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+        byMonth[mk] = byMonth[mk] || { count: 0, rev: 0 }; byMonth[mk].count++;
+        bySvc[o.service] = bySvc[o.service] || { count: 0, rev: 0 }; bySvc[o.service].count++;
+        byStatus[o.status] = (byStatus[o.status] || 0) + 1;
+        if (o.payment.status === 'Paid') { byMonth[mk].rev += parsePrice(o.total); bySvc[o.service].rev += parsePrice(o.total); }
+      });
+      return { orders: orders, paid: paid, revenue: revenue, unpaid: unpaid, avg: avg, byMonth: byMonth, bySvc: bySvc, byStatus: byStatus };
+    }
+
+    function renderReports() {
+      var d = reportData();
+      var months = Object.keys(d.byMonth).sort().reverse();
+      var svcs = Object.keys(d.bySvc).sort(function (a, b) { return d.bySvc[b].count - d.bySvc[a].count; });
+
+      var kpis = '<div class="report-grid">' +
+        '<div class="report-kpi glass"><div class="v">' + d.orders.length + '</div><div class="l">Total Orders</div></div>' +
+        '<div class="report-kpi glass"><div class="v">' + fmtRM(d.revenue) + '</div><div class="l">Revenue (Paid)</div></div>' +
+        '<div class="report-kpi glass"><div class="v">' + fmtRM(d.unpaid) + '</div><div class="l">Outstanding</div></div>' +
+        '<div class="report-kpi glass"><div class="v">' + fmtRM(d.avg) + '</div><div class="l">Avg Order Value</div></div>' +
+      '</div>';
+
+      var monthRows = months.length ? months.map(function (m) {
+        return '<tr><td>' + monthName(m) + '</td><td class="num">' + d.byMonth[m].count + '</td><td class="num">' + fmtRM(d.byMonth[m].rev) + '</td></tr>';
+      }).join('') : '<tr><td colspan="3" style="color:var(--white-40);">No data yet.</td></tr>';
+
+      var svcRows = svcs.length ? svcs.map(function (s) {
+        return '<tr><td>' + escapeHtml(s) + '</td><td class="num">' + d.bySvc[s].count + '</td><td class="num">' + fmtRM(d.bySvc[s].rev) + '</td></tr>';
+      }).join('') : '<tr><td colspan="3" style="color:var(--white-40);">No data yet.</td></tr>';
+
+      var statusRows = AFP.STATUSES.map(function (s) {
+        return '<tr><td><span class="' + AFP.statusClass(s) + '">' + s + '</span></td><td class="num">' + (d.byStatus[s] || 0) + '</td></tr>';
+      }).join('');
+
+      document.getElementById('view-reports').innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-top:1.4rem;">' +
+          '<h3 style="font-family:var(--font-serif);font-size:1.4rem;">Business Reports</h3>' +
+          '<button class="invoice-btn" id="print-report" style="width:auto;padding:0.7rem 1.3rem;">🖨 Print Monthly Report</button>' +
+        '</div>' + kpis +
+        '<div class="report-panels">' +
+          '<div class="panel glass"><h4>Monthly Sales</h4><table class="afp-table"><thead><tr><th>Month</th><th class="num">Orders</th><th class="num">Revenue</th></tr></thead><tbody>' + monthRows + '</tbody></table></div>' +
+          '<div class="panel glass"><h4>Revenue by Service</h4><table class="afp-table"><thead><tr><th>Service</th><th class="num">Orders</th><th class="num">Revenue</th></tr></thead><tbody>' + svcRows + '</tbody></table></div>' +
+        '</div>' +
+        '<div class="panel glass" style="margin-top:1.3rem;"><h4>Orders by Status</h4><table class="afp-table"><thead><tr><th>Status</th><th class="num">Count</th></tr></thead><tbody>' + statusRows + '</tbody></table></div>';
+
+      document.getElementById('print-report').addEventListener('click', printReport);
+    }
+
+    function printReport() {
+      var d = reportData();
+      var months = Object.keys(d.byMonth).sort().reverse();
+      var svcs = Object.keys(d.bySvc).sort(function (a, b) { return d.bySvc[b].count - d.bySvc[a].count; });
+      var mRows = months.map(function (m) { return '<tr><td>' + monthName(m) + '</td><td style="text-align:right">' + d.byMonth[m].count + '</td><td style="text-align:right">' + fmtRM(d.byMonth[m].rev) + '</td></tr>'; }).join('') || '<tr><td colspan="3">No data</td></tr>';
+      var sRows = svcs.map(function (s) { return '<tr><td>' + s + '</td><td style="text-align:right">' + d.bySvc[s].count + '</td><td style="text-align:right">' + fmtRM(d.bySvc[s].rev) + '</td></tr>'; }).join('') || '<tr><td colspan="3">No data</td></tr>';
+      var w = window.open('', '_blank', 'width=720,height=860');
+      w.document.write('<html><head><title>Monthly Report — Ambangan Fast Print</title><style>body{font-family:Arial;padding:40px;color:#111;max-width:680px;margin:0 auto;}h1{font-size:20px;margin:0;}h2{font-size:14px;margin:24px 0 8px;border-bottom:2px solid #111;padding-bottom:6px;}table{width:100%;border-collapse:collapse;font-size:13px;}td,th{padding:7px;border-bottom:1px solid #eee;text-align:left;}.kpi{display:flex;gap:16px;margin:14px 0;}.kpi div{flex:1;border:1px solid #ddd;border-radius:8px;padding:10px;}.kpi b{font-size:17px;display:block;}.muted{color:#777;font-size:12px;}</style></head><body>' +
+        '<div style="display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:12px;"><div><h1>AMBANGAN FAST PRINT</h1><div class="muted">Business / Sales Report</div></div><div class="muted" style="text-align:right">Generated<br>' + AFP.fmtDate(new Date().toISOString()) + '</div></div>' +
+        '<div class="kpi"><div><span class="muted">Total Orders</span><b>' + d.orders.length + '</b></div><div><span class="muted">Revenue (Paid)</span><b>' + fmtRM(d.revenue) + '</b></div><div><span class="muted">Outstanding</span><b>' + fmtRM(d.unpaid) + '</b></div></div>' +
+        '<h2>Monthly Sales</h2><table><tr><th>Month</th><th style="text-align:right">Orders</th><th style="text-align:right">Revenue</th></tr>' + mRows + '</table>' +
+        '<h2>Revenue by Service</h2><table><tr><th>Service</th><th style="text-align:right">Orders</th><th style="text-align:right">Revenue</th></tr>' + sRows + '</table>' +
+        '<p class="muted" style="margin-top:30px;text-align:center;">Prototype report — ISP500 project · FA Sinar Fajar Enterprise (AS0395296-D)</p>' +
+        '<' + 'script>window.onload=function(){window.print();}<' + '/script></body></html>');
+      w.document.close();
+    }
+
+    /* ════════ OWNER/ADMIN: CUSTOMERS ════════ */
+    function renderCustomers() {
+      var orders = AFP.getOrders();
+      var map = {};
+      orders.forEach(function (o) {
+        var key = (o.customer.phone || '').replace(/\D/g, '') || (o.customer.email || '').toLowerCase() || o.id;
+        if (!map[key]) map[key] = { name: o.customer.name || '—', phone: o.customer.phone || '', email: o.customer.email || '', count: 0, spent: 0, last: o.createdAt, orders: [], registered: false };
+        var c = map[key]; c.count++; c.orders.push(o);
+        if (o.payment.status === 'Paid') c.spent += parsePrice(o.total);
+        if (new Date(o.createdAt) > new Date(c.last)) c.last = o.createdAt;
+        if (o.customer.name && (c.name === '—' || !c.name)) c.name = o.customer.name;
+        if (o.customer.email && !c.email) c.email = o.customer.email;
+      });
+      AFP.getCustomers().forEach(function (rc) {
+        var key = (rc.phone || '').replace(/\D/g, '') || (rc.email || '').toLowerCase();
+        if (!map[key]) map[key] = { name: rc.name, phone: rc.phone, email: rc.email, count: 0, spent: 0, last: rc.createdAt, orders: [], registered: true };
+        else map[key].registered = true;
+      });
+      var custs = Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) { return b.count - a.count; });
+
+      var rows = custs.map(function (c, i) {
+        var sub = c.orders.length ? ('<tr class="cust-orders" data-sub="' + i + '" style="display:none;"><td colspan="5">' +
+          c.orders.map(function (o) { return o.id + ' · ' + escapeHtml(o.service) + ' · ' + o.status + ' · ' + escapeHtml(o.total || '—'); }).join('<br>') + '</td></tr>') : '';
+        return '<tr class="cust-row" data-row="' + i + '">' +
+          '<td>' + escapeHtml(c.name) + (c.registered ? '<span class="reg-badge">Registered</span>' : '') + '</td>' +
+          '<td>' + escapeHtml(c.phone || '—') + '</td>' +
+          '<td>' + escapeHtml(c.email || '—') + '</td>' +
+          '<td class="num">' + c.count + '</td>' +
+          '<td class="num">' + fmtRM(c.spent) + '</td>' +
+        '</tr>' + sub;
+      }).join('');
+
+      document.getElementById('view-customers').innerHTML =
+        '<h3 style="font-family:var(--font-serif);font-size:1.4rem;margin-top:1.4rem;">Customer Database</h3>' +
+        '<p style="color:var(--white-40);font-size:0.8rem;margin-top:0.3rem;">' + custs.length + ' customer(s) on record. Click a row to view their orders.</p>' +
+        '<input class="cust-search" id="cust-search" placeholder="Search by name, phone, or email…" />' +
+        '<div class="panel glass" style="padding:0.5rem 1.2rem;"><table class="afp-table"><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th class="num">Orders</th><th class="num">Spent</th></tr></thead><tbody id="cust-tbody">' +
+        (custs.length ? rows : '<tr><td colspan="5" style="color:var(--white-40);padding:1.5rem;">No customers yet.</td></tr>') +
+        '</tbody></table></div>';
+
+      document.querySelectorAll('#cust-tbody .cust-row').forEach(function (r) {
+        r.addEventListener('click', function () {
+          var i = r.getAttribute('data-row');
+          var sub = document.querySelector('[data-sub="' + i + '"]');
+          if (sub) sub.style.display = sub.style.display === 'none' ? 'table-row' : 'none';
+        });
+      });
+      var search = document.getElementById('cust-search');
+      search.addEventListener('input', function () {
+        var q = search.value.toLowerCase();
+        document.querySelectorAll('#cust-tbody .cust-row').forEach(function (r) {
+          var show = r.textContent.toLowerCase().indexOf(q) > -1;
+          r.style.display = show ? '' : 'none';
+          var sub = document.querySelector('[data-sub="' + r.getAttribute('data-row') + '"]');
+          if (sub && !show) sub.style.display = 'none';
+        });
+      });
+    }
+
+    /* ---- HELPERS ---- */
+    function parsePrice(str) {
+      var m = String(str || '').replace(/[^0-9.]/g, '');
+      var n = parseFloat(m);
+      return isNaN(n) ? 0 : n;
+    }
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDrawer(); });
+
+    /* ---- BOOT: restore session if already logged in ---- */
+    (function () {
+      var sess = AFP.session();
+      if (sess) enterDash(sess);
+    })();
+  </script>
+</body>
+</html>

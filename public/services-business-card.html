@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>Business Card Configurator | Ambangan Fast Print</title>
+  <meta name="description" content="Configure premium business cards. Select thick cotton paper stocks, 24K hot foil stamping, blind debossing, and specialty Pantone letterpress inks." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+  <style>
+    /* Card design specific overrides to perfectly match the original react screenshot */
+    .biz-card {
+      background: #ffffff;
+      color: #171717;
+      border-color: rgba(0,0,0,0.06);
+      transition: all 0.5s ease;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+    .biz-card-logo-circle {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.02);
+      display: flex; align-items: center; justify-content: center;
+      margin: 1.5rem auto;
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: #9e7f44;
+      transition: all 0.4s ease;
+    }
+    
+    /* Midnight velvet styling */
+    .biz-card.paper-midnight {
+      background: #090b0e !important;
+      color: #e5e5e5 !important;
+      border-color: rgba(255,255,255,0.08) !important;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+    }
+    .biz-card.paper-midnight .biz-card-logo-circle {
+      border-color: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+    }
+
+    /* Japanese washi sand */
+    .biz-card.paper-washi {
+      background: #e5dacf !important;
+      color: #262626 !important;
+      border-color: rgba(202,168,133,0.15) !important;
+    }
+    .biz-card.paper-washi .biz-card-logo-circle {
+      border-color: rgba(202,168,133,0.2);
+      background: rgba(0,0,0,0.01);
+    }
+
+    /* Holographic Pearl Board */
+    .biz-card.paper-holographic {
+      background: linear-gradient(135deg, #eef2f3 0%, #ffdde1 50%, #eef2f3 100%) !important;
+      color: #1e1b4b !important;
+      border-color: rgba(99,102,241,0.12) !important;
+    }
+    .biz-card.paper-holographic .biz-card-logo-circle {
+      border-color: rgba(99,102,241,0.15);
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* Finishes visual cues */
+    .finish-glow-ring {
+      position: absolute; inset: -4px;
+      border-radius: 20px;
+      opacity: 0;
+      filter: blur(8px);
+      transition: all 0.5s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .finish-holo-edge .finish-glow-ring {
+      opacity: 0.15;
+      background: linear-gradient(90deg, #ec4899, #8b5cf6, #06b6d4);
+    }
+
+    /* Gold foil debossed text */
+    .finish-gold-foil .biz-card-logo-circle {
+      background: linear-gradient(135deg, #d4af37, #ffdf7a, #aa7c11) !important;
+      -webkit-background-clip: padding-box !important;
+      color: #000 !important;
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 2px 5px rgba(0,0,0,0.15);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+    }
+
+    /* Blind Debossing */
+    .finish-debossing .biz-card-logo-circle {
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.15), 1px 1px 0 rgba(255,255,255,0.8);
+      background: transparent !important;
+      color: inherit !important;
+    }
+    .paper-midnight.finish-debossing .biz-card-logo-circle {
+      box-shadow: inset 2px 2px 4px rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,0.05);
+    }
+
+    /* Spot UV Gloss */
+    .finish-spot-uv .biz-card-logo-circle {
+      border-color: #6366f1 !important;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <div class="nav-wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <div class="nav-logo-text">
+          <div class="top">Ambangan</div>
+          <div class="bottom">Fast Print</div>
+        </div>
+      </a>
+      <a href="/" class="nav-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.25rem;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- ── APPLE-STYLE SERVICE SWITCHER ── -->
+  <div class="sub-nav">
+    <div class="sub-nav-inner">
+      <a href="/services-photostat.html" class="sub-nav-item">Photostat</a>
+      <a href="/services-banner.html" class="sub-nav-item">Banners</a>
+      <a href="/services-business-card.html" class="sub-nav-item active">Business Cards</a>
+      <a href="/services-rubber-stamp.html" class="sub-nav-item">Rubber Stamps</a>
+      <a href="/services-name-tag.html" class="sub-nav-item">Name Tags</a>
+      <a href="/services-custom.html" class="sub-nav-item">Custom Print</a>
+      <a href="/services-wedding-card.html" class="sub-nav-item">Wedding Cards</a>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONFIGURATOR AREA ── -->
+  <main class="builder-section">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-grid"></div>
+
+    <!-- LEFT: 3D Visual Preview (Aesthetic original layout) -->
+    <div class="preview-container fade-up">
+      <div class="preview-card-wrap" id="card-wrapper">
+        <!-- Floating edge glow -->
+        <div class="finish-glow-ring" id="holo-glow"></div>
+        
+        <!-- Original card customizer design -->
+        <div class="preview-card biz-card finish-gold-foil" id="preview-card">
+          <div class="paper-grain"></div>
+          <div class="glare-overlay" id="glare-overlay"></div>
+
+          <!-- Top header -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+            <div>
+              <div style="font-family:var(--font-serif); font-size:1.15rem; font-weight:800; letter-spacing:0.04em;">AETHERIA</div>
+              <div style="font-size:0.42rem; font-weight:700; letter-spacing:0.2em; color:currentColor; opacity:0.6; text-transform:uppercase; margin-top:0.1rem;">DESIGN STUDIO</div>
+            </div>
+            <div style="width:30px; height:12px; border-radius:3px; border:1px solid currentColor; opacity:0.2;"></div>
+          </div>
+
+          <!-- Debossed Monogram -->
+          <div class="biz-card-logo-circle" id="prev-monogram">Æ</div>
+
+          <!-- Bottom Footer -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; width:100%; font-size:0.55rem; font-weight:600; border-top:1px solid rgba(0,0,0,0.06); padding-top:0.75rem; border-color:currentColor; border-opacity:0.1;">
+            <div>
+              <div style="opacity:0.4; font-size:0.42rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.15rem;">STUDIO PRINCIPAL</div>
+              <div style="font-weight:700; letter-spacing:0.02em;">Elian Kaelen</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.35rem; font-weight:700;">
+              <span style="width:5px; height:5px; border-radius:50%; background:currentColor; opacity:0.8;"></span>
+              <span id="prev-ink-text" style="letter-spacing:0.05em; text-transform:uppercase;">Matte Black</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-help-text">
+        <div class="dot"></div>
+        Hover and move your mouse to tilt card &amp; preview light reflection.
+      </div>
+    </div>
+
+    <!-- RIGHT: Settings Panel (Matching original InteractiveConfigurator.tsx) -->
+    <div class="settings-panel fade-up delay-1">
+      
+      <!-- 1. Select Premium Paper Stock -->
+      <section>
+        <h3 class="settings-section-title"><span>01.</span> Select Premium Paper Stock</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-paper="cotton-white" data-modifier="0.0">
+            <div class="option-card-header">
+              <span class="option-card-title">German Cotton White</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">600 GSM. Extremely thick, heavy texture, and soft tactile feel. The standard for premium letterpress.</span>
+            <span class="option-card-meta">Base Stock</span>
+          </div>
+
+          <div class="option-card glass" data-paper="midnight-velvet" data-modifier="0.40">
+            <div class="option-card-header">
+              <span class="option-card-title">Midnight Velvet Black</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">700 GSM. Ultra-dark, deep-black structural fiberboard. Exceptional for metallic gilding.</span>
+            <span class="option-card-meta">+RM 0.40 / card</span>
+          </div>
+
+          <div class="option-card glass" data-paper="washi-sand" data-modifier="0.60">
+            <div class="option-card-header">
+              <span class="option-card-title">Japanese Washi Sand</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">400 GSM. Organic mulberry fibers with gold-flake accents. A delicate, unique editorial look.</span>
+            <span class="option-card-meta">+RM 0.60 / card</span>
+          </div>
+
+          <div class="option-card glass" data-paper="holographic-pearl" data-modifier="0.80">
+            <div class="option-card-header">
+              <span class="option-card-title">Holographic Pearl Board</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">500 GSM. Subtle pearlescent board reflecting full rainbow spectrums under light.</span>
+            <span class="option-card-meta">+RM 0.80 / card</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Choose Premium Finish -->
+      <section>
+        <h3 class="settings-section-title"><span>02.</span> Choose Premium Finish</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-finish="gold-foil" data-modifier="0.50">
+            <div class="option-card-header">
+              <span class="option-card-title">24K Gold Stamping</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Metallic hot foil pressed into stock at 150°C, producing reflective debossed details.</span>
+            <span class="option-card-meta">+RM 0.50 / card</span>
+          </div>
+
+          <div class="option-card glass" data-finish="debossing" data-modifier="0.25">
+            <div class="option-card-header">
+              <span class="option-card-title">Blind Debossing</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">No ink or foil. A clean indentation pressed into soft paper for architectural shadow details.</span>
+            <span class="option-card-meta">+RM 0.25 / card</span>
+          </div>
+
+          <div class="option-card glass" data-finish="spot-uv" data-modifier="0.35">
+            <div class="option-card-header">
+              <span class="option-card-title">Spot UV High Gloss</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Raised transparent liquid gloss layer that catches light on matte paper.</span>
+            <span class="option-card-meta">+RM 0.35 / card</span>
+          </div>
+
+          <div class="option-card glass" data-finish="holographic-edge" data-modifier="0.70">
+            <div class="option-card-header">
+              <span class="option-card-title">Holographic Edging</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">All edges of the card gilded with holographic metallic film, shining at every angle.</span>
+            <span class="option-card-meta">+RM 0.70 / card</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Choose Letterpress Ink Color -->
+      <section>
+        <h3 class="settings-section-title"><span>03.</span> Choose Letterpress Ink Color</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-ink="matte-black" data-modifier="0.0">
+            <div class="option-card-header">
+              <span class="option-card-title">Pantone Matte Black</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Pure oil-based organic black ink for high-contrast letterpress.</span>
+            <span class="option-card-meta">Base Ink</span>
+          </div>
+
+          <div class="option-card glass" data-ink="metallic-bronze" data-modifier="0.15">
+            <div class="option-card-header">
+              <span class="option-card-title">Pantone Metallic Bronze</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Shimmering copper-bronze ink with subtle metallic flake.</span>
+            <span class="option-card-meta">+RM 0.15 / card</span>
+          </div>
+
+          <div class="option-card glass" data-ink="pure-white" data-modifier="0.10">
+            <div class="option-card-header">
+              <span class="option-card-title">Opaque White Ink</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Specially formulated heavy-bodied white ink for dark velvet cards.</span>
+            <span class="option-card-meta">+RM 0.10 / card</span>
+          </div>
+
+          <div class="option-card glass" data-ink="blind" data-modifier="-0.10">
+            <div class="option-card-header">
+              <span class="option-card-title">No Ink (Blind Press)</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Pressed purely with pressure, creating textured shadows.</span>
+            <span class="option-card-meta">-RM 0.10 / card</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Select Run Quantity -->
+      <section>
+        <h3 class="settings-section-title"><span>04.</span> Select Run Quantity</h3>
+        <div class="slider-wrap glass">
+          <div class="slider-header">
+            <span class="slider-title">Quantity</span>
+            <div class="slider-val-box"><span id="quantity-val">250</span> Cards</div>
+          </div>
+          <div class="slider-input-row">
+            <input type="range" id="quantity-slider" class="slider-control" min="100" max="1000" value="250" step="50" />
+          </div>
+          <div class="slider-ticks">
+            <span class="slider-tick">100</span>
+            <span class="slider-tick">500</span>
+            <span class="slider-tick">1000</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Pricing Summary & CTA -->
+      <section>
+        <div class="pricing-wrap glass">
+          <div class="price-row">
+            <div>
+              <span class="price-label">Price per card</span>
+              <div class="price-unit" id="price-unit-text">RM 1.75</div>
+            </div>
+            <div class="price-val-box">
+              <span class="price-label" style="text-align: right; display:block;">Estimated Total</span>
+              <div class="price-total" id="price-total-text">RM 437.50</div>
+            </div>
+          </div>
+          <button class="checkout-btn" id="whatsapp-cta">
+            Initialize Custom Spec Run
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>
+      &copy; <span id="year"></span> Ambangan Fast Print ·
+      <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">FA Sinar Fajar Enterprise (AS0395296-D)</a> ·
+      All Rights Reserved.
+    </p>
+  </footer>
+
+  <script src="/services-common.js"></script>
+  <script src="/afp.js"></script>
+  <script>
+    // 3D TILT TRIGGER
+    init3DTilt('card-wrapper', 'preview-card', 'glare-overlay');
+
+    // CONFIGURATION MANAGEMENT
+    const quantitySlider = document.getElementById('quantity-slider');
+    const quantityVal = document.getElementById('quantity-val');
+    const previewCard = document.getElementById('preview-card');
+    const holoGlow = document.getElementById('holo-glow');
+    const prevInkText = document.getElementById('prev-ink-text');
+    const priceUnitText = document.getElementById('price-unit-text');
+    const priceTotalText = document.getElementById('price-total-text');
+    const whatsappCta = document.getElementById('whatsapp-cta');
+
+    let paper = 'cotton-white';
+    let paperModifier = 0.0;
+    let finish = 'gold-foil';
+    let finishModifier = 0.50;
+    let ink = 'matte-black';
+    let inkModifier = 0.0;
+    let quantity = 250;
+
+    const basePricePerCard = 1.25;
+
+    function calculatePrice() {
+      // Unit price = base + paper modifier + finish modifier + ink modifier
+      const unitPrice = basePricePerCard + paperModifier + finishModifier + inkModifier;
+      // Total price = unit price * quantity
+      const total = unitPrice * quantity;
+
+      priceUnitText.textContent = `RM ${unitPrice.toFixed(2)}`;
+      priceTotalText.textContent = `RM ${total.toFixed(2)}`;
+
+      // Update Visual Preview styling based on paper stock selection
+      previewCard.className = 'preview-card biz-card'; // reset
+      if (paper === 'midnight-velvet') {
+        previewCard.classList.add('paper-midnight');
+      } else if (paper === 'washi-sand') {
+        previewCard.classList.add('paper-washi');
+      } else if (paper === 'holographic-pearl') {
+        previewCard.classList.add('paper-holographic');
+      }
+
+      // Add finish styling
+      previewCard.classList.add(`finish-${finish}`);
+
+      // Edge lighting indicator
+      if (finish === 'holographic-edge') {
+        previewCard.style.borderImage = 'linear-gradient(to right, #ec4899, #8b5cf6, #06b6d4) 1';
+        holoGlow.style.opacity = '0.15';
+      } else {
+        previewCard.style.borderImage = 'none';
+        holoGlow.style.opacity = '0';
+      }
+
+      // Ink color indicator text
+      let inkLabel = 'Matte Black';
+      if (ink === 'metallic-bronze') inkLabel = 'Metallic Bronze';
+      if (ink === 'pure-white') inkLabel = 'Opaque White';
+      if (ink === 'blind') inkLabel = 'No Ink (Blind)';
+      prevInkText.textContent = inkLabel;
+
+      let paperLabel = 'German Cotton White';
+      if (paper === 'midnight-velvet') paperLabel = 'Midnight Velvet Black';
+      if (paper === 'washi-sand') paperLabel = 'Japanese Washi Sand';
+      if (paper === 'holographic-pearl') paperLabel = 'Holographic Pearl Board';
+
+      let finishLabel = '24K Gold Stamping';
+      if (finish === 'debossing') finishLabel = 'Blind Debossing';
+      if (finish === 'spot-uv') finishLabel = 'Spot UV High Gloss';
+      if (finish === 'holographic-edge') finishLabel = 'Holographic Edging';
+
+      // Update WhatsApp link
+      const text = `Hello Ambangan Fast Print! I want to configure a Business Card Order:\n\n` +
+                   `- Paper Stock: ${paperLabel}\n` +
+                   `- Premium Finish: ${finishLabel}\n` +
+                   `- Ink Color: ${inkLabel}\n` +
+                   `- Quantity: ${quantity} cards\n` +
+                   `- Estimated price: RM ${total.toFixed(2)}`;
+      
+      whatsappCta.setAttribute('href', `https://wa.me/60126949147?text=${encodeURIComponent(text)}`);
+    }
+
+    // Set up option listeners
+    document.querySelectorAll('[data-paper]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-paper]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        paper = card.getAttribute('data-paper');
+        paperModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-finish]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-finish]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        finish = card.getAttribute('data-finish');
+        finishModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-ink]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-ink]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        ink = card.getAttribute('data-ink');
+        inkModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    // Slider listener
+    quantitySlider.addEventListener('input', () => {
+      quantity = parseInt(quantitySlider.value);
+      quantityVal.textContent = quantity;
+      calculatePrice();
+    });
+
+    // Initial setup
+    calculatePrice();
+    
+    // WhatsApp click redirection
+    whatsappCta.addEventListener('click', () => {
+      window.open(whatsappCta.getAttribute('href'), '_blank');
+    });
+  </script>
+</body>
+</html>

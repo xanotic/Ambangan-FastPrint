@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>About Us | Ambangan FastPrint — Fast. Reliable. Local.</title>
+  <meta name="description" content="Learn about Ambangan FastPrint — the go-to printing and stationery destination in Sungai Petani, Kedah. Fast turnaround, consistent quality, affordable prices." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #29b6d8;
+      --teal-dim: rgba(41, 182, 216, 0.12);
+      --teal-border: rgba(41, 182, 216, 0.25);
+      --bg: #07090e;
+      --bg-2: #0a0e1a;
+      --bg-3: #05070a;
+      --white: #ffffff;
+      --white-60: rgba(255,255,255,0.6);
+      --white-40: rgba(255,255,255,0.4);
+      --white-20: rgba(255,255,255,0.2);
+      --white-10: rgba(255,255,255,0.1);
+      --white-5: rgba(255,255,255,0.05);
+      --glass: rgba(255,255,255,0.03);
+      --glass-border: rgba(255,255,255,0.08);
+      --radius: 20px;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--white);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #1b212f; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2b3348; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.25rem 1.5rem;
+      background: rgba(7, 9, 14, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--white-5);
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1280px; margin: 0 auto;
+    }
+    .nav-wrap {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7, 9, 14, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--white-5);
+    }
+    .nav-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 1.1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.75rem;
+      text-decoration: none;
+    }
+    .nav-logo img {
+      width: 36px; height: 36px; object-fit: contain;
+      border-radius: 10px; background: var(--white-5);
+      border: 1px solid var(--white-10); padding: 2px;
+    }
+    .nav-logo-text { line-height: 1.1; }
+    .nav-logo-text .top {
+      font-size: 0.8rem; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--white);
+    }
+    .nav-logo-text .bottom {
+      font-size: 0.6rem; font-weight: 600; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--teal);
+    }
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; text-decoration: none; color: var(--white-60);
+      border: 1px solid var(--white-10); border-radius: 50px;
+      padding: 0.5rem 1.1rem;
+      transition: all 0.25s ease;
+    }
+    .nav-back:hover { color: var(--white); border-color: var(--teal-border); }
+
+    /* ── GLASS UTILITY ── */
+    .glass {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* ── SCROLL FADE ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.75s cubic-bezier(0.25,0.1,0.25,1), transform 0.75s cubic-bezier(0.25,0.1,0.25,1);
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up.delay-1 { transition-delay: 0.1s; }
+    .fade-up.delay-2 { transition-delay: 0.2s; }
+    .fade-up.delay-3 { transition-delay: 0.3s; }
+    .fade-up.delay-4 { transition-delay: 0.4s; }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      padding: 7rem 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* ── EYEBROW ── */
+    .eyebrow {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--teal); display: block; margin-bottom: 1rem;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      background: var(--bg);
+      padding: 8rem 2rem 6rem;
+    }
+    .hero-glow-1 {
+      position: absolute; top: -15%; left: -10%;
+      width: 55%; height: 55%;
+      background: rgba(41,182,216,0.07); border-radius: 50%;
+      filter: blur(180px); pointer-events: none;
+    }
+    .hero-glow-2 {
+      position: absolute; bottom: -20%; right: -10%;
+      width: 50%; height: 50%;
+      background: rgba(59,130,246,0.06); border-radius: 50%;
+      filter: blur(160px); pointer-events: none;
+    }
+    .hero-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .hero-inner {
+      position: relative; z-index: 1;
+      max-width: 860px; text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--teal-dim); border: 1px solid var(--teal-border);
+      border-radius: 50px; padding: 0.4rem 1rem;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 2rem;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--teal);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .hero-h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 700; line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .hero-h1 .gradient {
+      background: linear-gradient(135deg, var(--teal), #7dd8f0, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-style: italic;
+    }
+    .hero-p {
+      font-size: 1.05rem; color: var(--white-60);
+      max-width: 600px; margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+    .hero-stats {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
+      margin-top: 3rem;
+    }
+    .hero-stat {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.25rem; padding: 1.25rem 2rem;
+      border-radius: 16px;
+    }
+    .hero-stat .num {
+      font-family: var(--font-serif);
+      font-size: 2rem; font-weight: 700; color: var(--white);
+      line-height: 1;
+    }
+    .hero-stat .lbl {
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--white-40);
+    }
+    .hero-stat .stars { color: var(--teal); font-size: 0.85rem; }
+
+    /* ── WHO WE ARE ── */
+    #who {
+      border-top: 1px solid var(--white-5);
+      background: var(--bg-2);
+    }
+    .who-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+    }
+    @media (max-width: 768px) {
+      .who-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+    .who-text h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700; line-height: 1.15;
+      letter-spacing: -0.02em; color: var(--white);
+      margin-bottom: 1.25rem;
+    }
+    .who-text p {
+      font-size: 0.95rem; color: var(--white-60);
+      line-height: 1.8; margin-bottom: 1rem;
+    }
+    .who-card {
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .who-card-glow {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(41,182,216,0.08), transparent);
+      pointer-events: none;
+    }
+    .who-card-logo {
+      width: 80px; height: 80px; border-radius: 18px;
+      background: var(--teal-dim); border: 1px solid var(--teal-border);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem; overflow: hidden;
+    }
+    .who-card-logo img { width: 64px; height: 64px; object-fit: contain; }
+    .who-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.35rem; font-weight: 600; color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+    .who-card p { font-size: 0.875rem; color: var(--white-60); line-height: 1.75; margin-bottom: 0.75rem; }
+    .who-card .reg {
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--teal); margin-top: 1.25rem; display: block;
+      border-top: 1px solid var(--white-5); padding-top: 1rem;
+    }
+
+    /* ── SERVICES ── */
+    #services { border-top: 1px solid var(--white-5); }
+    .services-heading { margin-bottom: 3rem; }
+    .services-heading h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; color: var(--white); margin-bottom: 0.75rem;
+    }
+    .services-heading p { font-size: 0.95rem; color: var(--white-60); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+    .service-card {
+      border-radius: var(--radius); padding: 1.75rem;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: default;
+    }
+    .service-card:hover {
+      border-color: var(--teal-border) !important;
+      transform: translateY(-4px);
+    }
+    .service-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--teal-dim); border: 1px solid var(--teal-border);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.1rem;
+      font-size: 1.25rem;
+    }
+    .service-card h4 {
+      font-size: 1rem; font-weight: 700; color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .service-card p { font-size: 0.825rem; color: var(--white-60); line-height: 1.7; }
+
+    /* ── HOURS ── */
+    #hours {
+      border-top: 1px solid var(--white-5);
+      background: var(--bg-2);
+    }
+    .hours-heading { margin-bottom: 2.5rem; }
+    .hours-heading h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; color: var(--white); margin-bottom: 0.5rem;
+    }
+    .hours-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+    @media (max-width: 640px) { .hours-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .hours-grid { grid-template-columns: 1fr 1fr; } }
+    .hours-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.25rem; border-radius: 12px;
+    }
+    .hours-day { font-size: 0.875rem; font-weight: 700; color: var(--white); }
+    .hours-time { font-size: 0.875rem; color: var(--white-60); }
+    .hours-time.closed { color: #f87171; font-weight: 600; }
+    .hours-time.open { color: #34d399; }
+
+    /* ── FAQ ── */
+    #faq { border-top: 1px solid var(--white-5); }
+    .faq-heading { margin-bottom: 3rem; }
+    .faq-heading h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; color: var(--white); margin-bottom: 0.5rem;
+    }
+    .faq-heading p { font-size: 0.95rem; color: var(--white-60); }
+    .faq-list { display: flex; flex-direction: column; gap: 1rem; }
+    .faq-item {
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .faq-item:hover { border-color: var(--teal-border) !important; }
+    .faq-q {
+      width: 100%; text-align: left;
+      background: transparent; border: none; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.5rem; gap: 1rem;
+      color: var(--white); font-family: var(--font-sans);
+      font-size: 1rem; font-weight: 600; line-height: 1.5;
+    }
+    .faq-q .icon {
+      flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px;
+      background: var(--teal-dim); border: 1px solid var(--teal-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 700; color: var(--teal);
+      transition: transform 0.3s;
+    }
+    .faq-item.open .faq-q .icon { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s;
+      padding: 0 1.5rem;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 1.5rem 1.5rem; }
+    .faq-a p { font-size: 0.9rem; color: var(--white-60); line-height: 1.8; }
+    .faq-a a { color: var(--teal); text-decoration: none; }
+    .faq-a a:hover { text-decoration: underline; }
+
+    /* ── CONTACT ── */
+    #contact {
+      border-top: 1px solid var(--white-5);
+      background: var(--bg-3);
+      position: relative; overflow: hidden;
+    }
+    .contact-glow {
+      position: absolute; bottom: -20%; left: 50%; transform: translateX(-50%);
+      width: 60%; height: 50%; background: rgba(41,182,216,0.05);
+      border-radius: 50%; filter: blur(160px); pointer-events: none;
+    }
+    .contact-heading { margin-bottom: 3rem; }
+    .contact-heading h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; color: var(--white); margin-bottom: 0.5rem;
+    }
+    .contact-heading p { font-size: 0.95rem; color: var(--white-60); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem; position: relative; z-index: 1;
+    }
+    .contact-card {
+      border-radius: var(--radius); padding: 1.75rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .contact-card:hover {
+      border-color: var(--teal-border) !important;
+      transform: translateY(-4px);
+    }
+    .contact-card a { text-decoration: none; color: inherit; }
+    .contact-label {
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 0.6rem; display: block;
+    }
+    .contact-value {
+      font-size: 0.925rem; font-weight: 600; color: var(--white); line-height: 1.6;
+    }
+    .contact-value a { color: var(--white); transition: color 0.2s; }
+    .contact-value a:hover { color: var(--teal); }
+    .contact-card-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--teal-dim); border: 1px solid var(--teal-border);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem; font-size: 1rem;
+    }
+    .cta-bar {
+      margin-top: 3rem;
+      display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: center;
+      position: relative; z-index: 1;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--teal); color: #000;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      padding: 0.85rem 1.75rem; border-radius: 50px;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #4ec8e4; transform: translateY(-2px); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--white-20); color: var(--white-60);
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      padding: 0.85rem 1.75rem; border-radius: 50px;
+      transition: border-color 0.25s, color 0.25s, transform 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--teal-border); color: var(--white); transform: translateY(-2px); }
+
+    /* ── APPLE-STYLE SERVICE SHOWCASE ── */
+    #services { border-top: 1px solid var(--white-5); }
+    .services-intro { max-width: 1280px; margin: 0 auto; padding: 7rem 2rem 3rem; }
+    .services-intro h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; color: var(--white); margin-bottom: 0.75rem;
+    }
+    .services-intro p { font-size: 0.95rem; color: var(--white-60); margin-bottom: 0; }
+
+    /* Full-bleed panels */
+    .showcase-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 600px;
+      position: relative;
+      overflow: hidden;
+    }
+    @media (max-width: 768px) {
+      .showcase-panel { grid-template-columns: 1fr; min-height: auto; }
+      .showcase-panel .panel-img { min-height: 55vw; order: -1 !important; }
+    }
+    .showcase-panel .panel-img {
+      position: relative;
+      overflow: hidden;
+      min-height: 560px;
+    }
+    .showcase-panel .panel-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scale(1.04);
+      transition: transform 0.9s cubic-bezier(0.25,0.1,0.25,1);
+    }
+    .showcase-panel:hover .panel-img img { transform: scale(1); }
+    .panel-img .img-caption {
+      position: absolute; bottom: 1.5rem; left: 1.5rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(7,9,14,0.75); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--white-10); border-radius: 50px;
+      padding: 0.4rem 1rem;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--white-60);
+    }
+    .panel-img .img-caption .dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--teal);
+    }
+    /* Overlay gradient on image */
+    .panel-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(7,9,14,0.15), transparent);
+      pointer-events: none;
+    }
+    .panel-text {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 5rem 5rem;
+      background: var(--bg-2);
+      position: relative; overflow: hidden;
+    }
+    @media (max-width: 1024px) { .panel-text { padding: 3rem 2.5rem; } }
+    .panel-text::before {
+      content: '';
+      position: absolute; top: -30%; right: -20%;
+      width: 55%; height: 55%;
+      background: var(--teal-dim);
+      border-radius: 50%; filter: blur(90px);
+      pointer-events: none;
+    }
+    .panel-num {
+      font-family: var(--font-serif);
+      font-size: 4.5rem; font-weight: 700;
+      color: var(--white-5); line-height: 1;
+      position: absolute; top: 2rem; right: 2.5rem;
+      user-select: none; pointer-events: none;
+    }
+    .panel-text .eyebrow { margin-bottom: 0.75rem; }
+    .panel-text h3 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-weight: 700; color: var(--white);
+      line-height: 1.15; margin-bottom: 1.25rem;
+    }
+    .panel-text p {
+      font-size: 0.95rem; color: var(--white-60);
+      line-height: 1.8; margin-bottom: 0.75rem;
+    }
+    .panel-tag {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 0.75rem;
+      padding: 0.35rem 0.85rem; border-radius: 50px;
+      background: var(--teal-dim); border: 1px solid var(--teal-border);
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal);
+    }
+    .panel-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+    /* Alternate layout — image on right */
+    .showcase-panel.flip .panel-img { order: 2; }
+    .showcase-panel.flip .panel-text { order: 1; background: var(--bg-3); }
+    .showcase-panel.flip .panel-text::before {
+      top: -30%; left: -20%; right: auto;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--white-5);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.7rem; color: var(--white-40);
+      letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+    }
+    footer a { color: var(--teal); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE TWEAKS ── */
+    @media (max-width: 640px) {
+      .hero-stats { gap: 0.6rem; }
+      .hero-stat { padding: 1rem 1.25rem; }
+      .hero-stat .num { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <div class="nav-wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="Ambangan FastPrint Home">
+        <img src="/logo-arrow.png" alt="Ambangan FastPrint logo" />
+        <div class="nav-logo-text">
+          <span class="top">Ambangan</span>
+          <span class="bottom">Fast Print</span>
+        </div>
+      </a>
+      <a href="/" class="nav-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ HERO ══ -->
+  <section id="hero">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-grid"></div>
+
+    <div class="hero-inner">
+      <div class="hero-badge fade-up">
+        <span class="dot"></span>
+        Sungai Petani's Local Print Studio
+      </div>
+
+      <h1 class="hero-h1 fade-up delay-1">
+        Fast. Reliable.<br />
+        <span class="gradient">Local.</span>
+      </h1>
+
+      <p class="hero-p fade-up delay-2">
+        Ambangan FastPrint is the go-to printing and stationery destination for students, office
+        workers, and small business owners in Sungai Petani, Kedah. We combine quick turnaround
+        times with consistent quality — all at prices that make sense for everyday needs.
+      </p>
+
+      <!-- At-a-glance stats -->
+      <div class="hero-stats fade-up delay-3">
+        <div class="hero-stat glass">
+          <span class="num">4.6</span>
+          <span class="stars">★★★★★</span>
+          <span class="lbl">Google Rating</span>
+        </div>
+        <div class="hero-stat glass">
+          <span class="num">Bedong</span>
+          <span class="lbl">Sungai Petani, Kedah</span>
+        </div>
+        <div class="hero-stat glass">
+          <span class="num">6 Days</span>
+          <span class="lbl">Open Per Week</span>
+        </div>
+        <div class="hero-stat glass">
+          <span class="num" style="font-size:1.1rem;line-height:1.3">+60 12-694 9147</span>
+          <span class="lbl">WhatsApp / Phone</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ WHO WE ARE ══ -->
+  <section id="who">
+    <div class="section">
+      <div class="who-grid">
+
+        <div class="who-text fade-up">
+          <span class="eyebrow">Who We Are</span>
+          <h2>Serving the Bedong<br />Community</h2>
+          <p>
+            Ambangan FastPrint is located in the heart of Bedong, Kedah, and has grown to become
+            a trusted name for fast printing services and quality stationery. Whether you need a
+            quick document printout, promotional materials for your business, or everyday stationery
+            supplies, we are equipped to handle it all — efficiently and affordably.
+          </p>
+          <p>
+            Our active presence on social media keeps our customers informed about our latest
+            promotions, operating hours, and new services as they launch.
+          </p>
+        </div>
+
+        <div class="fade-up delay-2">
+          <div class="who-card glass">
+            <div class="who-card-glow"></div>
+            <div class="who-card-logo">
+              <img src="/logo-arrow.png" alt="Ambangan FastPrint logo" />
+            </div>
+            <h3>Ambangan FastPrint</h3>
+            <p>
+              A trusted community print studio providing high-speed precision printing and creative
+              design solutions for everyone — from individual students to growing local businesses.
+            </p>
+            <p>
+              📍 No. 310, Lorong Melor 1/2, Ambangan Heights,<br />
+              08000 Sungai Petani, Kedah, Malaysia
+            </p>
+            <span class="reg">FA Sinar Fajar Enterprise · Registration No. AS0395296-D</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ SERVICES ══ -->
+  <section id="services">
+
+    <!-- Intro heading -->
+    <div class="services-intro">
+      <span class="eyebrow fade-up">What We Offer</span>
+      <h2 class="fade-up delay-1">Our Services</h2>
+      <p class="fade-up delay-2">We cover a full range of print and stationery needs under one roof.</p>
+    </div>
+
+    <!-- Panel 1 — Document Printing (image left) -->
+    <div class="showcase-panel fade-up">
+      <div class="panel-img">
+        <img src="/img-printer.jpeg" alt="Professional printing machines at Ambangan FastPrint" loading="lazy" />
+        <span class="img-caption"><span class="dot"></span>Document Printing</span>
+      </div>
+      <div class="panel-text">
+        <span class="panel-num">01</span>
+        <span class="eyebrow">Fast & Accurate</span>
+        <h3>Document<br />Printing</h3>
+        <p>
+          Get crisp, clear printouts for any document — whether it's a report, an assignment, a
+          legal contract, or office paperwork. Our professional copiers handle it all with speed
+          and precision.
+        </p>
+        <p>Perfect for students, office workers, and anyone who needs it done right — quickly.</p>
+        <div class="panel-tags">
+          <span class="panel-tag">A4 &amp; A3 Prints</span>
+          <span class="panel-tag">B&amp;W &amp; Colour</span>
+          <span class="panel-tag">Double-Sided</span>
+          <span class="panel-tag">Binding Available</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 2 — Business Cards (image right) -->
+    <div class="showcase-panel flip fade-up">
+      <div class="panel-text">
+        <span class="panel-num">02</span>
+        <span class="eyebrow">First Impressions Matter</span>
+        <h3>Business<br />Cards</h3>
+        <p>
+          Make a lasting impression with professionally printed business cards. We offer sharp,
+          vibrant printing tailored for entrepreneurs, freelancers, and small businesses of all kinds.
+        </p>
+        <p>Your brand identity, delivered in the palm of a hand.</p>
+        <div class="panel-tags">
+          <span class="panel-tag">Custom Sizes</span>
+          <span class="panel-tag">Glossy &amp; Matte Finish</span>
+          <span class="panel-tag">Full Colour</span>
+          <span class="panel-tag">Fast Turnaround</span>
+        </div>
+      </div>
+      <div class="panel-img">
+        <img src="/img-ink.jpeg" alt="Epson ink cartridges — vibrant colour printing" loading="lazy" />
+        <span class="img-caption"><span class="dot"></span>Premium Colour Inks</span>
+      </div>
+    </div>
+
+    <!-- Panel 3 — Promotional Materials (image left) -->
+    <div class="showcase-panel fade-up">
+      <div class="panel-img">
+        <img src="/img-banner-machine.jpeg" alt="Large-format banner printing machine" loading="lazy" />
+        <span class="img-caption"><span class="dot"></span>Large-Format Printing</span>
+      </div>
+      <div class="panel-text">
+        <span class="panel-num">03</span>
+        <span class="eyebrow">Promote Your Brand</span>
+        <h3>Promotional<br />Materials</h3>
+        <p>
+          Stand out at events, markets, and grand openings with eye-catching promotional print.
+          From pull-up banners to streamers and flyers, we produce large-format prints that command
+          attention.
+        </p>
+        <p>Bring your marketing vision to life — bold, vivid, and built to impress.</p>
+        <div class="panel-tags">
+          <span class="panel-tag">Banners &amp; Streamers</span>
+          <span class="panel-tag">Flyers &amp; Brochures</span>
+          <span class="panel-tag">Event Signage</span>
+          <span class="panel-tag">Digital Graphics</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 4 — Stationery Supplies (image right) -->
+    <div class="showcase-panel flip fade-up">
+      <div class="panel-text">
+        <span class="panel-num">04</span>
+        <span class="eyebrow">Everyday Essentials</span>
+        <h3>Stationery<br />Supplies</h3>
+        <p>
+          Stock up on everything you need for school, the office, or your business. From notebooks
+          and writing tools to folders and art supplies, we carry a curated range of everyday
+          stationery at accessible prices.
+        </p>
+        <p>One stop. Everything covered.</p>
+        <div class="panel-tags">
+          <span class="panel-tag">Notebooks &amp; Pads</span>
+          <span class="panel-tag">Writing Tools</span>
+          <span class="panel-tag">Office Supplies</span>
+          <span class="panel-tag">School Stationery</span>
+        </div>
+      </div>
+      <div class="panel-img">
+        <img src="/img-customer.jpeg" alt="Ambangan FastPrint team serving customers" loading="lazy" />
+        <span class="img-caption"><span class="dot"></span>Friendly Service</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════ HOURS ══ -->
+  <section id="hours">
+    <div class="section">
+      <div class="hours-heading">
+        <span class="eyebrow fade-up">Operating Hours</span>
+        <h2 class="fade-up delay-1">When We're Open</h2>
+      </div>
+      <div class="hours-grid">
+        <div class="hours-row glass fade-up">
+          <span class="hours-day">Monday</span>
+          <span class="hours-time open">9:30 AM – 5:30 PM</span>
+        </div>
+        <div class="hours-row glass fade-up delay-1">
+          <span class="hours-day">Tuesday</span>
+          <span class="hours-time open">9:30 AM – 5:30 PM</span>
+        </div>
+        <div class="hours-row glass fade-up delay-2">
+          <span class="hours-day">Wednesday</span>
+          <span class="hours-time open">9:30 AM – 5:30 PM</span>
+        </div>
+        <div class="hours-row glass fade-up delay-3">
+          <span class="hours-day">Thursday</span>
+          <span class="hours-time open">9:30 AM – 5:30 PM</span>
+        </div>
+        <div class="hours-row glass fade-up">
+          <span class="hours-day">Friday</span>
+          <span class="hours-time open">9:00 AM – 1:00 PM</span>
+        </div>
+        <div class="hours-row glass fade-up delay-1">
+          <span class="hours-day">Saturday</span>
+          <span class="hours-time closed">Closed</span>
+        </div>
+        <div class="hours-row glass fade-up delay-2">
+          <span class="hours-day">Sunday</span>
+          <span class="hours-time open">9:30 AM – 5:30 PM</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ FAQ ══ -->
+  <section id="faq">
+    <div class="section">
+      <div class="faq-heading">
+        <span class="eyebrow fade-up">Frequently Asked</span>
+        <h2 class="fade-up delay-1">Common Questions</h2>
+        <p class="fade-up delay-2">Everything you need to know about Ambangan FastPrint.</p>
+      </div>
+      <div class="faq-list fade-up delay-1">
+
+        <div class="faq-item glass">
+          <button class="faq-q" aria-expanded="false">
+            Where is Ambangan FastPrint located?
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>We are at <strong style="color:rgba(255,255,255,0.8)">No. 310, Lorong Melor 1/2, Ambangan Heights, 08000 Sungai Petani, Kedah, Malaysia</strong> — easily accessible for residents across the area.</p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-q" aria-expanded="false">
+            What types of services does Ambangan FastPrint offer?
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>We provide <strong style="color:rgba(255,255,255,0.8)">document printing, business card printing, notebooks and stationery supplies</strong>, as well as promotional materials such as banners and flyers — making us a one-stop shop for print and stationery needs.</p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-q" aria-expanded="false">
+            What is Ambangan FastPrint's customer rating?
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>We hold a <strong style="color:rgba(255,255,255,0.8)">4.6 out of 5 star rating</strong>, reflecting our consistent commitment to quality printing and customer satisfaction.</p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-q" aria-expanded="false">
+            How can I contact Ambangan FastPrint?
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>You can reach us by phone or WhatsApp at <a href="https://wa.me/60126949147">+60 12-694 9147</a>, or follow us on Facebook at <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">facebook.com/spambanganfastprint</a> for the latest promotions and updates.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ CONTACT ══ -->
+  <section id="contact">
+    <div class="contact-glow"></div>
+    <div class="section">
+      <div class="contact-heading">
+        <span class="eyebrow fade-up">Get in Touch</span>
+        <h2 class="fade-up delay-1">Visit or Contact Us</h2>
+        <p class="fade-up delay-2">We're here to help. Walk in or reach out anytime.</p>
+      </div>
+      <div class="contact-grid">
+
+        <div class="contact-card glass fade-up delay-1">
+          <div class="contact-card-icon">📍</div>
+          <span class="contact-label">Address</span>
+          <div class="contact-value">
+            No. 310, Lorong Melor 1/2,<br />
+            Ambangan Heights,<br />
+            08000 Sungai Petani, Kedah
+          </div>
+        </div>
+
+        <div class="contact-card glass fade-up delay-2">
+          <div class="contact-card-icon">📞</div>
+          <span class="contact-label">Phone / WhatsApp</span>
+          <div class="contact-value">
+            <a href="https://wa.me/60126949147">+60 12-694 9147</a>
+          </div>
+        </div>
+
+        <div class="contact-card glass fade-up delay-3">
+          <div class="contact-card-icon">👍</div>
+          <span class="contact-label">Facebook</span>
+          <div class="contact-value">
+            <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">
+              fb.com/spambanganfastprint
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="cta-bar fade-up">
+        <a href="https://wa.me/60126949147" class="btn-primary" target="_blank" rel="noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp Us
+        </a>
+        <a href="https://facebook.com/spambanganfastprint" class="btn-ghost" target="_blank" rel="noreferrer">
+          Follow on Facebook
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>
+      © <span id="year"></span> Ambangan FastPrint ·
+      <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">FA Sinar Fajar Enterprise (AS0395296-D)</a> ·
+      All Rights Reserved.
+    </p>
+  </footer>
+
+  <script>
+    // Dynamic year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Intersection observer for scroll fade-up
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '-40px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const btn = item.querySelector('.faq-q');
+      btn.addEventListener('click', () => {
+        const isOpen = item.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        // Toggle clicked
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        } else {
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    // Auto-open first FAQ
+    setTimeout(() => {
+      const first = document.querySelector('.faq-item');
+      if (first) {
+        first.classList.add('open');
+        first.querySelector('.faq-q').setAttribute('aria-expanded', 'true');
+      }
+    }, 800);
+  </script>
+</body>
+</html>

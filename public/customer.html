@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>My Account | Ambangan Fast Print</title>
+  <meta name="description" content="Customer portal — sign up, track your printing orders, and manage your account." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+  <style>
+    body { padding-bottom: 4rem; }
+
+    /* ── AUTH ── */
+    .auth-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; position: relative; }
+    .auth-card { width: 100%; max-width: 430px; border-radius: var(--radius); padding: 2.5rem; position: relative; z-index: 2; }
+    .auth-logo { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1.6rem; }
+    .auth-logo img { width: 40px; height: 40px; border-radius: 10px; background: var(--white-5); border: 1px solid var(--white-10); padding: 3px; }
+    .auth-logo .t { font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.9rem; }
+    .auth-logo .b { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--teal); }
+    .auth-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.6rem; background: var(--white-5); border-radius: 50px; padding: 0.3rem; }
+    .auth-tab { flex: 1; text-align: center; padding: 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--white-50, rgba(255,255,255,0.5)); cursor: pointer; border: none; background: transparent; transition: var(--transition); }
+    .auth-tab.active { background: var(--teal); color: #000; }
+    .af-field { margin-bottom: 1rem; }
+    .af-field label { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #7fd4e8; margin-bottom: 0.45rem; }
+    .af-field input { width: 100%; background: var(--white-5); border: 1px solid var(--white-10); border-radius: 12px; padding: 0.85rem 1rem; color: #fff; font-size: 0.9rem; font-family: inherit; outline: none; transition: var(--transition); }
+    .af-field input:focus { border-color: var(--teal-border); background: var(--teal-dim); }
+    .auth-err { color: #f87171; font-size: 0.75rem; font-weight: 600; margin-bottom: 1rem; display: none; }
+    .auth-back { display: block; text-align: center; margin-top: 1.4rem; font-size: 0.72rem; color: var(--white-40); text-decoration: none; }
+    .auth-back:hover { color: var(--white-70); }
+
+    /* ── DASHBOARD ── */
+    .cust-dash { display: none; max-width: 960px; margin: 0 auto; padding: 1.5rem 2rem 2rem; }
+    .cd-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.2rem 0 1.5rem; border-bottom: 1px solid var(--white-5); flex-wrap: wrap; }
+    .cd-hello { font-family: var(--font-serif); font-size: 1.7rem; font-weight: 700; }
+    .cd-hello span { color: var(--teal); }
+    .cd-sub { font-size: 0.78rem; color: var(--white-40); margin-top: 0.2rem; }
+    .cd-actions { display: flex; gap: 0.6rem; }
+    .btn-pill { border: 1px solid var(--white-10); background: var(--white-5); color: var(--white-70); border-radius: 50px; padding: 0.6rem 1.2rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; transition: var(--transition); }
+    .btn-pill:hover { color: #fff; border-color: var(--teal-border); }
+    .btn-pill.primary { background: var(--teal); color: #000; border-color: var(--teal); }
+    .btn-pill.primary:hover { background: #4ec8e4; color: #000; }
+
+    .cd-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.6rem 0; }
+    .cd-stat { border-radius: var(--radius-sm); padding: 1.2rem 1.3rem; }
+    .cd-stat .v { font-family: var(--font-serif); font-size: 1.7rem; font-weight: 800; color: #fff; }
+    .cd-stat .l { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white-40); margin-top: 0.4rem; }
+
+    .cd-section-title { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white-40); margin: 1.4rem 0 1rem; }
+    .my-orders { display: flex; flex-direction: column; gap: 0.8rem; }
+    .mo-card { border-radius: var(--radius-sm); padding: 1.1rem 1.3rem; display: grid; grid-template-columns: 1.2fr 1.4fr auto; gap: 1rem; align-items: center; text-decoration: none; transition: var(--transition); }
+    @media(max-width:640px){ .mo-card{ grid-template-columns: 1fr 1fr; } }
+    .mo-card:hover { border-color: var(--teal-border); background: rgba(41,182,216,0.03); }
+    .mo-id { font-family: monospace; font-weight: 800; color: var(--teal); font-size: 0.85rem; }
+    .mo-svc { font-size: 0.72rem; color: var(--white-60); margin-top: 0.2rem; }
+    .mo-total { font-family: var(--font-serif); font-weight: 700; }
+    .mo-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
+    .mo-time { font-size: 0.65rem; color: var(--white-40); }
+    .empty { text-align: center; padding: 3.5rem 1rem; color: var(--white-40); border-radius: var(--radius-sm); }
+    .empty .big { font-size: 2.5rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <!-- ════════ AUTH VIEW ════════ -->
+  <div class="auth-shell" id="auth-view">
+    <div class="auth-card glass">
+      <div class="auth-logo">
+        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <div>
+          <div class="t">Ambangan Fast Print</div>
+          <div class="b">Customer Portal</div>
+        </div>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Log In</button>
+        <button class="auth-tab" id="tab-signup">Sign Up</button>
+      </div>
+
+      <!-- Login form -->
+      <form id="login-form">
+        <div class="af-field"><label>Email</label><input type="email" id="li-email" placeholder="you@email.com" autocomplete="email" /></div>
+        <div class="af-field"><label>Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password" /></div>
+        <div class="auth-err" id="li-err"></div>
+        <button type="submit" class="checkout-btn" style="width:100%;">Log In</button>
+      </form>
+
+      <!-- Sign up form -->
+      <form id="signup-form" style="display:none;">
+        <div class="af-field"><label>Full Name</label><input type="text" id="su-name" placeholder="e.g. Nabil Fauzi" autocomplete="name" /></div>
+        <div class="af-field"><label>Email</label><input type="email" id="su-email" placeholder="you@email.com" autocomplete="email" /></div>
+        <div class="af-field"><label>Phone Number</label><input type="tel" id="su-phone" placeholder="012-345 6789" autocomplete="tel" /></div>
+        <div class="af-field"><label>Password</label><input type="password" id="su-pass" placeholder="Create a password" autocomplete="new-password" /></div>
+        <div class="auth-err" id="su-err"></div>
+        <button type="submit" class="checkout-btn" style="width:100%;">Create Account</button>
+      </form>
+
+      <a href="/" class="auth-back">← Back to website</a>
+    </div>
+  </div>
+
+  <!-- ════════ DASHBOARD VIEW ════════ -->
+  <div class="cust-dash" id="dash-view">
+    <div class="cd-top">
+      <div>
+        <div class="cd-hello">Hello, <span id="cust-name">—</span></div>
+        <div class="cd-sub" id="cust-contact">—</div>
+      </div>
+      <div class="cd-actions">
+        <a href="/services-photostat.html" class="btn-pill primary">+ Place New Order</a>
+        <button class="btn-pill" id="logout-btn">Logout</button>
+      </div>
+    </div>
+
+    <div class="cd-stats">
+      <div class="cd-stat glass"><div class="v" id="cs-total">0</div><div class="l">Total Orders</div></div>
+      <div class="cd-stat glass"><div class="v" id="cs-active">0</div><div class="l">In Progress</div></div>
+      <div class="cd-stat glass"><div class="v" id="cs-done">0</div><div class="l">Completed</div></div>
+    </div>
+
+    <div class="cd-section-title">My Orders</div>
+    <div class="my-orders" id="my-orders"></div>
+  </div>
+
+  <script src="/afp.js"></script>
+  <script>
+    var authView = document.getElementById('auth-view');
+    var dashView = document.getElementById('dash-view');
+
+    /* ---- TAB SWITCH ---- */
+    var loginForm = document.getElementById('login-form');
+    var signupForm = document.getElementById('signup-form');
+    document.getElementById('tab-login').addEventListener('click', function () {
+      this.classList.add('active'); document.getElementById('tab-signup').classList.remove('active');
+      loginForm.style.display = ''; signupForm.style.display = 'none';
+    });
+    document.getElementById('tab-signup').addEventListener('click', function () {
+      this.classList.add('active'); document.getElementById('tab-login').classList.remove('active');
+      signupForm.style.display = ''; loginForm.style.display = 'none';
+    });
+
+    /* ---- LOGIN ---- */
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = document.getElementById('li-err');
+      var sess = AFP.loginCustomer(document.getElementById('li-email').value, document.getElementById('li-pass').value);
+      if (!sess) { err.textContent = 'Invalid email or password.'; err.style.display = 'block'; return; }
+      enterDash(sess);
+    });
+
+    /* ---- SIGN UP ---- */
+    signupForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = document.getElementById('su-err');
+      var res = AFP.registerCustomer({
+        name: document.getElementById('su-name').value,
+        email: document.getElementById('su-email').value,
+        phone: document.getElementById('su-phone').value,
+        password: document.getElementById('su-pass').value
+      });
+      if (res.error) { err.textContent = res.error; err.style.display = 'block'; return; }
+      enterDash(res.customer);
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      AFP.logoutCustomer();
+      dashView.style.display = 'none';
+      authView.style.display = 'flex';
+    });
+
+    /* ---- DASHBOARD ---- */
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+
+    function enterDash(sess) {
+      authView.style.display = 'none';
+      dashView.style.display = 'block';
+      document.getElementById('cust-name').textContent = sess.name;
+      document.getElementById('cust-contact').textContent = sess.email + (sess.phone ? '  ·  ' + sess.phone : '');
+      renderOrders(sess);
+    }
+
+    function renderOrders(sess) {
+      var orders = AFP.ordersForCustomer(sess.email, sess.phone);
+      var active = orders.filter(function (o) { return o.status === 'Pending' || o.status === 'Ready to Pick Up'; }).length;
+      var done = orders.filter(function (o) { return o.status === 'Completed'; }).length;
+      document.getElementById('cs-total').textContent = orders.length;
+      document.getElementById('cs-active').textContent = active;
+      document.getElementById('cs-done').textContent = done;
+
+      var el = document.getElementById('my-orders');
+      if (!orders.length) {
+        el.innerHTML = '<div class="empty glass"><div class="big">📭</div>You have no orders yet.<br>' +
+          '<a href="/services-photostat.html" style="color:var(--teal);text-decoration:none;font-weight:700;">Browse our services →</a></div>';
+        return;
+      }
+      el.innerHTML = orders.map(function (o) {
+        return '<a class="mo-card glass" href="/track.html?id=' + encodeURIComponent(o.id) + '">' +
+          '<div><div class="mo-id">' + o.id + '</div><div class="mo-svc">' + escapeHtml(o.service) + '</div></div>' +
+          '<div class="mo-total">' + escapeHtml(o.total || '—') + '</div>' +
+          '<div class="mo-meta"><span class="' + AFP.statusClass(o.status) + '">' + o.status + '</span>' +
+          '<span class="mo-time">' + AFP.fmtDate(o.createdAt) + '</span></div>' +
+        '</a>';
+      }).join('');
+    }
+
+    /* ---- BOOT: restore session ---- */
+    (function () {
+      var sess = AFP.customerSession();
+      if (sess) enterDash(sess);
+    })();
+  </script>
+</body>
+</html>

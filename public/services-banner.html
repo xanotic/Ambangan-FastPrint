@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>Banner Printing Configurator | Ambangan Fast Print</title>
+  <meta name="description" content="Configure outdoor vinyl banners, custom posters, and high-res tarpaulins. Choose sizes, weatherproof materials, corner eyelets, and accessories." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <div class="nav-wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/logo-arrow.png" alt="Ambangan Fast Print" />
+        <div class="nav-logo-text">
+          <div class="top">Ambangan</div>
+          <div class="bottom">Fast Print</div>
+        </div>
+      </a>
+      <a href="/" class="nav-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.25rem;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- ── APPLE-STYLE SERVICE SWITCHER ── -->
+  <div class="sub-nav">
+    <div class="sub-nav-inner">
+      <a href="/services-photostat.html" class="sub-nav-item">Photostat</a>
+      <a href="/services-banner.html" class="sub-nav-item active">Banners</a>
+      <a href="/services-business-card.html" class="sub-nav-item">Business Cards</a>
+      <a href="/services-rubber-stamp.html" class="sub-nav-item">Rubber Stamps</a>
+      <a href="/services-name-tag.html" class="sub-nav-item">Name Tags</a>
+      <a href="/services-custom.html" class="sub-nav-item">Custom Print</a>
+      <a href="/services-wedding-card.html" class="sub-nav-item">Wedding Cards</a>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONFIGURATOR AREA ── -->
+  <main class="builder-section">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-grid"></div>
+
+    <!-- LEFT: 3D Visual Preview -->
+    <div class="preview-container fade-up">
+      <div class="preview-card-wrap" id="card-wrapper" style="aspect-ratio: 2.1/1; max-width: 480px;">
+        <!-- Banner Representation with grommets -->
+        <div class="preview-card banner-card" id="preview-card" style="background-image: url('/img-banner-machine.jpeg'); background-size: cover; background-position: center; border-radius: 12px;">
+          <div class="paper-grain"></div>
+          <div class="glare-overlay" id="glare-overlay"></div>
+          
+          <!-- Grommets at corners -->
+          <div class="banner-grommet g-tl" id="grom-tl"></div>
+          <div class="banner-grommet g-tr" id="grom-tr"></div>
+          <div class="banner-grommet g-bl" id="grom-bl"></div>
+          <div class="banner-grommet g-br" id="grom-br"></div>
+
+          <!-- Glass text label -->
+          <div class="preview-details" style="background: rgba(7,9,14,0.7); backdrop-filter:blur(8px); padding:1rem; border-radius:10px; border: 1px solid rgba(255,255,255,0.06); width: fit-content; margin-top: auto;">
+            <div class="preview-logo">
+              <img src="/logo-arrow.png" alt="Logo" />
+              <div style="font-size:0.55rem; font-weight:800; letter-spacing:0.1em; color:#fff;">AMBANGAN / WIDE OUTDOOR</div>
+            </div>
+            <h3 class="preview-title" id="prev-title" style="font-size:1.1rem; margin-top:0.4rem;">Banner Print</h3>
+            <p id="prev-subtitle" style="font-size:0.6rem; font-weight:600; color:var(--teal); margin-top:0.1rem; letter-spacing:0.05em; text-transform:uppercase;">3' × 6' Standard · 320g Tarpaulin</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-help-text">
+        <div class="dot"></div>
+        Hover &amp; move mouse to tilt banner layout
+      </div>
+    </div>
+
+    <!-- RIGHT: Settings Panel -->
+    <div class="settings-panel fade-up delay-1">
+      
+      <!-- Option upload pic (Added based on user request) -->
+      <section>
+        <h3 class="settings-section-title"><span>01.</span> Upload Design or Reference</h3>
+        <div class="upload-wrap glass" id="design-upload">
+          <div class="upload-icon">📁</div>
+          <div class="upload-title">Drag &amp; drop design here</div>
+          <div class="upload-desc">Supports JPG, PNG, PDF or AI formats (Max 50MB)</div>
+          <div class="upload-file-details" id="upload-details"></div>
+          <input type="file" class="upload-input" accept="image/*,application/pdf,.ai" />
+        </div>
+      </section>
+
+      <!-- 2. Select Dimensions -->
+      <section>
+        <h3 class="settings-section-title"><span>02.</span> Choose Banner Dimensions</h3>
+        <div class="options-grid">
+          <div class="option-card glass" data-size="2x3" data-base-price="15.00">
+            <div class="option-card-header">
+              <span class="option-card-title">2 ft × 3 ft</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Compact banner size. Excellent for small shop banners or birthday events.</span>
+            <span class="option-card-meta">RM 15.00</span>
+          </div>
+
+          <div class="option-card glass" data-size="2x5" data-base-price="30.00">
+            <div class="option-card-header">
+              <span class="option-card-title">2 ft × 5 ft</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Bunting standard. Ideal for roll-up displays or narrow entryways.</span>
+            <span class="option-card-meta">RM 30.00</span>
+          </div>
+
+          <div class="option-card glass active" data-size="3x6" data-base-price="45.00">
+            <div class="option-card-header">
+              <span class="option-card-title">3 ft × 6 ft</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Standard banner dimensions. Perfect for outdoor road shows or promotion announcement.</span>
+            <span class="option-card-meta">RM 45.00</span>
+          </div>
+
+          <div class="option-card glass" data-size="4x8" data-base-price="70.00">
+            <div class="option-card-header">
+              <span class="option-card-title">4 ft × 8 ft</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Large format banner. Highly readable from distances, ideal for highway or storefront.</span>
+            <span class="option-card-meta">RM 70.00</span>
+          </div>
+
+          <div class="option-card glass" data-size="4x12" data-base-price="110.00">
+            <div class="option-card-header">
+              <span class="option-card-title">4 ft × 12 ft</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Grand backdrop format. Designed for stage announcements, event backdrops, or fences.</span>
+            <span class="option-card-meta">RM 110.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Choose Banner Material -->
+      <section>
+        <h3 class="settings-section-title"><span>03.</span> Select Weatherproof Material</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-material="320g" data-modifier="0">
+            <div class="option-card-header">
+              <span class="option-card-title">320g Tarpaulin</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Standard quality daily vinyl. Water resistant, recommended for temporary setups.</span>
+            <span class="option-card-meta">Base Material</span>
+          </div>
+
+          <div class="option-card glass" data-material="380g" data-modifier="5.00">
+            <div class="option-card-header">
+              <span class="option-card-title">380g Heavy Duty</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Thicker and stronger grid backing. Increased wind load tolerance.</span>
+            <span class="option-card-meta">+RM 5.00</span>
+          </div>
+
+          <div class="option-card glass" data-material="440g" data-modifier="12.00">
+            <div class="option-card-header">
+              <span class="option-card-title">440g Extra Tough Vinyl</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Premium industrial vinyl canvas. Extreme UV-resistance and tensile strength.</span>
+            <span class="option-card-meta">+RM 12.00</span>
+          </div>
+
+          <div class="option-card glass" data-material="matte" data-modifier="18.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Matte Synthetic Paper</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Ultra-smooth non-reflective paper with film laminate. High detail close-up prints.</span>
+            <span class="option-card-meta">+RM 18.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Select Hanging Accessory / Finishing -->
+      <section>
+        <h3 class="settings-section-title"><span>04.</span> Select Banner Finish</h3>
+        <div class="options-grid">
+          <div class="option-card glass active" data-finish="eyelets" data-flat-cost="0">
+            <div class="option-card-header">
+              <span class="option-card-title">Corner Eyelets</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Brass grommet rings pressed into folded corner seams. Ready for cable tie hanging.</span>
+            <span class="option-card-meta">Free / Default</span>
+          </div>
+
+          <div class="option-card glass" data-finish="pipes" data-flat-cost="3.00">
+            <div class="option-card-header">
+              <span class="option-card-title">PVC Pipes + String</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Solid PVC pipes inserted in top and bottom loops with a hanging nylon string.</span>
+            <span class="option-card-meta">+RM 3.00</span>
+          </div>
+
+          <div class="option-card glass" data-finish="pockets" data-flat-cost="2.00">
+            <div class="option-card-header">
+              <span class="option-card-title">Side Pocket Loops</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Folded and hot-welded banner edges to slide iron rods or wooden poles.</span>
+            <span class="option-card-meta">+RM 2.00</span>
+          </div>
+
+          <div class="option-card glass" data-finish="cut" data-flat-cost="0">
+            <div class="option-card-header">
+              <span class="option-card-title">Clean Cut</span>
+              <span class="option-card-indicator"></span>
+            </div>
+            <span class="option-card-desc">Simply trimmed to exact edges. No holes, rings or pockets. Suitable for framing.</span>
+            <span class="option-card-meta">Free</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Quantity Run -->
+      <section>
+        <h3 class="settings-section-title"><span>05.</span> Select Quantity</h3>
+        <div class="slider-wrap glass">
+          <div class="slider-header">
+            <span class="slider-title">Banner Copies</span>
+            <div class="slider-val-box"><span id="quantity-val">1</span> Units</div>
+          </div>
+          <div class="slider-input-row">
+            <input type="range" id="quantity-slider" class="slider-control" min="1" max="20" value="1" step="1" />
+          </div>
+          <div class="slider-ticks">
+            <span class="slider-tick">1</span>
+            <span class="slider-tick">10</span>
+            <span class="slider-tick">20</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Pricing Summary & CTA -->
+      <section>
+        <div class="pricing-wrap glass">
+          <div class="price-row">
+            <div>
+              <span class="price-label">Price per unit</span>
+              <div class="price-unit" id="price-unit-text">RM 45.00</div>
+            </div>
+            <div class="price-val-box">
+              <span class="price-label" style="text-align: right; display:block;">Estimated Total</span>
+              <div class="price-total" id="price-total-text">RM 45.00</div>
+            </div>
+          </div>
+          <button class="checkout-btn" id="whatsapp-cta">
+            Initialize Banner Order
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>
+      &copy; <span id="year"></span> Ambangan Fast Print ·
+      <a href="https://facebook.com/spambanganfastprint" target="_blank" rel="noreferrer">FA Sinar Fajar Enterprise (AS0395296-D)</a> ·
+      All Rights Reserved.
+    </p>
+  </footer>
+
+  <script src="/services-common.js"></script>
+  <script src="/afp.js"></script>
+  <script>
+    // 3D TILT TRIGGER
+    init3DTilt('card-wrapper', 'preview-card', 'glare-overlay');
+
+    // CONFIGURATION MANAGEMENT
+    const quantitySlider = document.getElementById('quantity-slider');
+    const quantityVal = document.getElementById('quantity-val');
+    const prevSubtitle = document.getElementById('prev-subtitle');
+    const gromTl = document.getElementById('grom-tl');
+    const gromTr = document.getElementById('grom-tr');
+    const gromBl = document.getElementById('grom-bl');
+    const gromBr = document.getElementById('grom-br');
+    const priceUnitText = document.getElementById('price-unit-text');
+    const priceTotalText = document.getElementById('price-total-text');
+    const whatsappCta = document.getElementById('whatsapp-cta');
+    const uploadInput = document.querySelector('.upload-input');
+
+    let size = '3x6';
+    let sizeBase = 45.00;
+    let material = '320g';
+    let materialModifier = 0;
+    let finish = 'eyelets';
+    let finishCost = 0;
+    let quantity = 1;
+
+    function calculatePrice() {
+      // Unit price = size base + material modifier
+      const unitPrice = sizeBase + materialModifier;
+      // Total price = (unit price * quantity) + (finish cost * quantity)
+      const total = (unitPrice + finishCost) * quantity;
+
+      priceUnitText.textContent = `RM ${unitPrice.toFixed(2)}`;
+      priceTotalText.textContent = `RM ${total.toFixed(2)}`;
+
+      // Update Visual Preview Labels
+      let sizeLabel = "3' × 6' Standard";
+      if (size === '2x3') sizeLabel = "2' × 3' Compact";
+      if (size === '2x5') sizeLabel = "2' × 5' Bunting";
+      if (size === '4x8') sizeLabel = "4' × 8' Large";
+      if (size === '4x12') sizeLabel = "4' × 12' Backdrop";
+
+      let materialLabel = '320g Tarpaulin';
+      if (material === '380g') materialLabel = '380g Heavy Duty';
+      if (material === '440g') materialLabel = '440g Heavy Vinyl';
+      if (material === 'matte') materialLabel = 'Matte Synthetic';
+
+      prevSubtitle.textContent = `${sizeLabel} · ${materialLabel}`;
+
+      // Update Eyelet Grommets visual display
+      if (finish === 'eyelets') {
+        gromTl.style.display = 'block';
+        gromTr.style.display = 'block';
+        gromBl.style.display = 'block';
+        gromBr.style.display = 'block';
+      } else {
+        gromTl.style.display = 'none';
+        gromTr.style.display = 'none';
+        gromBl.style.display = 'none';
+        gromBr.style.display = 'none';
+      }
+
+      let finishLabel = 'Corner Eyelets';
+      if (finish === 'pipes') finishLabel = 'PVC Pipe + String';
+      if (finish === 'pockets') finishLabel = 'Pocket Loops';
+      if (finish === 'cut') finishLabel = 'Clean Cut';
+
+      // Check file upload status
+      let fileAttached = "None (Will email/WhatsApp file later)";
+      if (uploadInput.files && uploadInput.files.length > 0) {
+        fileAttached = uploadInput.files[0].name;
+      }
+
+      // Update WhatsApp link
+      const text = `Hello Ambangan Fast Print! I want to configure a Banner Printing Order:\n\n` +
+                   `- Size: ${sizeLabel}\n` +
+                   `- Material: ${materialLabel}\n` +
+                   `- Finishing: ${finishLabel}\n` +
+                   `- Quantity: ${quantity} units\n` +
+                   `- Attached File: ${fileAttached}\n` +
+                   `- Estimated price: RM ${total.toFixed(2)}`;
+      
+      whatsappCta.setAttribute('href', `https://wa.me/60126949147?text=${encodeURIComponent(text)}`);
+    }
+
+    // Set up option listeners
+    document.querySelectorAll('[data-size]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-size]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        size = card.getAttribute('data-size');
+        sizeBase = parseFloat(card.getAttribute('data-base-price'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-material]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-material]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        material = card.getAttribute('data-material');
+        materialModifier = parseFloat(card.getAttribute('data-modifier'));
+        calculatePrice();
+      });
+    });
+
+    document.querySelectorAll('[data-finish]').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('[data-finish]').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        finish = card.getAttribute('data-finish');
+        finishCost = parseFloat(card.getAttribute('data-flat-cost'));
+        calculatePrice();
+      });
+    });
+
+    // Slider listener
+    quantitySlider.addEventListener('input', () => {
+      quantity = parseInt(quantitySlider.value);
+      quantityVal.textContent = quantity;
+      calculatePrice();
+    });
+
+    // File change recalculate (adds filename to WhatsApp)
+    uploadInput.addEventListener('change', () => {
+      calculatePrice();
+    });
+
+    // Initial setup
+    calculatePrice();
+    
+    // WhatsApp click redirection
+    whatsappCta.addEventListener('click', () => {
+      window.open(whatsappCta.getAttribute('href'), '_blank');
+    });
+  </script>
+</body>
+</html>

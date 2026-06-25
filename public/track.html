@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo-arrow.png" />
+  <title>Track Your Order | Ambangan Fast Print</title>
+  <meta name="description" content="Track the status of your Ambangan Fast Print order using your Order ID or phone number." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/services.css" />
+  <style>
+    .track-wrap { max-width: 680px; margin: 0 auto; padding: 8rem 1.5rem 4rem; position: relative; z-index: 2; }
+    .track-head { text-align: center; margin-bottom: 2.5rem; }
+    .track-eyebrow { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: var(--teal); }
+    .track-head h1 { font-family: var(--font-serif); font-size: 2.4rem; font-weight: 800; margin: 0.6rem 0 0.5rem; }
+    .track-head p { color: var(--white-60); font-size: 0.9rem; }
+
+    .search-box { display: flex; gap: 0.7rem; margin-bottom: 2rem; }
+    @media(max-width:520px){ .search-box{ flex-direction:column; } }
+    .search-box input { flex: 1; background: var(--white-5); border: 1px solid var(--white-10); border-radius: 50px; padding: 1rem 1.4rem; color: #fff; font-size: 0.9rem; font-family: inherit; outline: none; transition: var(--transition); }
+    .search-box input:focus { border-color: var(--teal-border); background: var(--teal-dim); }
+    .search-box button { white-space: nowrap; }
+
+    .result { display: none; }
+    .order-block { border-radius: var(--radius); padding: 1.8rem; margin-bottom: 1.3rem; }
+    .ob-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--white-5); padding-bottom: 1.2rem; margin-bottom: 1.3rem; }
+    .ob-id { font-family: monospace; font-size: 1.4rem; font-weight: 800; color: var(--teal); }
+    .ob-svc { font-size: 0.82rem; color: var(--white-60); margin-top: 0.3rem; }
+
+    /* progress steps */
+    .steps { display: flex; align-items: flex-start; margin: 1.8rem 0; }
+    .step { flex: 1; text-align: center; position: relative; }
+    .step::before { content: ''; position: absolute; top: 13px; left: -50%; width: 100%; height: 2px; background: var(--white-10); z-index: 0; }
+    .step:first-child::before { display: none; }
+    .step.done::before, .step.current::before { background: var(--teal); }
+    .step .dot { width: 28px; height: 28px; border-radius: 50%; background: #0a0e16; border: 2px solid var(--white-20); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.6rem; position: relative; z-index: 1; font-size: 0.8rem; color: var(--white-40); }
+    .step.done .dot { border-color: var(--teal); background: var(--teal); color: #000; }
+    .step.current .dot { border-color: var(--teal); color: var(--teal); box-shadow: 0 0 0 4px rgba(41,182,216,0.15); }
+    .step .lbl { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--white-40); line-height: 1.4; }
+    .step.done .lbl, .step.current .lbl { color: #fff; }
+    .step.cancelled .dot { border-color: #f87171; background: #f87171; color: #000; }
+
+    .cancel-banner { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.25); color: #f87171; border-radius: 12px; padding: 1rem 1.2rem; font-size: 0.85rem; font-weight: 600; text-align: center; margin: 1.5rem 0; }
+
+    .ob-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; margin-top: 0.5rem; }
+    @media(max-width:520px){ .ob-grid{ grid-template-columns:1fr; } }
+    .ob-row { font-size: 0.82rem; padding: 0.35rem 0; }
+    .ob-row .k { color: var(--white-40); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.2rem; }
+    .ob-row .v { color: #fff; font-weight: 600; }
+
+    .notif { margin-top: 1.5rem; }
+    .notif h4 { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white-40); margin-bottom: 0.9rem; }
+    .timeline { position: relative; padding-left: 1.3rem; }
+    .timeline::before { content: ''; position: absolute; left: 4px; top: 4px; bottom: 4px; width: 2px; background: var(--white-10); }
+    .tl-item { position: relative; padding-bottom: 1rem; }
+    .tl-item::before { content: ''; position: absolute; left: -1.3rem; top: 3px; width: 10px; height: 10px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 3px rgba(41,182,216,0.15); }
+    .tl-note { font-size: 0.82rem; font-weight: 600; color: #fff; }
+    .tl-time { font-size: 0.68rem; color: var(--white-40); margin-top: 0.15rem; }
+
+    .not-found { display: none; text-align: center; padding: 3rem 1rem; color: var(--white-40); }
+    .not-found .big { font-size: 2.5rem; margin-bottom: 1rem; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 2rem; font-size: 0.78rem; color: var(--white-60); text-decoration: none; }
+    .back-link:hover { color: var(--teal); }
+  </style>
+</head>
+<body>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="track-wrap">
+    <div class="track-head">
+      <div class="track-eyebrow">Order Status</div>
+      <h1>Track Your Order</h1>
+      <p>Enter your Order ID (e.g. AFP-0001) or the phone number you ordered with.</p>
+    </div>
+
+    <form class="search-box" id="search-form">
+      <input type="text" id="q" placeholder="AFP-0001  or  012-3456789" autocomplete="off" />
+      <button type="submit" class="checkout-btn">Track</button>
+    </form>
+
+    <div class="result" id="result"></div>
+
+    <div class="not-found" id="not-found">
+      <div class="big">🔍</div>
+      <p>No order found for that ID or phone number.<br>Double-check and try again.</p>
+    </div>
+
+    <div style="text-align:center;">
+      <a href="/" class="back-link">← Back to Ambangan Fast Print</a>
+    </div>
+  </div>
+
+  <script src="/afp.js"></script>
+  <script>
+    var FLOW = ['Pending', 'Ready to Pick Up', 'Completed'];
+    var STEP_ICON = { 'Pending': '🕓', 'Ready to Pick Up': '📦', 'Completed': '✓' };
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+
+    function renderOrder(o) {
+      var cancelled = o.status === 'Cancelled';
+      var curIdx = FLOW.indexOf(o.status);
+
+      var steps = FLOW.map(function (s, i) {
+        var cls = 'step';
+        if (!cancelled) {
+          if (i < curIdx) cls += ' done';
+          else if (i === curIdx) cls += (o.status === 'Completed') ? ' done' : ' current';
+        }
+        return '<div class="' + cls + '"><div class="dot">' + STEP_ICON[s] + '</div><div class="lbl">' + s + '</div></div>';
+      }).join('');
+
+      var specRows = (o.specs || []).map(function (sp) {
+        var i = sp.indexOf(':');
+        var k = i > -1 ? sp.slice(0, i) : sp, v = i > -1 ? sp.slice(i + 1).trim() : '';
+        return '<div class="ob-row"><span class="k">' + escapeHtml(k) + '</span><span class="v">' + escapeHtml(v) + '</span></div>';
+      }).join('');
+
+      var timeline = (o.history || []).slice().reverse().map(function (h) {
+        return '<div class="tl-item"><div class="tl-note">' + escapeHtml(h.note) + '</div>' +
+          '<div class="tl-time">' + AFP.fmtDate(h.at) + '</div></div>';
+      }).join('');
+
+      return '<div class="order-block glass">' +
+        '<div class="ob-top"><div><div class="ob-id">' + o.id + '</div><div class="ob-svc">' + escapeHtml(o.service) + '</div></div>' +
+        '<span class="' + AFP.statusClass(o.status) + '">' + o.status + '</span></div>' +
+        (cancelled
+          ? '<div class="cancel-banner">This order has been cancelled. Please contact the shop if this is unexpected.</div>'
+          : '<div class="steps">' + steps + '</div>') +
+        '<div class="ob-grid">' + specRows +
+          '<div class="ob-row"><span class="k">Estimated Total</span><span class="v" style="color:var(--teal);">' + escapeHtml(o.total || '—') + '</span></div>' +
+          '<div class="ob-row"><span class="k">Payment</span><span class="v ' + (o.payment.status === 'Paid' ? 'afp-pay-paid' : 'afp-pay-unpaid') + '">' +
+            (o.payment.status === 'Paid' ? 'Paid · ' + escapeHtml(o.payment.method) : 'Unpaid (pay on pickup)') + '</span></div>' +
+          (o.fileName ? '<div class="ob-row"><span class="k">Design File</span><span class="v">📎 ' + escapeHtml(o.fileName) + '</span></div>' : '') +
+        '</div>' +
+        '<div class="notif"><h4>Order Updates</h4><div class="timeline">' + timeline + '</div></div>' +
+        '</div>';
+    }
+
+    function doSearch(query) {
+      var matches = AFP.find(query);
+      var resEl = document.getElementById('result');
+      var nfEl = document.getElementById('not-found');
+      if (!matches.length) {
+        resEl.style.display = 'none';
+        nfEl.style.display = 'block';
+        return;
+      }
+      nfEl.style.display = 'none';
+      resEl.innerHTML = matches.map(renderOrder).join('');
+      resEl.style.display = 'block';
+    }
+
+    document.getElementById('search-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var q = document.getElementById('q').value.trim();
+      if (q) doSearch(q);
+    });
+
+    // Auto-load from ?id= (used by the order confirmation "Track My Order" button)
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var id = params.get('id');
+      if (id) { document.getElementById('q').value = id; doSearch(id); }
+    })();
+  </script>
+</body>
+</html>
