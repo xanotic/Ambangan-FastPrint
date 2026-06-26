@@ -309,6 +309,7 @@
           <div class="n" id="user-name">—</div>
           <div class="r" id="user-role">—</div>
         </div>
+        <button class="btn-logout" id="demo-btn" title="Load / reload sample orders">🎲 Demo Data</button>
         <button class="btn-logout" id="logout-btn">Logout</button>
       </div>
     </div>
@@ -368,7 +369,7 @@
     <div class="drawer-body" id="dr-body"></div>
   </div>
 
-  <script src="afp.js"></script>
+  <script src="afp.js?v=3"></script>
   <script>
     var loginView = document.getElementById('login-view');
     var dashView  = document.getElementById('dash-view');
@@ -408,12 +409,26 @@
         el.style.display = IS_MANAGER ? '' : 'none';
       });
 
-      // Populate the analytics with a realistic month of demo orders (once per browser)
-      if (IS_MANAGER) AFP.seedDemoIfEmpty();
+      // Populate with a realistic month of demo orders (once per browser), any role.
+      // Guarded in case an older cached afp.js is still loaded.
+      if (typeof AFP.seedDemoIfEmpty === 'function') AFP.seedDemoIfEmpty();
 
       switchView(IS_MANAGER ? 'overview' : 'orders');
       render();
     }
+
+    /* ---- DEMO DATA BUTTON (all roles) ---- */
+    document.getElementById('demo-btn').addEventListener('click', function () {
+      if (typeof AFP.resetDemo !== 'function') {
+        alert('Please hard-refresh the page (Ctrl+Shift+R) to load the latest version, then try again.');
+        return;
+      }
+      var has = AFP.getOrders().length > 0;
+      if (has && !confirm('Reload the sample demo dataset? This replaces the orders currently stored in this browser.')) return;
+      AFP.resetDemo();
+      render();
+      if (IS_MANAGER && document.getElementById('view-overview').style.display !== 'none') renderOverview();
+    });
 
     /* ---- VIEW SWITCHER ---- */
     var liveTimer = null;
@@ -479,7 +494,12 @@
       if (!list.length) {
         oEl.innerHTML = '<div class="empty"><div class="big">📭</div>' +
           (orders.length ? 'No orders in this category.' :
-            'No orders yet. Place a test order from a service page to see it appear here.') + '</div>';
+            'No orders yet.<br><button class="invoice-btn" id="empty-load-demo" style="width:auto;display:inline-flex;margin-top:1.1rem;padding:0.75rem 1.4rem;">🎲 Load demo data</button>' +
+            '<div style="margin-top:0.8rem;font-size:0.72rem;">…or place a test order from a service page.</div>') + '</div>';
+        var eld = document.getElementById('empty-load-demo');
+        if (eld) eld.addEventListener('click', function () {
+          if (typeof AFP.resetDemo === 'function') { AFP.resetDemo(); render(); }
+        });
         return;
       }
       oEl.innerHTML = list.map(function (o) {
