@@ -113,7 +113,12 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.98 }}
                   transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="absolute right-0 mt-2 w-64 liquid-glass-strong rounded-2xl border border-white/10 overflow-hidden shadow-2xl shadow-black/40"
+                  style={{
+                    background: "rgba(10, 14, 22, 0.96)",
+                    backdropFilter: "blur(28px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(28px) saturate(180%)",
+                  }}
+                  className="absolute right-0 mt-2 w-64 rounded-2xl border border-white/15 overflow-hidden shadow-2xl shadow-black/60"
                 >
                   <div className="px-4 pt-3 pb-2">
                     <p className="text-[10px] uppercase tracking-widest text-white/40 font-semibold">Login / Sign Up</p>

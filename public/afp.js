@@ -13,6 +13,7 @@
   var SESSION_KEY = "afp_staff_session";
   var CUSTOMERS_KEY = "afp_customers";
   var CUST_SESSION_KEY = "afp_customer_session";
+  var DEMO_KEY = "afp_demo_seeded";
 
   var STATUSES = ["Pending", "Ready to Pick Up", "Completed", "Cancelled"];
 
@@ -181,6 +182,112 @@
         var oph = (o.customer.phone || "").replace(/\D/g, "");
         return (em && oem === em) || (ph && oph && oph === ph);
       });
+    },
+
+    // ---- Demo data (so the dashboard is populated for a fresh viewer) ----
+    // Seeds a realistic month of orders the FIRST time the dashboard is opened
+    // on a browser. Real orders placed by customers are added on top. The owner
+    // can wipe everything with resetDemo().
+    seedDemoIfEmpty: function () {
+      if (localStorage.getItem(DEMO_KEY) === "1") return false;
+      if (read().length > 0) { localStorage.setItem(DEMO_KEY, "1"); return false; }
+      AFP._seed();
+      localStorage.setItem(DEMO_KEY, "1");
+      return true;
+    },
+    resetDemo: function () {
+      localStorage.removeItem(ORDERS_KEY);
+      localStorage.removeItem(SEQ_KEY);
+      localStorage.removeItem(DEMO_KEY);
+      localStorage.removeItem(CUSTOMERS_KEY);
+      AFP._seed();
+      localStorage.setItem(DEMO_KEY, "1");
+    },
+    _seed: function () {
+      function daysAgo(d, h) {
+        var t = new Date();
+        t.setDate(t.getDate() - d);
+        t.setHours(h || 10, (d * 7) % 59, 0, 0);
+        return t.toISOString();
+      }
+      // service -> typical spec lines builder
+      var SVC = {
+        "Photostat & Document Copying": function (q) { return ["Paper Size: A4", "Colour: Black & White", "Copies: " + q, "Binding: Comb binding"]; },
+        "Banner & Large Format": function (q) { return ["Material: Flex 440gsm", "Size: 4ft x 6ft", "Quantity: " + q, "Finishing: Eyelets + hemming"]; },
+        "Business Cards": function (q) { return ["Stock: Art card 310gsm", "Finish: Matte lamination", "Quantity: " + q + " pcs", "Sides: Double-sided"]; },
+        "Rubber Stamp": function (q) { return ["Type: Self-inking", "Size: 38mm x 14mm", "Ink: Blue", "Quantity: " + q]; },
+        "Name Tag Printing": function (q) { return ["Material: Acrylic", "Size: 8.5cm x 5.5cm", "Pin: Magnetic", "Quantity: " + q]; },
+        "Wedding Invitation": function (q) { return ["Card: Softcover", "Size: 5\" x 7\"", "Quantity: " + q + " pcs", "Finishing: Hot stamping gold"]; }
+      };
+      var ppl = [
+        { name: "Cikgu Rosnah Hamid", phone: "013-4521190", email: "rosnah.hamid@moe.gov.my" },
+        { name: "SK Bedong Office", phone: "04-4582213", email: "admin@skbedong.edu.my" },
+        { name: "Hafiz Tan", phone: "012-6940021", email: "hafiztan90@gmail.com" },
+        { name: "Pn. Suriani Aziz", phone: "019-5523410", email: "suriani.aziz@gmail.com" },
+        { name: "Naufal Haziq", phone: "011-23457788", email: "naufal.haziq@email.com" },
+        { name: "Koperasi SMK Merbok", phone: "04-4571882", email: "koperasi.smkm@edu.my" },
+        { name: "Amir Studio", phone: "017-3398120", email: "amirstudio.kedah@gmail.com" },
+        { name: "Cikgu Lim Wei", phone: "016-4120098", email: "limwei.cikgu@moe.gov.my" },
+        { name: "Zhahier Amzar", phone: "014-9087712", email: "zhahier.amzar@email.com" },
+        { name: "Pejabat Pendidikan Daerah", phone: "04-4419900", email: "ppd.kualamuda@moe.gov.my" }
+      ];
+      // [service, qty, totalRM, daysAgo, status, paid(method|null)]
+      var rows = [
+        ["Banner & Large Format", 2, 96, 33, "Completed", "Online Transfer"],
+        ["Photostat & Document Copying", 300, 90, 31, "Completed", "Cash"],
+        ["Business Cards", 200, 75, 28, "Completed", "QR Pay"],
+        ["Rubber Stamp", 3, 84, 26, "Completed", "Cash"],
+        ["Wedding Invitation", 150, 525, 24, "Completed", "Online Transfer"],
+        ["Name Tag Printing", 40, 200, 22, "Completed", "QR Pay"],
+        ["Banner & Large Format", 1, 48, 19, "Completed", "Cash"],
+        ["Photostat & Document Copying", 500, 150, 17, "Completed", "Online Transfer"],
+        ["Business Cards", 500, 160, 14, "Completed", "QR Pay"],
+        ["Banner & Large Format", 3, 144, 11, "Completed", "Online Transfer"],
+        ["Rubber Stamp", 2, 56, 9, "Ready to Pick Up", "Cash"],
+        ["Wedding Invitation", 200, 690, 7, "Ready to Pick Up", null],
+        ["Name Tag Printing", 25, 137.5, 5, "Completed", "QR Pay"],
+        ["Business Cards", 100, 45, 4, "Ready to Pick Up", "QR Pay"],
+        ["Photostat & Document Copying", 120, 36, 3, "Cancelled", null],
+        ["Banner & Large Format", 2, 96, 2, "Pending", null],
+        ["Rubber Stamp", 1, 32, 1, "Pending", null],
+        ["Business Cards", 250, 95, 0, "Pending", null]
+      ];
+      var orders = rows.map(function (r, i) {
+        var svc = r[0], qty = r[1], total = r[2], dAgo = r[3], status = r[4], pay = r[5];
+        var p = ppl[i % ppl.length];
+        var created = daysAgo(dAgo);
+        var hist = [{ status: "Pending", at: created, note: "Order submitted online by customer" }];
+        if (status !== "Pending") {
+          if (status === "Cancelled") {
+            hist.push({ status: "Cancelled", at: daysAgo(dAgo - 0.2 < 0 ? 0 : dAgo, 14), note: "Order cancelled by customer" });
+          } else {
+            hist.push({ status: "Ready to Pick Up", at: daysAgo(Math.max(0, dAgo - 1), 15), note: "Status updated to Ready to Pick Up" });
+            if (status === "Completed") hist.push({ status: "Completed", at: daysAgo(Math.max(0, dAgo - 2), 12), note: "Order collected — Completed" });
+          }
+        }
+        if (pay) hist.push({ status: status, at: daysAgo(Math.max(0, dAgo - 1), 11), note: "Payment recorded — " + pay });
+        return {
+          id: "AFP-" + String(i + 1).padStart(4, "0"),
+          service: svc,
+          specs: SVC[svc](qty),
+          total: "RM " + Number(total).toFixed(2),
+          fileName: (i % 3 === 0) ? "artwork-" + (i + 1) + ".pdf (842.0 KB)" : "",
+          customer: { name: p.name, phone: p.phone, email: p.email },
+          notes: (i % 5 === 0) ? "Regular customer — same design as last batch." : "",
+          payment: pay ? { status: "Paid", method: pay, paidAt: daysAgo(Math.max(0, dAgo - 1), 11) } : { status: "Unpaid", method: "", paidAt: "" },
+          status: status,
+          createdAt: created,
+          history: hist
+        };
+      }).reverse(); // newest first
+      write(orders);
+      localStorage.setItem(SEQ_KEY, String(rows.length));
+      // a couple of registered customer accounts so Customer analytics has signups
+      var demoCusts = [
+        { id: "C-demo1", name: ppl[2].name, email: ppl[2].email, phone: ppl[2].phone, password: "demo123", createdAt: daysAgo(20) },
+        { id: "C-demo2", name: ppl[3].name, email: ppl[3].email, phone: ppl[3].phone, password: "demo123", createdAt: daysAgo(10) }
+      ];
+      localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(demoCusts));
     },
 
     // ---- Shared formatting helpers (used by staff + track pages too) ----

@@ -156,6 +156,105 @@
 
     .invoice-btn { width:100%; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; border:1px solid var(--white-10); background:var(--white-5); color:var(--white-70); border-radius:50px; padding:0.85rem; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
     .invoice-btn:hover { color:#fff; border-color:var(--teal-border); }
+
+    /* ════════ OWNER OVERVIEW (analytics) ════════ */
+    .ov-greet { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem; margin:1.6rem 0 0.4rem; }
+    .ov-greet h2 { font-family:var(--font-serif); font-size:1.7rem; font-weight:800; line-height:1.1; }
+    .ov-greet .sub { font-size:0.78rem; color:var(--white-40); margin-top:0.3rem; }
+    .ov-greet .right { display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap; }
+    .live-dot { display:inline-flex; align-items:center; gap:0.45rem; font-size:0.62rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#34d399; }
+    .live-dot::before { content:''; width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 0 0 rgba(52,211,153,0.5); animation:pulse 1.8s infinite; }
+    @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(52,211,153,0.45);} 70%{box-shadow:0 0 0 7px rgba(52,211,153,0);} 100%{box-shadow:0 0 0 0 rgba(52,211,153,0);} }
+    .btn-reset { border:1px solid var(--white-10); background:var(--white-5); color:var(--white-60); border-radius:50px; padding:0.5rem 1rem; font-size:0.66rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
+    .btn-reset:hover { color:#fff; border-color:var(--teal-border); }
+
+    /* KPI cards */
+    .kpi-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:1rem; margin:1.3rem 0; }
+    @media(max-width:1100px){ .kpi-grid{ grid-template-columns:repeat(3,1fr);} }
+    @media(max-width:620px){ .kpi-grid{ grid-template-columns:repeat(2,1fr);} }
+    .kpi { border-radius:var(--radius-sm); padding:1.15rem 1.2rem; position:relative; overflow:hidden; }
+    .kpi .ic { font-size:1rem; opacity:0.9; }
+    .kpi .v { font-family:var(--font-serif); font-size:1.55rem; font-weight:800; line-height:1; margin-top:0.55rem; }
+    .kpi .l { font-size:0.6rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--white-40); margin-top:0.45rem; }
+    .kpi .trend { font-size:0.64rem; font-weight:700; margin-top:0.5rem; display:inline-flex; align-items:center; gap:0.25rem; }
+    .trend.up { color:#34d399; } .trend.down { color:#f87171; } .trend.flat { color:var(--white-40); }
+    .kpi.accent { background:linear-gradient(135deg, rgba(41,182,216,0.14), rgba(41,182,216,0.03)); }
+    .kpi.accent .v { color:var(--teal); }
+    .kpi.warn .v { color:#f5b945; }
+
+    /* analytics panels grid */
+    .ov-row { display:grid; gap:1.2rem; margin-bottom:1.2rem; }
+    .ov-row.r1 { grid-template-columns:1.7fr 1fr; }
+    .ov-row.r2 { grid-template-columns:1.3fr 1fr; }
+    .ov-row.r3 { grid-template-columns:1fr 1fr; }
+    @media(max-width:900px){ .ov-row.r1,.ov-row.r2,.ov-row.r3{ grid-template-columns:1fr; } }
+    .pan { border-radius:var(--radius-sm); padding:1.4rem 1.5rem; }
+    .pan-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.1rem; gap:0.6rem; flex-wrap:wrap; }
+    .pan-head h4 { font-size:0.64rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--white-40); }
+    .pan-head .hint { font-size:0.66rem; color:var(--white-40); }
+    .pan-head .big { font-family:var(--font-serif); font-size:1.3rem; font-weight:800; color:#fff; }
+
+    /* sales chart */
+    .chart-wrap { width:100%; }
+    .chart-svg { width:100%; height:190px; display:block; }
+    .chart-x { display:flex; justify-content:space-between; margin-top:0.5rem; }
+    .chart-x span { font-size:0.56rem; color:var(--white-40); font-weight:600; }
+
+    /* donut */
+    .donut-row { display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap; }
+    .donut { width:140px; height:140px; border-radius:50%; flex-shrink:0; position:relative; }
+    .donut::after { content:''; position:absolute; inset:22px; border-radius:50%; background:#0c111b; }
+    .donut .mid { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2; }
+    .donut .mid .n { font-family:var(--font-serif); font-size:1.5rem; font-weight:800; line-height:1; }
+    .donut .mid .t { font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--white-40); margin-top:0.25rem; }
+    .legend { display:flex; flex-direction:column; gap:0.6rem; flex:1; min-width:130px; }
+    .legend-item { display:flex; align-items:center; gap:0.6rem; font-size:0.78rem; }
+    .legend-item .sw { width:11px; height:11px; border-radius:3px; flex-shrink:0; }
+    .legend-item .nm { color:var(--white-70); flex:1; }
+    .legend-item .ct { font-weight:700; color:#fff; }
+
+    /* service bars */
+    .bars { display:flex; flex-direction:column; gap:0.95rem; }
+    .bar-item .bar-top { display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:0.4rem; }
+    .bar-item .bar-top .nm { color:var(--white-70); font-weight:600; }
+    .bar-item .bar-top .vl { color:#fff; font-weight:700; font-variant-numeric:tabular-nums; }
+    .bar-track { height:8px; background:var(--white-5); border-radius:50px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:50px; background:linear-gradient(90deg,#1d7d94,#29b6d8); transition:width 0.6s cubic-bezier(0.25,0.1,0.25,1); }
+
+    /* top customers */
+    .tc-item { display:flex; align-items:center; gap:0.85rem; padding:0.7rem 0; border-bottom:1px solid var(--white-5); }
+    .tc-item:last-child { border-bottom:none; }
+    .tc-rank { width:26px; height:26px; border-radius:8px; background:var(--teal-dim); border:1px solid var(--teal-border); color:var(--teal); font-size:0.72rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .tc-info { flex:1; min-width:0; }
+    .tc-info .nm { font-size:0.82rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .tc-info .meta { font-size:0.66rem; color:var(--white-40); margin-top:0.1rem; }
+    .tc-spent { font-family:var(--font-serif); font-weight:800; font-size:0.95rem; color:var(--teal); }
+
+    /* live feed */
+    .feed-item { display:grid; grid-template-columns:auto 1fr auto; gap:0.85rem; align-items:center; padding:0.75rem 0; border-bottom:1px solid var(--white-5); cursor:pointer; transition:var(--transition); }
+    .feed-item:last-child { border-bottom:none; }
+    .feed-item:hover { background:rgba(41,182,216,0.03); }
+    .feed-id { font-family:monospace; font-size:0.74rem; font-weight:800; color:var(--teal); }
+    .feed-svc { font-size:0.78rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .feed-sub { font-size:0.64rem; color:var(--white-40); margin-top:0.12rem; }
+    .feed-right { text-align:right; }
+    .feed-time { font-size:0.6rem; color:var(--white-40); margin-top:0.3rem; }
+
+    /* insights */
+    .insights { display:grid; grid-template-columns:repeat(2,1fr); gap:0.9rem; }
+    @media(max-width:620px){ .insights{ grid-template-columns:1fr; } }
+    .insight { display:flex; gap:0.85rem; align-items:flex-start; border-radius:14px; padding:1rem 1.1rem; background:var(--white-5); border:1px solid var(--white-10); }
+    .insight .ico { font-size:1.15rem; line-height:1; flex-shrink:0; }
+    .insight .tx { font-size:0.8rem; color:var(--white-70); line-height:1.5; }
+    .insight .tx b { color:#fff; }
+    .insight.alert { background:rgba(245,185,69,0.07); border-color:rgba(245,185,69,0.22); }
+    .insight.good { background:rgba(52,211,153,0.06); border-color:rgba(52,211,153,0.2); }
+
+    /* role-specific staff banner */
+    .staff-banner { display:flex; align-items:center; gap:0.9rem; border-radius:var(--radius-sm); padding:1.1rem 1.3rem; margin:1.6rem 0 0.4rem; background:linear-gradient(135deg, rgba(41,182,216,0.12), rgba(41,182,216,0.02)); }
+    .staff-banner .ic { font-size:1.5rem; }
+    .staff-banner .tx h3 { font-size:0.95rem; font-weight:800; }
+    .staff-banner .tx p { font-size:0.74rem; color:var(--white-60); margin-top:0.15rem; }
   </style>
 </head>
 <body>
@@ -201,7 +300,7 @@
       <div class="dash-brand">
         <img src="logo-arrow.png" alt="" />
         <div>
-          <div class="t">Order Management</div>
+          <div class="t" id="dash-title">Order Management</div>
           <div class="b">Ambangan Fast Print</div>
         </div>
       </div>
@@ -214,15 +313,26 @@
       </div>
     </div>
 
-    <!-- View tabs — Reports & Customers are Owner/Admin only -->
+    <!-- View tabs — Overview, Customers & Reports are Owner/Admin only -->
     <div class="view-tabs" id="view-tabs">
+      <button class="view-tab manager-only" data-view="overview">📊 Overview</button>
       <button class="view-tab active" data-view="orders">📋 Orders</button>
-      <button class="view-tab manager-only" data-view="reports">📊 Reports</button>
       <button class="view-tab manager-only" data-view="customers">👥 Customers</button>
+      <button class="view-tab manager-only" data-view="reports">📈 Reports</button>
     </div>
+
+    <!-- OVERVIEW VIEW (Owner/Admin only — analytics) -->
+    <div id="view-overview" style="display:none;"></div>
 
     <!-- ORDERS VIEW (all roles) -->
     <div id="view-orders">
+      <div class="staff-banner" id="staff-banner" style="display:none;">
+        <div class="ic">🖨️</div>
+        <div class="tx">
+          <h3>Order Workspace</h3>
+          <p>Process incoming orders: update production status, record payments and generate invoices. Newest orders are on top.</p>
+        </div>
+      </div>
       <div class="stats">
         <div class="stat glass s-total"><div class="v" id="st-total">0</div><div class="l">Total Orders</div></div>
         <div class="stat glass s-pending"><div class="v" id="st-pending">0</div><div class="l">Pending</div></div>
@@ -290,24 +400,42 @@
       document.getElementById('user-role').textContent = sess.role;
 
       IS_MANAGER = AFP.isManager(sess.role);
-      // Show/hide Owner/Admin-only tabs
+
+      // Role-specific dashboard chrome — owner gets analytics, staff gets ops.
+      document.getElementById('dash-title').textContent = IS_MANAGER ? 'Owner Dashboard' : 'Staff Workspace';
+      document.getElementById('staff-banner').style.display = IS_MANAGER ? 'none' : 'flex';
       document.querySelectorAll('.manager-only').forEach(function (el) {
         el.style.display = IS_MANAGER ? '' : 'none';
       });
-      switchView('orders');
+
+      // Populate the analytics with a realistic month of demo orders (once per browser)
+      if (IS_MANAGER) AFP.seedDemoIfEmpty();
+
+      switchView(IS_MANAGER ? 'overview' : 'orders');
       render();
     }
 
     /* ---- VIEW SWITCHER ---- */
+    var liveTimer = null;
     function switchView(name) {
       if (!IS_MANAGER && name !== 'orders') name = 'orders';
-      ['orders', 'reports', 'customers'].forEach(function (v) {
+      ['overview', 'orders', 'reports', 'customers'].forEach(function (v) {
         var el = document.getElementById('view-' + v);
         if (el) el.style.display = (v === name) ? '' : 'none';
       });
       document.querySelectorAll('.view-tab').forEach(function (t) {
         t.classList.toggle('active', t.getAttribute('data-view') === name);
       });
+
+      // Live auto-refresh only while the Overview is open
+      if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
+      if (name === 'overview') {
+        renderOverview();
+        liveTimer = setInterval(function () {
+          if (document.getElementById('view-overview').style.display !== 'none') renderOverview();
+          else { clearInterval(liveTimer); liveTimer = null; }
+        }, 20000);
+      }
       if (name === 'reports') renderReports();
       if (name === 'customers') renderCustomers();
     }
@@ -495,6 +623,189 @@
         '<script>window.onload=function(){window.print();}<\/script>' +
         '</body></html>');
       w.document.close();
+    }
+
+    /* ════════ OWNER/ADMIN: OVERVIEW (live analytics) ════════ */
+    function timeAgo(iso) {
+      var diff = (Date.now() - new Date(iso).getTime()) / 1000;
+      if (diff < 60) return 'just now';
+      if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+      return Math.floor(diff / 86400) + 'd ago';
+    }
+    function greeting() { var h = new Date().getHours(); return h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening'); }
+    function trendBadge(pct) {
+      var cls = pct > 0.5 ? 'up' : (pct < -0.5 ? 'down' : 'flat');
+      var arrow = pct > 0.5 ? '▲' : (pct < -0.5 ? '▼' : '■');
+      return '<span class="trend ' + cls + '">' + arrow + ' ' + (pct > 0 ? '+' : '') + pct.toFixed(0) + '% vs prev 7d</span>';
+    }
+    function donut(segments, centerNum, centerTxt) {
+      var total = segments.reduce(function (s, x) { return s + x.value; }, 0);
+      var bg;
+      if (total <= 0) { bg = 'rgba(255,255,255,0.05)'; }
+      else {
+        var acc = 0, stops = [];
+        segments.forEach(function (s) {
+          var start = acc / total * 100; acc += s.value; var end = acc / total * 100;
+          if (s.value > 0) stops.push(s.color + ' ' + start + '% ' + end + '%');
+        });
+        bg = 'conic-gradient(' + stops.join(',') + ')';
+      }
+      var legend = segments.map(function (s) {
+        return '<div class="legend-item"><span class="sw" style="background:' + s.color + '"></span><span class="nm">' + s.label + '</span><span class="ct">' + s.value + '</span></div>';
+      }).join('');
+      return '<div class="donut-row"><div class="donut" style="background:' + bg + '"><div class="mid"><div class="n">' + centerNum + '</div><div class="t">' + centerTxt + '</div></div></div><div class="legend">' + legend + '</div></div>';
+    }
+    function buildSalesChart(days) {
+      var W = 600, H = 190, pad = 14;
+      var max = Math.max.apply(null, days.map(function (d) { return d.rev; }).concat([1]));
+      var n = days.length;
+      var xs = function (i) { return pad + i * ((W - 2 * pad) / (n - 1)); };
+      var ys = function (v) { return H - pad - (v / max) * (H - 2 * pad - 10); };
+      var pts = days.map(function (d, i) { return xs(i) + ',' + ys(d.rev); });
+      var line = 'M' + pts.join(' L');
+      var area = 'M' + xs(0) + ',' + (H - pad) + ' L' + pts.join(' L') + ' L' + xs(n - 1) + ',' + (H - pad) + ' Z';
+      var grid = '';
+      for (var g = 0; g <= 3; g++) { var gy = pad + g * ((H - 2 * pad) / 3); grid += '<line x1="' + pad + '" y1="' + gy + '" x2="' + (W - pad) + '" y2="' + gy + '" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>'; }
+      return '<svg class="chart-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
+        '<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(41,182,216,0.35)"/><stop offset="100%" stop-color="rgba(41,182,216,0)"/></linearGradient></defs>' +
+        grid + '<path d="' + area + '" fill="url(#ag)"/>' +
+        '<path d="' + line + '" fill="none" stroke="#29b6d8" stroke-width="2.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+    }
+
+    function ovData() {
+      var orders = AFP.getOrders();
+      var paidOrders = orders.filter(function (o) { return o.payment.status === 'Paid'; });
+      var revenue = paidOrders.reduce(function (s, o) { return s + parsePrice(o.total); }, 0);
+      var unpaid = orders.filter(function (o) { return o.payment.status !== 'Paid' && o.status !== 'Cancelled'; });
+      var outstanding = unpaid.reduce(function (s, o) { return s + parsePrice(o.total); }, 0);
+      var active = orders.filter(function (o) { return o.status === 'Pending' || o.status === 'Ready to Pick Up'; }).length;
+      var avg = paidOrders.length ? revenue / paidOrders.length : 0;
+
+      var custMap = {};
+      orders.forEach(function (o) {
+        var key = (o.customer.phone || '').replace(/\D/g, '') || (o.customer.email || '').toLowerCase() || o.id;
+        if (!custMap[key]) custMap[key] = { name: o.customer.name || '—', phone: o.customer.phone || '', count: 0, spent: 0, last: o.createdAt };
+        var c = custMap[key]; c.count++;
+        if (o.payment.status === 'Paid') c.spent += parsePrice(o.total);
+        if (new Date(o.createdAt) > new Date(c.last)) c.last = o.createdAt;
+      });
+      var custs = Object.keys(custMap).map(function (k) { return custMap[k]; });
+      var returning = custs.filter(function (c) { return c.count > 1; }).length;
+      var topCust = custs.slice().sort(function (a, b) { return b.spent - a.spent; }).slice(0, 5);
+
+      var byStatus = {}; AFP.STATUSES.forEach(function (s) { byStatus[s] = 0; });
+      orders.forEach(function (o) { byStatus[o.status] = (byStatus[o.status] || 0) + 1; });
+
+      var bySvc = {};
+      orders.forEach(function (o) { bySvc[o.service] = bySvc[o.service] || { count: 0, rev: 0 }; bySvc[o.service].count++; if (o.payment.status === 'Paid') bySvc[o.service].rev += parsePrice(o.total); });
+      var svcArr = Object.keys(bySvc).map(function (k) { return { name: k, count: bySvc[k].count, rev: bySvc[k].rev }; }).sort(function (a, b) { return b.rev - a.rev; });
+
+      var days = [], today = new Date(); today.setHours(0, 0, 0, 0);
+      for (var i = 13; i >= 0; i--) { var dd = new Date(today); dd.setDate(dd.getDate() - i); days.push({ date: dd, rev: 0, count: 0 }); }
+      orders.forEach(function (o) {
+        var d0 = new Date(o.createdAt); d0.setHours(0, 0, 0, 0);
+        var idx = 13 + Math.round((d0 - today) / 86400000);
+        if (idx >= 0 && idx < 14) { days[idx].count++; if (o.payment.status === 'Paid') days[idx].rev += parsePrice(o.total); }
+      });
+      var last7 = days.slice(7).reduce(function (s, d) { return s + d.rev; }, 0);
+      var prev7 = days.slice(0, 7).reduce(function (s, d) { return s + d.rev; }, 0);
+      var revTrend = prev7 > 0 ? ((last7 - prev7) / prev7 * 100) : (last7 > 0 ? 100 : 0);
+      var oLast7 = days.slice(7).reduce(function (s, d) { return s + d.count; }, 0);
+      var oPrev7 = days.slice(0, 7).reduce(function (s, d) { return s + d.count; }, 0);
+      var ordTrend = oPrev7 > 0 ? ((oLast7 - oPrev7) / oPrev7 * 100) : (oLast7 > 0 ? 100 : 0);
+
+      return { orders: orders, revenue: revenue, outstanding: outstanding, active: active, avg: avg,
+        totalCust: custs.length, returning: returning, newC: custs.length - returning, topCust: topCust,
+        byStatus: byStatus, svcArr: svcArr, days: days, revTrend: revTrend, ordTrend: ordTrend, unpaidCount: unpaid.length };
+    }
+
+    function renderOverview() {
+      var d = ovData();
+      var sess = AFP.session() || { name: 'Owner' };
+      var firstName = (sess.name || 'Owner').split(' ')[0];
+
+      var kpis = '<div class="kpi-grid">' +
+        '<div class="kpi accent glass"><div class="ic">💰</div><div class="v">' + fmtRM(d.revenue) + '</div><div class="l">Revenue (Paid)</div>' + trendBadge(d.revTrend) + '</div>' +
+        '<div class="kpi warn glass"><div class="ic">⏳</div><div class="v">' + fmtRM(d.outstanding) + '</div><div class="l">Outstanding</div><span class="trend flat">' + d.unpaidCount + ' unpaid order(s)</span></div>' +
+        '<div class="kpi glass"><div class="ic">🧾</div><div class="v">' + d.orders.length + '</div><div class="l">Total Orders</div>' + trendBadge(d.ordTrend) + '</div>' +
+        '<div class="kpi glass"><div class="ic">🔥</div><div class="v">' + d.active + '</div><div class="l">Active Orders</div><span class="trend flat">in production</span></div>' +
+        '<div class="kpi glass"><div class="ic">👥</div><div class="v">' + d.totalCust + '</div><div class="l">Customers</div><span class="trend flat">' + d.returning + ' returning</span></div>' +
+        '<div class="kpi glass"><div class="ic">📈</div><div class="v">' + fmtRM(d.avg) + '</div><div class="l">Avg Order Value</div><span class="trend flat">per paid order</span></div>' +
+      '</div>';
+
+      var xl = [0, 3, 6, 9, 13].map(function (i) { var dt = d.days[i].date; return '<span>' + dt.getDate() + ' ' + dt.toLocaleString('en-MY', { month: 'short' }) + '</span>'; }).join('');
+      var totalRev14 = d.days.reduce(function (s, x) { return s + x.rev; }, 0);
+      var salesPanel = '<div class="pan glass"><div class="pan-head"><h4>Sales Trend · Last 14 Days</h4><span class="big">' + fmtRM(totalRev14) + '</span></div><div class="chart-wrap">' + buildSalesChart(d.days) + '<div class="chart-x">' + xl + '</div></div></div>';
+
+      var stSeg = [
+        { label: 'Pending', value: d.byStatus['Pending'] || 0, color: '#f5b945' },
+        { label: 'Ready to Pick Up', value: d.byStatus['Ready to Pick Up'] || 0, color: '#29b6d8' },
+        { label: 'Completed', value: d.byStatus['Completed'] || 0, color: '#34d399' },
+        { label: 'Cancelled', value: d.byStatus['Cancelled'] || 0, color: '#f87171' }
+      ];
+      var statusPanel = '<div class="pan glass"><div class="pan-head"><h4>Orders by Status</h4></div>' + donut(stSeg, d.orders.length, 'Orders') + '</div>';
+
+      var maxRev = Math.max.apply(null, d.svcArr.map(function (s) { return s.rev; }).concat([1]));
+      var bars = d.svcArr.length ? d.svcArr.map(function (s) {
+        return '<div class="bar-item"><div class="bar-top"><span class="nm">' + escapeHtml(s.name) + '</span><span class="vl">' + fmtRM(s.rev) + ' · ' + s.count + '</span></div><div class="bar-track"><div class="bar-fill" style="width:' + (s.rev / maxRev * 100) + '%"></div></div></div>';
+      }).join('') : '<p style="color:var(--white-40);font-size:0.8rem;">No data yet.</p>';
+      var svcPanel = '<div class="pan glass"><div class="pan-head"><h4>Revenue by Service</h4><span class="hint">paid · orders</span></div><div class="bars">' + bars + '</div></div>';
+
+      var custSeg = [
+        { label: 'Returning', value: d.returning, color: '#29b6d8' },
+        { label: 'New', value: d.newC, color: '#7c5cff' }
+      ];
+      var custPanel = '<div class="pan glass"><div class="pan-head"><h4>Customer Analytics</h4></div>' + donut(custSeg, d.totalCust, 'Total') + '</div>';
+
+      var recent = d.orders.slice(0, 6);
+      var feed = recent.length ? recent.map(function (o) {
+        return '<div class="feed-item" data-feedid="' + o.id + '"><div class="feed-id">' + o.id + '</div>' +
+          '<div><div class="feed-svc">' + escapeHtml(o.service) + '</div><div class="feed-sub">' + escapeHtml(o.customer.name || '—') + ' · ' + escapeHtml(o.total || '—') + '</div></div>' +
+          '<div class="feed-right"><span class="' + AFP.statusClass(o.status) + '">' + o.status + '</span><div class="feed-time">' + timeAgo(o.createdAt) + '</div></div></div>';
+      }).join('') : '<p style="color:var(--white-40);font-size:0.8rem;">No orders yet.</p>';
+      var feedPanel = '<div class="pan glass"><div class="pan-head"><h4>Live Order Feed</h4><span class="live-dot">Live</span></div>' + feed + '</div>';
+
+      var tc = d.topCust.filter(function (c) { return c.count > 0; });
+      var tcHtml = tc.length ? tc.map(function (c, i) {
+        return '<div class="tc-item"><div class="tc-rank">' + (i + 1) + '</div><div class="tc-info"><div class="nm">' + escapeHtml(c.name) + '</div><div class="meta">' + c.count + ' order(s) · ' + escapeHtml(c.phone || '') + '</div></div><div class="tc-spent">' + fmtRM(c.spent) + '</div></div>';
+      }).join('') : '<p style="color:var(--white-40);font-size:0.8rem;">No customers yet.</p>';
+      var tcPanel = '<div class="pan glass"><div class="pan-head"><h4>Top Customers</h4><span class="hint">by spend</span></div>' + tcHtml + '</div>';
+
+      var pendingOrders = d.orders.filter(function (o) { return o.status === 'Pending'; });
+      var oldestPending = pendingOrders.map(function (o) { return o.createdAt; }).sort()[0];
+      var readyCount = d.byStatus['Ready to Pick Up'] || 0;
+      var topSvc = d.svcArr[0];
+      var ins = '<div class="insights">';
+      if (pendingOrders.length) {
+        var daysWait = oldestPending ? Math.floor((Date.now() - new Date(oldestPending)) / 86400000) : 0;
+        ins += '<div class="insight alert"><span class="ico">⏱️</span><span class="tx"><b>' + pendingOrders.length + ' order(s) pending.</b> Oldest has waited ' + daysWait + ' day(s) — assign it to production so no order gets missed.</span></div>';
+      } else {
+        ins += '<div class="insight good"><span class="ico">✅</span><span class="tx"><b>No pending orders.</b> The production queue is clear — nothing waiting on the team.</span></div>';
+      }
+      if (readyCount) ins += '<div class="insight"><span class="ico">📦</span><span class="tx"><b>' + readyCount + ' order(s) ready for pickup.</b> Notify these customers to collect and close them out.</span></div>';
+      if (topSvc && topSvc.rev > 0) ins += '<div class="insight good"><span class="ico">🏆</span><span class="tx"><b>Top earner: ' + escapeHtml(topSvc.name) + '.</b> ' + fmtRM(topSvc.rev) + ' from ' + topSvc.count + ' order(s) — your strongest service this period.</span></div>';
+      if (d.outstanding > 0) ins += '<div class="insight alert"><span class="ico">💳</span><span class="tx"><b>' + fmtRM(d.outstanding) + ' outstanding</b> across ' + d.unpaidCount + ' order(s). Collect the 80% deposit before production starts.</span></div>';
+      ins += '</div>';
+
+      document.getElementById('view-overview').innerHTML =
+        '<div class="ov-greet"><div><h2>' + greeting() + ', ' + escapeHtml(firstName) + ' 👋</h2><div class="sub">How Ambangan Fast Print is performing · ' + new Date().toLocaleString('en-MY', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '</div></div>' +
+          '<div class="right"><span class="live-dot">Live data</span><button class="btn-reset" id="reset-demo">↻ Reset demo data</button></div></div>' +
+        kpis +
+        '<div class="ov-row r1">' + salesPanel + statusPanel + '</div>' +
+        '<div class="ov-row r2">' + svcPanel + custPanel + '</div>' +
+        '<div class="ov-row r3">' + feedPanel + tcPanel + '</div>' +
+        '<div class="pan glass" style="margin-bottom:1.2rem;"><div class="pan-head"><h4>Smart Insights &amp; Alerts</h4></div>' + ins + '</div>';
+
+      document.querySelectorAll('#view-overview .feed-item').forEach(function (f) {
+        f.addEventListener('click', function () { openDrawer(f.getAttribute('data-feedid')); });
+      });
+      var rb = document.getElementById('reset-demo');
+      if (rb) rb.addEventListener('click', function () {
+        if (confirm('Reset all orders and reload the demo dataset? This clears any test orders placed in this browser.')) {
+          AFP.resetDemo(); renderOverview(); render();
+        }
+      });
     }
 
     /* ════════ OWNER/ADMIN: REPORTS ════════ */
