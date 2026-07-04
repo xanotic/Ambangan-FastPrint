@@ -1,0 +1,6 @@
+# Serves the built Ambangan Fast Print static site 24/7 on localhost.
+# Build:  docker build -f Dockerfile.web -t afp-web .
+# Run:    docker run -d --restart unless-stopped --name afp-web -p 8080:80 afp-web
+FROM nginx:alpine
+COPY dist/ /usr/share/nginx/html/
+EXPOSE 80

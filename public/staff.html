@@ -309,6 +309,7 @@
           <div class="n" id="user-name">—</div>
           <div class="r" id="user-role">—</div>
         </div>
+        <button class="btn-logout" id="source-btn" title="Switch between live Oracle data and offline demo data" style="display:none;">🔴 Live</button>
         <button class="btn-logout" id="demo-btn" title="Load / reload sample orders">🎲 Demo Data</button>
         <button class="btn-logout" id="logout-btn">Logout</button>
       </div>
@@ -320,6 +321,7 @@
       <button class="view-tab active" data-view="orders">📋 Orders</button>
       <button class="view-tab manager-only" data-view="customers">👥 Customers</button>
       <button class="view-tab manager-only" data-view="reports">📈 Reports</button>
+      <button class="view-tab manager-only" data-view="database">🗄️ Database</button>
     </div>
 
     <!-- OVERVIEW VIEW (Owner/Admin only — analytics) -->
@@ -351,6 +353,9 @@
 
     <!-- CUSTOMERS VIEW (Owner/Admin only) -->
     <div id="view-customers" style="display:none;"></div>
+
+    <!-- DATABASE VIEW (Owner/Admin only — live raw Oracle tables via ORDS) -->
+    <div id="view-database" style="display:none;"></div>
   </div>
 
   <!-- ════════ ORDER DETAIL DRAWER ════════ -->
@@ -369,7 +374,8 @@
     <div class="drawer-body" id="dr-body"></div>
   </div>
 
-  <script src="afp.js?v=3"></script>
+  <script src="afp-config.js?v=4"></script>
+  <script src="afp.js?v=4"></script>
   <script>
     var loginView = document.getElementById('login-view');
     var dashView  = document.getElementById('dash-view');
@@ -409,12 +415,123 @@
         el.style.display = IS_MANAGER ? '' : 'none';
       });
 
-      // Populate with a realistic month of demo orders (once per browser), any role.
-      // Guarded in case an older cached afp.js is still loaded.
-      if (typeof AFP.seedDemoIfEmpty === 'function') AFP.seedDemoIfEmpty();
+      // Load data — prefer LIVE Oracle (ORDS) when configured, else offline demo.
+      bootData(function () {
+        switchView(IS_MANAGER ? 'overview' : 'orders');
+        render();
+      });
+    }
 
-      switchView(IS_MANAGER ? 'overview' : 'orders');
+    /* ---- DATA SOURCE: live Oracle (ORDS REST) vs offline demo ---- */
+    var DATA_MODE = 'demo';
+    function bootData(done) {
+      var preferLive = !window.AFP_CONFIG || window.AFP_CONFIG.preferLive !== false;
+      if (AFP.hasLive() && preferLive) {
+        setSourceLoading();
+        AFP.loadLiveOrders().then(function () {
+          DATA_MODE = 'live'; updateSourceBtn(); done();
+        }).catch(function (err) {
+          console.warn('Live Oracle load failed — falling back to demo:', err);
+          AFP.useLocal(); DATA_MODE = 'demo';
+          if (typeof AFP.seedDemoIfEmpty === 'function') AFP.seedDemoIfEmpty();
+          updateSourceBtn(); done();
+        });
+      } else {
+        AFP.useLocal(); DATA_MODE = 'demo';
+        if (typeof AFP.seedDemoIfEmpty === 'function') AFP.seedDemoIfEmpty();
+        updateSourceBtn(); done();
+      }
+    }
+    function setSourceLoading() {
+      var b = document.getElementById('source-btn');
+      b.style.display = ''; b.textContent = '⏳ Oracle…';
+    }
+    function updateSourceBtn() {
+      var b = document.getElementById('source-btn');
+      var demoBtn = document.getElementById('demo-btn');
+      if (!AFP.hasLive()) { b.style.display = 'none'; demoBtn.style.display = ''; return; }
+      b.style.display = '';
+      if (DATA_MODE === 'live') {
+        b.textContent = '🟢 Live: Oracle';
+        b.title = 'Showing LIVE data from Oracle APEX. Click to switch to offline demo.';
+        demoBtn.style.display = 'none';
+      } else {
+        b.textContent = '🎲 Demo mode';
+        b.title = 'Showing offline demo data. Click to load LIVE Oracle data.';
+        demoBtn.style.display = '';
+      }
+    }
+    function refreshCurrent() {
       render();
+      var vis = function (id) { var e = document.getElementById(id); return e && e.style.display !== 'none'; };
+      if (IS_MANAGER && vis('view-overview')) renderOverview();
+      if (IS_MANAGER && vis('view-reports')) renderReports();
+      if (IS_MANAGER && vis('view-customers')) renderCustomers();
+      if (IS_MANAGER && vis('view-database')) renderDatabase();
+    }
+    document.getElementById('source-btn').addEventListener('click', function () {
+      if (DATA_MODE === 'live') {
+        AFP.useLocal(); DATA_MODE = 'demo';
+        if (typeof AFP.seedDemoIfEmpty === 'function') AFP.seedDemoIfEmpty();
+        updateSourceBtn(); refreshCurrent();
+      } else {
+        if (!AFP.hasLive()) return;
+        setSourceLoading();
+        AFP.loadLiveOrders().then(function () {
+          DATA_MODE = 'live'; updateSourceBtn(); refreshCurrent();
+        }).catch(function (err) {
+          DATA_MODE = 'demo'; updateSourceBtn();
+          alert('Could not reach the Oracle API.\n\n' + (err && err.message) +
+                '\n\nMost likely CORS: in APEX -> RESTful Services -> afp module, set "Origins Allowed" to *');
+        });
+      }
+    });
+
+    function escHtml(str) {
+      return String(str == null ? '' : str).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+
+    /* ---- DATABASE VIEW: raw Oracle tables straight from ORDS ---- */
+    function renderDatabase() {
+      var host = document.getElementById('view-database');
+      if (!AFP.hasLive()) {
+        host.innerHTML = '<div class="pan"><div style="padding:2rem;text-align:center;color:var(--white-60);">No Oracle API is configured (afp-config.js is empty), so the raw database tables are unavailable.</div></div>';
+        return;
+      }
+      host.innerHTML = '<div style="margin:1.2rem 0 0.4rem;color:var(--white-60);font-size:0.8rem;">Live tables read directly from your Oracle database through Oracle APEX (ORDS REST). Edit rows in APEX SQL Workshop and refresh to see them change here.</div><div id="db-body">Loading live data from Oracle…</div>';
+      var body = document.getElementById('db-body');
+      var tables = [
+        { ep: 'customers', title: 'CUSTOMER', cols: [['customer_id', 'ID'], ['customer_name', 'Name'], ['customer_phone', 'Phone'], ['customer_email', 'Email']] },
+        { ep: 'employees', title: 'EMPLOYEE', cols: [['employee_id', 'ID'], ['employee_name', 'Name'], ['employee_phone', 'Phone'], ['job_position', 'Position']] },
+        { ep: 'services', title: 'SERVICE', cols: [['service_id', 'ID'], ['service_type', 'Type'], ['service_price', 'Price (RM)'], ['category', 'Category']] },
+        { ep: 'machines', title: 'MACHINE', cols: [['machine_id', 'ID'], ['machine_name', 'Name'], ['machine_type', 'Type'], ['machine_brand', 'Brand'], ['machine_status', 'Status']] },
+        { ep: 'deliveries', title: 'DELIVERY', cols: [['delivery_id', 'ID'], ['order_ref', 'Order'], ['delivery_date', 'Date'], ['address', 'Address'], ['tracking_number', 'Tracking']] },
+        { ep: 'receipts', title: 'RECEIPT', cols: [['receipt_id', 'ID'], ['order_id', 'Order'], ['payment_method', 'Method'], ['deposit_amount', 'Deposit'], ['total_amount', 'Total'], ['cashier', 'Cashier']] }
+      ];
+      Promise.all(tables.map(function (t) {
+        return AFP.fetchItems(t.ep).then(function (items) { return { t: t, items: items }; })
+          .catch(function (e) { return { t: t, err: e.message }; });
+      })).then(function (results) {
+        body.innerHTML = results.map(function (r) { return dbTable(r.t, r.items, r.err); }).join('');
+      });
+    }
+    function dbTable(t, items, err) {
+      var h = '<div class="pan" style="margin-bottom:1.2rem;"><div class="pan-head">' + t.title +
+        ' <span style="color:var(--white-40);font-weight:500;">(' + (items ? items.length : '—') + ' rows)</span></div><div style="padding:0.4rem 1rem 1rem;overflow-x:auto;">';
+      if (err) return h + '<div style="color:#f87171;">Failed to load: ' + escHtml(err) + '</div></div></div>';
+      if (!items || !items.length) return h + '<div style="color:var(--white-50);">No rows.</div></div></div>';
+      h += '<table class="afp-table"><thead><tr>' + t.cols.map(function (c) { return '<th>' + c[1] + '</th>'; }).join('') + '</tr></thead><tbody>';
+      h += items.map(function (row) {
+        return '<tr>' + t.cols.map(function (c) {
+          var v = row[c[0]];
+          if ((c[0] === 'delivery_date') && v) v = String(v).replace('T', ' ').slice(0, 16);
+          return '<td>' + (v == null || v === '' ? '—' : escHtml(v)) + '</td>';
+        }).join('') + '</tr>';
+      }).join('');
+      h += '</tbody></table></div></div>';
+      return h;
     }
 
     /* ---- DEMO DATA BUTTON (all roles) ---- */
@@ -423,18 +540,20 @@
         alert('Please hard-refresh the page (Ctrl+Shift+R) to load the latest version, then try again.');
         return;
       }
+      AFP.useLocal();            // leave live mode if we were in it
+      DATA_MODE = 'demo';
       var has = AFP.getOrders().length > 0;
       if (has && !confirm('Reload the sample demo dataset? This replaces the orders currently stored in this browser.')) return;
       AFP.resetDemo();
-      render();
-      if (IS_MANAGER && document.getElementById('view-overview').style.display !== 'none') renderOverview();
+      updateSourceBtn();
+      refreshCurrent();
     });
 
     /* ---- VIEW SWITCHER ---- */
     var liveTimer = null;
     function switchView(name) {
       if (!IS_MANAGER && name !== 'orders') name = 'orders';
-      ['overview', 'orders', 'reports', 'customers'].forEach(function (v) {
+      ['overview', 'orders', 'reports', 'customers', 'database'].forEach(function (v) {
         var el = document.getElementById('view-' + v);
         if (el) el.style.display = (v === name) ? '' : 'none';
       });
@@ -453,6 +572,7 @@
       }
       if (name === 'reports') renderReports();
       if (name === 'customers') renderCustomers();
+      if (name === 'database') renderDatabase();
     }
     document.querySelectorAll('.view-tab').forEach(function (t) {
       t.addEventListener('click', function () { switchView(t.getAttribute('data-view')); });

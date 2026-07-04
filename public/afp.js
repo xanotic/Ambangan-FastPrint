@@ -15,6 +15,10 @@
   var CUST_SESSION_KEY = "afp_customer_session";
   var DEMO_KEY = "afp_demo_seeded";
 
+  // Live data source (Oracle APEX / ORDS). When LIVE.on, the dashboard reads
+  // from LIVE.orders (fetched from Oracle) instead of localStorage demo data.
+  var LIVE = { on: false, orders: null };
+
   var STATUSES = ["Pending", "Ready to Pick Up", "Completed", "Cancelled"];
 
   // Mock internal accounts (prototype only — credentials shown on login page).
@@ -38,6 +42,37 @@
     var n = parseInt(localStorage.getItem(SEQ_KEY) || "0", 10) + 1;
     localStorage.setItem(SEQ_KEY, String(n));
     return "AFP-" + String(n).padStart(4, "0");
+  }
+
+  // The active order list: live Oracle rows when in live mode, else localStorage.
+  function currentOrders() { return (LIVE.on && LIVE.orders) ? LIVE.orders : read(); }
+
+  // Map one ORDS /afp/orders row into the website's internal order shape,
+  // so all existing rendering + analytics work unchanged on live data.
+  function mapLiveOrder(r) {
+    var paid = !!r.payment_method;
+    var created = r.order_datetime || now();
+    var specs = [];
+    if (r.services) specs.push("Services: " + r.services);
+    if (r.handled_by) specs.push("Handled by: " + r.handled_by);
+    specs.push("Fulfilment: " + (r.fulfilment || "Self Pick-up"));
+    if (r.deposit_amount != null) specs.push("Deposit paid: RM " + Number(r.deposit_amount).toFixed(2));
+    var hist = [{ status: "Pending", at: created, note: "Order recorded in Oracle database" }];
+    if (r.status && r.status !== "Pending") hist.push({ status: r.status, at: created, note: "Current status: " + r.status });
+    return {
+      id: r.order_ref || ("AFP-" + String(r.order_id).padStart(4, "0")),
+      service: r.services || "Print Order",
+      specs: specs,
+      total: (r.total_amount != null) ? "RM " + Number(r.total_amount).toFixed(2) : "",
+      fileName: "",
+      customer: { name: r.customer_name || "", phone: r.customer_phone || "", email: r.customer_email || "" },
+      notes: r.remark || "",
+      payment: paid ? { status: "Paid", method: r.payment_method, paidAt: created } : { status: "Unpaid", method: "", paidAt: "" },
+      status: r.status || "Pending",
+      createdAt: created,
+      history: hist,
+      _live: true
+    };
   }
 
   var AFP = {
@@ -68,9 +103,9 @@
       return order;
     },
 
-    getOrders: function () { return read(); },
+    getOrders: function () { return currentOrders(); },
     getOrder: function (id) {
-      return read().filter(function (o) { return o.id === id; })[0] || null;
+      return currentOrders().filter(function (o) { return o.id === id; })[0] || null;
     },
 
     // Look up by exact Order ID or by phone number (for the customer tracking page)
@@ -78,7 +113,7 @@
       var q = (query || "").trim().toLowerCase();
       if (!q) return [];
       var qDigits = q.replace(/\D/g, "");
-      return read().filter(function (o) {
+      return currentOrders().filter(function (o) {
         if (o.id.toLowerCase() === q) return true;
         var phone = (o.customer.phone || "").replace(/\D/g, "");
         return phone && qDigits && phone === qDigits;
@@ -86,7 +121,7 @@
     },
 
     setStatus: function (id, status, note) {
-      var orders = read(), found = null;
+      var orders = currentOrders(), found = null;
       orders.forEach(function (o) {
         if (o.id === id) {
           o.status = status;
@@ -94,12 +129,14 @@
           found = o;
         }
       });
-      if (found) write(orders);
+      // In live mode we mutate the in-memory Oracle copy only (read-only API —
+      // changes are not written back to Oracle); in local mode we persist.
+      if (found && !LIVE.on) write(orders);
       return found;
     },
 
     recordPayment: function (id, method) {
-      var orders = read(), found = null;
+      var orders = currentOrders(), found = null;
       orders.forEach(function (o) {
         if (o.id === id) {
           o.payment = { status: "Paid", method: method || "Cash", paidAt: now() };
@@ -107,7 +144,7 @@
           found = o;
         }
       });
-      if (found) write(orders);
+      if (found && !LIVE.on) write(orders);
       return found;
     },
 
@@ -177,7 +214,7 @@
     ordersForCustomer: function (email, phone) {
       var em = (email || "").trim().toLowerCase();
       var ph = (phone || "").replace(/\D/g, "");
-      return read().filter(function (o) {
+      return currentOrders().filter(function (o) {
         var oem = (o.customer.email || "").trim().toLowerCase();
         var oph = (o.customer.phone || "").replace(/\D/g, "");
         return (em && oem === em) || (ph && oph && oph === ph);
@@ -289,6 +326,37 @@
       ];
       localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(demoCusts));
     },
+
+    // ---- Live Oracle data via Oracle APEX / ORDS REST ----
+    // Configured in afp-config.js (window.AFP_CONFIG.apiBase).
+    hasLive: function () {
+      return !!(window.AFP_CONFIG && window.AFP_CONFIG.apiBase);
+    },
+    isLive: function () { return LIVE.on; },
+    apiBase: function () {
+      return ((window.AFP_CONFIG && window.AFP_CONFIG.apiBase) || "").replace(/\/+$/, "");
+    },
+    // GET one ORDS endpoint (e.g. "orders", "customers") -> array of rows.
+    fetchItems: function (endpoint) {
+      var base = AFP.apiBase();
+      if (!base) return Promise.reject(new Error("No Oracle API configured (afp-config.js)"));
+      return fetch(base + "/" + endpoint, { headers: { Accept: "application/json" } })
+        .then(function (res) {
+          if (!res.ok) throw new Error(endpoint + " → HTTP " + res.status);
+          return res.json();
+        })
+        .then(function (j) { return (j && j.items) || []; });
+    },
+    // Fetch /orders, map to internal shape, switch into live mode.
+    loadLiveOrders: function () {
+      return AFP.fetchItems("orders").then(function (items) {
+        LIVE.orders = items.map(mapLiveOrder);
+        LIVE.on = true;
+        return LIVE.orders;
+      });
+    },
+    // Drop back to offline localStorage demo data.
+    useLocal: function () { LIVE.on = false; LIVE.orders = null; },
 
     // ---- Shared formatting helpers (used by staff + track pages too) ----
     fmtDate: function (iso) {

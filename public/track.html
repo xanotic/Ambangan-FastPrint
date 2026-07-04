@@ -93,7 +93,8 @@
     </div>
   </div>
 
-  <script src="afp.js?v=3"></script>
+  <script src="afp-config.js?v=4"></script>
+  <script src="afp.js?v=4"></script>
   <script>
     var FLOW = ['Pending', 'Ready to Pick Up', 'Completed'];
     var STEP_ICON = { 'Pending': '🕓', 'Ready to Pick Up': '📦', 'Completed': '✓' };
@@ -158,17 +159,31 @@
       resEl.style.display = 'block';
     }
 
+    // Load live Oracle orders (if configured) before searching, so customers
+    // track the SAME orders that live in the Oracle database.
+    function wantsLive() {
+      return AFP.hasLive() && (!window.AFP_CONFIG || window.AFP_CONFIG.preferLive !== false);
+    }
+    function ensureData() {
+      if (wantsLive() && !AFP.isLive()) {
+        return AFP.loadLiveOrders().catch(function () { /* fall back to local */ });
+      }
+      return Promise.resolve();
+    }
+
     document.getElementById('search-form').addEventListener('submit', function (e) {
       e.preventDefault();
       var q = document.getElementById('q').value.trim();
-      if (q) doSearch(q);
+      if (q) ensureData().then(function () { doSearch(q); });
     });
 
     // Auto-load from ?id= (used by the order confirmation "Track My Order" button)
     (function () {
       var params = new URLSearchParams(location.search);
       var id = params.get('id');
-      if (id) { document.getElementById('q').value = id; doSearch(id); }
+      ensureData().then(function () {
+        if (id) { document.getElementById('q').value = id; doSearch(id); }
+      });
     })();
   </script>
 </body>
