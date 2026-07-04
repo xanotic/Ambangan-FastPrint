@@ -75,6 +75,24 @@
     };
   }
 
+  // Small on-screen toast so sync results are visible without opening DevTools.
+  function afpToast(msg, ok) {
+    try {
+      var t = document.createElement("div");
+      t.textContent = msg;
+      t.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);" +
+        "z-index:2147483647;max-width:92vw;padding:12px 18px;border-radius:12px;" +
+        "font:600 13px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#fff;" +
+        "box-shadow:0 10px 34px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.22);" +
+        "background:" + (ok ? "#12805c" : "#b4232a") + ";";
+      document.body.appendChild(t);
+      setTimeout(function () {
+        t.style.transition = "opacity .4s"; t.style.opacity = "0";
+        setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 400);
+      }, ok ? 3500 : 9000);
+    } catch (e) { /* no DOM (shouldn't happen on pages) */ }
+  }
+
   // "AFP-0006" -> 6 ; used to address Oracle rows by numeric OrderID.
   function orderNum(id) { return parseInt(String(id).replace(/\D/g, ""), 10) || 0; }
   // "RM 45.00" -> 45 ; 0 if not parseable.
@@ -396,12 +414,15 @@
     },
     // Fire-and-forget write to Oracle. The UI stays local-first (instant),
     // and the row is pushed to Oracle in the background when live is configured.
+    // Shows a small on-screen toast with the result so no DevTools are needed.
     syncToOracle: function (endpoint, method, body) {
       if (!AFP.hasLive()) return;
       AFP.apiWrite(endpoint, method, body).then(function (r) {
         if (window.console) console.log("[AFP→Oracle] " + method + " /" + endpoint + " OK", r);
+        afpToast("✓ Saved to Oracle  (" + method + " /" + endpoint + ")", true);
       }).catch(function (e) {
         if (window.console) console.warn("[AFP→Oracle] " + method + " /" + endpoint + " FAILED: " + e.message);
+        afpToast("⚠ Oracle sync FAILED (" + method + " /" + endpoint + "): " + e.message, false);
       });
     },
 
