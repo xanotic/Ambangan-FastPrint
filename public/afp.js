@@ -75,6 +75,11 @@
     };
   }
 
+  // "AFP-0006" -> 6 ; used to address Oracle rows by numeric OrderID.
+  function orderNum(id) { return parseInt(String(id).replace(/\D/g, ""), 10) || 0; }
+  // "RM 45.00" -> 45 ; 0 if not parseable.
+  function parseRM(s) { var n = parseFloat(String(s).replace(/[^0-9.]/g, "")); return isNaN(n) ? 0 : n; }
+
   var AFP = {
     STATUSES: STATUSES,
 
@@ -100,6 +105,16 @@
       };
       orders.unshift(order);
       write(orders);
+      // Two-way sync: insert into Oracle (finds-or-creates the customer there).
+      AFP.syncToOracle("orders", "POST", {
+        name: order.customer.name,
+        phone: order.customer.phone,
+        email: order.customer.email,
+        remark: order.service + (order.total ? " — " + order.total : "") + (order.notes ? " | " + order.notes : ""),
+        employee_id: null
+      });
+      // Keep the live dashboard in sync immediately if it's showing live data.
+      if (LIVE.on && LIVE.orders) LIVE.orders.unshift(order);
       return order;
     },
 
@@ -129,9 +144,10 @@
           found = o;
         }
       });
-      // In live mode we mutate the in-memory Oracle copy only (read-only API —
-      // changes are not written back to Oracle); in local mode we persist.
+      // Local-first: persist to localStorage in demo mode (live mode already
+      // mutated the in-memory copy), then push the change to Oracle.
       if (found && !LIVE.on) write(orders);
+      if (found) AFP.syncToOracle("orderstatus", "PUT", { order_id: orderNum(id), status_val: status });
       return found;
     },
 
@@ -145,6 +161,11 @@
         }
       });
       if (found && !LIVE.on) write(orders);
+      // Push a RECEIPT into Oracle (only when we have a positive total).
+      if (found) {
+        var amt = parseRM(found.total);
+        if (amt > 0) AFP.syncToOracle("orderpayment", "PUT", { order_id: orderNum(id), method: method || "Cash", total: amt, employee_id: null });
+      }
       return found;
     },
 
@@ -190,6 +211,8 @@
       };
       customers.push(customer);
       localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
+      // Two-way sync: also insert into the Oracle CUSTOMER table.
+      AFP.syncToOracle("customers", "POST", { name: customer.name, phone: customer.phone, email: customer.email });
       var sess = { id: customer.id, name: customer.name, email: customer.email, phone: customer.phone };
       sessionStorage.setItem(CUST_SESSION_KEY, JSON.stringify(sess));
       return { ok: true, customer: sess };
@@ -357,6 +380,30 @@
     },
     // Drop back to offline localStorage demo data.
     useLocal: function () { LIVE.on = false; LIVE.orders = null; },
+
+    // ---- Write-back to Oracle (two-way sync) ----
+    apiWrite: function (endpoint, method, body) {
+      var base = AFP.apiBase();
+      if (!base) return Promise.reject(new Error("No Oracle API configured"));
+      return fetch(base + "/" + endpoint, {
+        method: method,
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(body || {})
+      }).then(function (res) {
+        if (!res.ok) throw new Error(endpoint + " " + method + " → HTTP " + res.status);
+        return res.json().catch(function () { return {}; });
+      });
+    },
+    // Fire-and-forget write to Oracle. The UI stays local-first (instant),
+    // and the row is pushed to Oracle in the background when live is configured.
+    syncToOracle: function (endpoint, method, body) {
+      if (!AFP.hasLive()) return;
+      AFP.apiWrite(endpoint, method, body).then(function (r) {
+        if (window.console) console.log("[AFP→Oracle] " + method + " /" + endpoint + " OK", r);
+      }).catch(function (e) {
+        if (window.console) console.warn("[AFP→Oracle] " + method + " /" + endpoint + " FAILED: " + e.message);
+      });
+    },
 
     // ---- Shared formatting helpers (used by staff + track pages too) ----
     fmtDate: function (iso) {

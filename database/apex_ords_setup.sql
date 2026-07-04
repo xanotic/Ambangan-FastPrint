@@ -202,6 +202,94 @@ BEGIN
        ORDER BY r.ReceiptID
     ~');
 
+  -- ===================================================================
+  --  WRITE ENDPOINTS (two-way sync: website -> Oracle)
+  --  JSON body keys become bind variables; OUT binds are returned as
+  --  JSON; :status sets the HTTP status code.
+  -- ===================================================================
+
+  -- POST /afp/customers  -> insert a new customer (website sign-up)
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp',
+    p_pattern     => 'customers',
+    p_method      => 'POST',
+    p_source_type => ORDS.source_type_plsql,
+    p_source      => q'~
+      BEGIN
+        INSERT INTO CUSTOMER (CustomerName, CustomerPhoneNum, CustomerEmail)
+        VALUES (:name, :phone, :email)
+        RETURNING CustomerID INTO :customer_id;
+        :status := 201;
+      END;
+    ~');
+
+  -- POST /afp/orders  -> place a new order (find-or-create the customer first)
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp',
+    p_pattern     => 'orders',
+    p_method      => 'POST',
+    p_source_type => ORDS.source_type_plsql,
+    p_source      => q'~
+      DECLARE
+        v_cust NUMBER;
+      BEGIN
+        BEGIN
+          SELECT CustomerID INTO v_cust FROM CUSTOMER
+           WHERE (:email IS NOT NULL AND CustomerEmail    = :email)
+              OR (:phone IS NOT NULL AND CustomerPhoneNum = :phone)
+           FETCH FIRST 1 ROWS ONLY;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+          INSERT INTO CUSTOMER (CustomerName, CustomerPhoneNum, CustomerEmail)
+          VALUES (:name, :phone, :email) RETURNING CustomerID INTO v_cust;
+        END;
+        INSERT INTO ORDERS (OrderDateTime, EmployeeID, CustomerID, Remark, OrderStatus)
+        VALUES (SYSDATE, NVL(:employee_id, 7), v_cust, :remark, 'Pending')
+        RETURNING OrderID INTO :order_id;
+        :order_ref := 'AFP-' || LPAD(:order_id, 4, '0');
+        :status := 201;
+      END;
+    ~');
+
+  -- PUT /afp/orderstatus  -> update an order's lifecycle status
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'orderstatus');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp',
+    p_pattern     => 'orderstatus',
+    p_method      => 'PUT',
+    p_source_type => ORDS.source_type_plsql,
+    p_source      => q'~
+      BEGIN
+        UPDATE ORDERS SET OrderStatus = :status_val WHERE OrderID = :order_id;
+        :status := 200;
+      END;
+    ~');
+
+  -- PUT /afp/orderpayment  -> record a payment (creates a RECEIPT, links order)
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'orderpayment');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp',
+    p_pattern     => 'orderpayment',
+    p_method      => 'PUT',
+    p_source_type => ORDS.source_type_plsql,
+    p_source      => q'~
+      DECLARE
+        v_rid    NUMBER;
+        v_method VARCHAR2(50);
+      BEGIN
+        v_method := CASE
+                      WHEN UPPER(:method) LIKE '%CARD%' THEN 'Card'
+                      WHEN UPPER(:method) LIKE '%CASH%' THEN 'Cash'
+                      ELSE 'Online'
+                    END;
+        INSERT INTO RECEIPT (PaymentMethod, EmployeeID, OrderID, ReceiptTotalAmount)
+        VALUES (v_method, NVL(:employee_id, 7), :order_id, :total)
+        RETURNING ReceiptID INTO v_rid;
+        UPDATE ORDERS SET ReceiptID = v_rid WHERE OrderID = :order_id;
+        :receipt_id := v_rid;
+        :status := 200;
+      END;
+    ~');
+
   COMMIT;
 END;
 /
@@ -215,8 +303,12 @@ SELECT p.name AS module, t.uri_template, h.method
  ORDER BY t.uri_template;
 
 -- =====================================================================
---  IMPORTANT — enable CORS so the website (a different domain) can read:
---  SQL Workshop -> RESTful Services -> Modules -> afp -> (Edit) ->
---  set  "Origins Allowed"  to:   *      then Apply Changes.
---  (If you prefer, use exactly: https://xanotic.github.io )
+--  IMPORTANT — enable CORS so the website (a different domain) can read
+--  AND write. SQL Workshop -> RESTful Services -> Modules -> afp ->
+--  (Edit) -> set "Origins Allowed" to:   *      then Apply Changes.
+--  ('*' covers GET, POST and PUT. If you prefer, use exactly:
+--   https://xanotic.github.io )
+--
+--  This script is idempotent: it drops and recreates the whole 'afp'
+--  module each run, so re-run it any time you change an endpoint.
 -- =====================================================================
