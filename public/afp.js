@@ -101,11 +101,15 @@
   var AFP = {
     STATUSES: STATUSES,
 
+    // Returns a Promise<order>. When Oracle is connected, the order is
+    // inserted there FIRST so Oracle assigns the OrderID — the ticket the
+    // customer tracks is the exact same row in the database. This avoids the
+    // bug where a locally-generated "AFP-0001" collided with an existing
+    // Oracle order of the same number.
     createOrder: function (data) {
       data = data || {};
-      var orders = read();
       var order = {
-        id: nextId(),
+        id: "",
         service: data.service || "Print Order",
         specs: data.specs || [],          // array of "Label: value" strings
         total: data.total || "",          // e.g. "RM 437.50"
@@ -121,19 +125,32 @@
         createdAt: now(),
         history: [{ status: "Pending", at: now(), note: "Order submitted online by customer" }]
       };
-      orders.unshift(order);
-      write(orders);
-      // Two-way sync: insert into Oracle (finds-or-creates the customer there).
-      AFP.syncToOracle("orders", "POST", {
-        name: order.customer.name,
-        phone: order.customer.phone,
-        email: order.customer.email,
-        remark: order.service + (order.total ? " — " + order.total : "") + (order.notes ? " | " + order.notes : ""),
-        employee_id: null
-      });
-      // Keep the live dashboard in sync immediately if it's showing live data.
-      if (LIVE.on && LIVE.orders) LIVE.orders.unshift(order);
-      return order;
+      var remark = order.service + (order.total ? " — " + order.total : "") + (order.notes ? " | " + order.notes : "");
+
+      if (AFP.hasLive()) {
+        return AFP.apiWrite("orders", "POST", {
+          name: order.customer.name, phone: order.customer.phone, email: order.customer.email,
+          remark: remark, employee_id: null
+        }).then(function (r) {
+          order.id = (r && r.order_ref) ? r.order_ref
+                   : ("AFP-" + String((r && r.order_id) || 0).padStart(4, "0"));
+          order.history[0].note = "Order recorded in the Oracle database";
+          if (LIVE.on && LIVE.orders) LIVE.orders.unshift(order);
+          afpToast("✓ Order placed in Oracle (" + order.id + ")", true);
+          return order;
+        }).catch(function (e) {
+          // Oracle unreachable — still give the customer a local ticket.
+          order.id = nextId();
+          var o = read(); o.unshift(order); write(o);
+          afpToast("⚠ Saved locally only (Oracle unreachable): " + e.message, false);
+          return order;
+        });
+      }
+
+      // Offline (no API configured): local sequence only.
+      order.id = nextId();
+      var o = read(); o.unshift(order); write(o);
+      return Promise.resolve(order);
     },
 
     getOrders: function () { return currentOrders(); },
@@ -757,15 +774,22 @@
         err.style.display = "block";
         return;
       }
-      var order = AFP.createOrder({
+      var btn = overlay.querySelector("[data-afp-submit]");
+      if (btn) { btn.disabled = true; btn.textContent = "Submitting…"; }
+      AFP.createOrder({
         service: ctx.service,
         specs: specs,
         total: total,
         fileName: fileName,
         customer: { name: name, phone: phone, email: val("email") },
         notes: val("notes")
+      }).then(function (order) {
+        showSuccess(order);
+      }).catch(function (e) {
+        if (btn) { btn.disabled = false; btn.textContent = "Confirm & Submit Order"; }
+        err.textContent = "Could not submit the order: " + (e && e.message || e);
+        err.style.display = "block";
       });
-      showSuccess(order);
     }
 
     function showSuccess(order) {

@@ -127,11 +127,23 @@
     <div class="my-orders" id="my-orders"></div>
   </div>
 
-  <script src="afp-config.js?v=7"></script>
-  <script src="afp.js?v=7"></script>
+  <script src="afp-config.js?v=8"></script>
+  <script src="afp.js?v=8"></script>
   <script>
     var authView = document.getElementById('auth-view');
     var dashView = document.getElementById('dash-view');
+
+    // Oracle-only: clear any stale local/demo orders in this browser so the
+    // portal only ever reflects what's actually in the Oracle database.
+    if (typeof AFP.purgeDemo === 'function') AFP.purgeDemo();
+
+    // Load live Oracle orders (if configured) before showing "My Orders".
+    function ensureLive() {
+      if (AFP.hasLive() && !AFP.isLive() && (!window.AFP_CONFIG || window.AFP_CONFIG.preferLive !== false)) {
+        return AFP.loadLiveOrders().catch(function () {});
+      }
+      return Promise.resolve();
+    }
 
     /* ---- TAB SWITCH ---- */
     var loginForm = document.getElementById('login-form');
@@ -186,7 +198,8 @@
       dashView.style.display = 'block';
       document.getElementById('cust-name').textContent = sess.name;
       document.getElementById('cust-contact').textContent = sess.email + (sess.phone ? '  ·  ' + sess.phone : '');
-      renderOrders(sess);
+      document.getElementById('my-orders').innerHTML = '<div class="empty glass">Loading your orders…</div>';
+      ensureLive().then(function () { renderOrders(sess); });
     }
 
     function renderOrders(sess) {
