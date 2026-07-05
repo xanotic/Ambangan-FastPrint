@@ -309,8 +309,7 @@
           <div class="n" id="user-name">—</div>
           <div class="r" id="user-role">—</div>
         </div>
-        <button class="btn-logout" id="source-btn" title="Switch between live Oracle data and offline demo data" style="display:none;">🔴 Live</button>
-        <button class="btn-logout" id="demo-btn" title="Load / reload sample orders">🎲 Demo Data</button>
+        <span class="live-dot" id="data-status" title="Data source" style="margin-right:0.5rem;">Oracle</span>
         <button class="btn-logout" id="logout-btn">Logout</button>
       </div>
     </div>
@@ -374,8 +373,8 @@
     <div class="drawer-body" id="dr-body"></div>
   </div>
 
-  <script src="afp-config.js?v=6"></script>
-  <script src="afp.js?v=6"></script>
+  <script src="afp-config.js?v=7"></script>
+  <script src="afp.js?v=7"></script>
   <script>
     var loginView = document.getElementById('login-view');
     var dashView  = document.getElementById('dash-view');
@@ -422,44 +421,33 @@
       });
     }
 
-    /* ---- DATA SOURCE: live Oracle (ORDS REST) vs offline demo ---- */
-    var DATA_MODE = 'demo';
+    /* ---- DATA SOURCE: live Oracle only (no demo data) ---- */
     function bootData(done) {
-      var preferLive = !window.AFP_CONFIG || window.AFP_CONFIG.preferLive !== false;
-      if (AFP.hasLive() && preferLive) {
-        setSourceLoading();
-        AFP.loadLiveOrders().then(function () {
-          DATA_MODE = 'live'; updateSourceBtn(); done();
-        }).catch(function (err) {
-          console.warn('Live Oracle load failed — falling back to demo:', err);
-          AFP.useLocal(); DATA_MODE = 'demo';
-          if (typeof AFP.seedDemoIfEmpty === 'function') AFP.seedDemoIfEmpty();
-          updateSourceBtn(); done();
-        });
-      } else {
-        AFP.useLocal(); DATA_MODE = 'demo';
-        if (typeof AFP.seedDemoIfEmpty === 'function') AFP.seedDemoIfEmpty();
-        updateSourceBtn(); done();
+      if (typeof AFP.purgeDemo === 'function') AFP.purgeDemo();  // wipe any leftover demo rows
+      var status = document.getElementById('data-status');
+      if (!AFP.hasLive()) {
+        if (status) status.textContent = 'No API';
+        done(); return;
       }
+      if (status) status.textContent = 'Loading…';
+      AFP.loadLiveOrders().then(function () {
+        if (status) status.textContent = 'Oracle';
+        done();
+      }).catch(function (err) {
+        if (status) status.textContent = 'Oracle offline';
+        showLoadError(err && err.message);
+        done();
+      });
     }
-    function setSourceLoading() {
-      var b = document.getElementById('source-btn');
-      b.style.display = ''; b.textContent = '⏳ Oracle…';
-    }
-    function updateSourceBtn() {
-      var b = document.getElementById('source-btn');
-      var demoBtn = document.getElementById('demo-btn');
-      if (!AFP.hasLive()) { b.style.display = 'none'; demoBtn.style.display = ''; return; }
-      b.style.display = '';
-      if (DATA_MODE === 'live') {
-        b.textContent = '🟢 Live: Oracle';
-        b.title = 'Showing LIVE data from Oracle APEX. Click to switch to offline demo.';
-        demoBtn.style.display = 'none';
-      } else {
-        b.textContent = '🎲 Demo mode';
-        b.title = 'Showing offline demo data. Click to load LIVE Oracle data.';
-        demoBtn.style.display = '';
-      }
+    function showLoadError(msg) {
+      var host = document.getElementById('orders');
+      if (!host) return;
+      host.innerHTML = '<div class="empty"><div class="big">⚠️</div>' +
+        'Could not load data from Oracle.<br>' +
+        '<span style="font-size:0.72rem;color:var(--white-40);">' + escHtml(msg || '') + '</span><br>' +
+        '<button class="invoice-btn" id="retry-load" style="width:auto;display:inline-flex;margin-top:1.1rem;padding:0.6rem 1.2rem;">↻ Retry</button></div>';
+      var r = document.getElementById('retry-load');
+      if (r) r.addEventListener('click', function () { bootData(function () { refreshCurrent(); }); });
     }
     function refreshCurrent() {
       render();
@@ -469,23 +457,6 @@
       if (IS_MANAGER && vis('view-customers')) renderCustomers();
       if (IS_MANAGER && vis('view-database')) renderDatabase();
     }
-    document.getElementById('source-btn').addEventListener('click', function () {
-      if (DATA_MODE === 'live') {
-        AFP.useLocal(); DATA_MODE = 'demo';
-        if (typeof AFP.seedDemoIfEmpty === 'function') AFP.seedDemoIfEmpty();
-        updateSourceBtn(); refreshCurrent();
-      } else {
-        if (!AFP.hasLive()) return;
-        setSourceLoading();
-        AFP.loadLiveOrders().then(function () {
-          DATA_MODE = 'live'; updateSourceBtn(); refreshCurrent();
-        }).catch(function (err) {
-          DATA_MODE = 'demo'; updateSourceBtn();
-          alert('Could not reach the Oracle API.\n\n' + (err && err.message) +
-                '\n\nMost likely CORS: in APEX -> RESTful Services -> afp module, set "Origins Allowed" to *');
-        });
-      }
-    });
 
     function escHtml(str) {
       return String(str == null ? '' : str).replace(/[&<>"]/g, function (c) {
@@ -533,21 +504,6 @@
       h += '</tbody></table></div></div>';
       return h;
     }
-
-    /* ---- DEMO DATA BUTTON (all roles) ---- */
-    document.getElementById('demo-btn').addEventListener('click', function () {
-      if (typeof AFP.resetDemo !== 'function') {
-        alert('Please hard-refresh the page (Ctrl+Shift+R) to load the latest version, then try again.');
-        return;
-      }
-      AFP.useLocal();            // leave live mode if we were in it
-      DATA_MODE = 'demo';
-      var has = AFP.getOrders().length > 0;
-      if (has && !confirm('Reload the sample demo dataset? This replaces the orders currently stored in this browser.')) return;
-      AFP.resetDemo();
-      updateSourceBtn();
-      refreshCurrent();
-    });
 
     /* ---- VIEW SWITCHER ---- */
     var liveTimer = null;
@@ -614,12 +570,8 @@
       if (!list.length) {
         oEl.innerHTML = '<div class="empty"><div class="big">📭</div>' +
           (orders.length ? 'No orders in this category.' :
-            'No orders yet.<br><button class="invoice-btn" id="empty-load-demo" style="width:auto;display:inline-flex;margin-top:1.1rem;padding:0.75rem 1.4rem;">🎲 Load demo data</button>' +
-            '<div style="margin-top:0.8rem;font-size:0.72rem;">…or place a test order from a service page.</div>') + '</div>';
-        var eld = document.getElementById('empty-load-demo');
-        if (eld) eld.addEventListener('click', function () {
-          if (typeof AFP.resetDemo === 'function') { AFP.resetDemo(); render(); }
-        });
+            'No orders in the Oracle database yet.' +
+            '<div style="margin-top:0.8rem;font-size:0.72rem;">Place an order from a service page, or add one in APEX — it will appear here.</div>') + '</div>';
         return;
       }
       oEl.innerHTML = list.map(function (o) {
@@ -930,7 +882,7 @@
 
       document.getElementById('view-overview').innerHTML =
         '<div class="ov-greet"><div><h2>' + greeting() + ', ' + escapeHtml(firstName) + ' 👋</h2><div class="sub">How Ambangan Fast Print is performing · ' + new Date().toLocaleString('en-MY', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '</div></div>' +
-          '<div class="right"><span class="live-dot">Live data</span><button class="btn-reset" id="reset-demo">↻ Reset demo data</button></div></div>' +
+          '<div class="right"><span class="live-dot">Live · Oracle</span></div></div>' +
         kpis +
         '<div class="ov-row r1">' + salesPanel + statusPanel + '</div>' +
         '<div class="ov-row r2">' + svcPanel + custPanel + '</div>' +
@@ -939,12 +891,6 @@
 
       document.querySelectorAll('#view-overview .feed-item').forEach(function (f) {
         f.addEventListener('click', function () { openDrawer(f.getAttribute('data-feedid')); });
-      });
-      var rb = document.getElementById('reset-demo');
-      if (rb) rb.addEventListener('click', function () {
-        if (confirm('Reset all orders and reload the demo dataset? This clears any test orders placed in this browser.')) {
-          AFP.resetDemo(); renderOverview(); render();
-        }
       });
     }
 
@@ -1038,50 +984,62 @@
         if (o.customer.name && (c.name === '—' || !c.name)) c.name = o.customer.name;
         if (o.customer.email && !c.email) c.email = o.customer.email;
       });
-      AFP.getCustomers().forEach(function (rc) {
-        var key = (rc.phone || '').replace(/\D/g, '') || (rc.email || '').toLowerCase();
-        if (!map[key]) map[key] = { name: rc.name, phone: rc.phone, email: rc.email, count: 0, spent: 0, last: rc.createdAt, orders: [], registered: true };
-        else map[key].registered = true;
-      });
-      var custs = Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) { return b.count - a.count; });
 
-      var rows = custs.map(function (c, i) {
-        var sub = c.orders.length ? ('<tr class="cust-orders" data-sub="' + i + '" style="display:none;"><td colspan="5">' +
-          c.orders.map(function (o) { return o.id + ' · ' + escapeHtml(o.service) + ' · ' + o.status + ' · ' + escapeHtml(o.total || '—'); }).join('<br>') + '</td></tr>') : '';
-        return '<tr class="cust-row" data-row="' + i + '">' +
-          '<td>' + escapeHtml(c.name) + (c.registered ? '<span class="reg-badge">Registered</span>' : '') + '</td>' +
-          '<td>' + escapeHtml(c.phone || '—') + '</td>' +
-          '<td>' + escapeHtml(c.email || '—') + '</td>' +
-          '<td class="num">' + c.count + '</td>' +
-          '<td class="num">' + fmtRM(c.spent) + '</td>' +
-        '</tr>' + sub;
-      }).join('');
+      function finish() {
+        var custs = Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) { return b.count - a.count; });
+        var rows = custs.map(function (c, i) {
+          var sub = c.orders.length ? ('<tr class="cust-orders" data-sub="' + i + '" style="display:none;"><td colspan="5">' +
+            c.orders.map(function (o) { return o.id + ' · ' + escapeHtml(o.service) + ' · ' + o.status + ' · ' + escapeHtml(o.total || '—'); }).join('<br>') + '</td></tr>') : '';
+          return '<tr class="cust-row" data-row="' + i + '">' +
+            '<td>' + escapeHtml(c.name) + (c.registered ? '<span class="reg-badge">In Oracle</span>' : '') + '</td>' +
+            '<td>' + escapeHtml(c.phone || '—') + '</td>' +
+            '<td>' + escapeHtml(c.email || '—') + '</td>' +
+            '<td class="num">' + c.count + '</td>' +
+            '<td class="num">' + fmtRM(c.spent) + '</td>' +
+          '</tr>' + sub;
+        }).join('');
 
-      document.getElementById('view-customers').innerHTML =
-        '<h3 style="font-family:var(--font-serif);font-size:1.4rem;margin-top:1.4rem;">Customer Database</h3>' +
-        '<p style="color:var(--white-40);font-size:0.8rem;margin-top:0.3rem;">' + custs.length + ' customer(s) on record. Click a row to view their orders.</p>' +
-        '<input class="cust-search" id="cust-search" placeholder="Search by name, phone, or email…" />' +
-        '<div class="panel glass" style="padding:0.5rem 1.2rem;"><table class="afp-table"><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th class="num">Orders</th><th class="num">Spent</th></tr></thead><tbody id="cust-tbody">' +
-        (custs.length ? rows : '<tr><td colspan="5" style="color:var(--white-40);padding:1.5rem;">No customers yet.</td></tr>') +
-        '</tbody></table></div>';
+        document.getElementById('view-customers').innerHTML =
+          '<h3 style="font-family:var(--font-serif);font-size:1.4rem;margin-top:1.4rem;">Customer Database</h3>' +
+          '<p style="color:var(--white-40);font-size:0.8rem;margin-top:0.3rem;">' + custs.length + ' customer(s) from Oracle. Click a row to view their orders.</p>' +
+          '<input class="cust-search" id="cust-search" placeholder="Search by name, phone, or email…" />' +
+          '<div class="panel glass" style="padding:0.5rem 1.2rem;"><table class="afp-table"><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th class="num">Orders</th><th class="num">Spent</th></tr></thead><tbody id="cust-tbody">' +
+          (custs.length ? rows : '<tr><td colspan="5" style="color:var(--white-40);padding:1.5rem;">No customers in Oracle yet.</td></tr>') +
+          '</tbody></table></div>';
 
-      document.querySelectorAll('#cust-tbody .cust-row').forEach(function (r) {
-        r.addEventListener('click', function () {
-          var i = r.getAttribute('data-row');
-          var sub = document.querySelector('[data-sub="' + i + '"]');
-          if (sub) sub.style.display = sub.style.display === 'none' ? 'table-row' : 'none';
-        });
-      });
-      var search = document.getElementById('cust-search');
-      search.addEventListener('input', function () {
-        var q = search.value.toLowerCase();
         document.querySelectorAll('#cust-tbody .cust-row').forEach(function (r) {
-          var show = r.textContent.toLowerCase().indexOf(q) > -1;
-          r.style.display = show ? '' : 'none';
-          var sub = document.querySelector('[data-sub="' + r.getAttribute('data-row') + '"]');
-          if (sub && !show) sub.style.display = 'none';
+          r.addEventListener('click', function () {
+            var i = r.getAttribute('data-row');
+            var sub = document.querySelector('[data-sub="' + i + '"]');
+            if (sub) sub.style.display = sub.style.display === 'none' ? 'table-row' : 'none';
+          });
         });
-      });
+        var search = document.getElementById('cust-search');
+        search.addEventListener('input', function () {
+          var q = search.value.toLowerCase();
+          document.querySelectorAll('#cust-tbody .cust-row').forEach(function (r) {
+            var show = r.textContent.toLowerCase().indexOf(q) > -1;
+            r.style.display = show ? '' : 'none';
+            var sub = document.querySelector('[data-sub="' + r.getAttribute('data-row') + '"]');
+            if (sub && !show) sub.style.display = 'none';
+          });
+        });
+      }
+
+      // Merge in the full Oracle CUSTOMER table so every customer shows (1-to-1),
+      // even ones with no orders yet.
+      if (AFP.hasLive()) {
+        AFP.fetchItems('customers').then(function (list) {
+          list.forEach(function (rc) {
+            var key = (rc.customer_phone || '').replace(/\D/g, '') || (rc.customer_email || '').toLowerCase() || ('cid' + rc.customer_id);
+            if (!map[key]) map[key] = { name: rc.customer_name, phone: rc.customer_phone || '', email: rc.customer_email || '', count: 0, spent: 0, last: null, orders: [], registered: true };
+            else map[key].registered = true;
+          });
+          finish();
+        }).catch(function () { finish(); });
+      } else {
+        finish();
+      }
     }
 
     /* ---- HELPERS ---- */

@@ -399,6 +399,13 @@
     // Drop back to offline localStorage demo data.
     useLocal: function () { LIVE.on = false; LIVE.orders = null; },
 
+    // Remove any leftover demo orders from this browser (Oracle-only mode).
+    purgeDemo: function () {
+      localStorage.removeItem(ORDERS_KEY);
+      localStorage.removeItem(SEQ_KEY);
+      localStorage.removeItem(DEMO_KEY);
+    },
+
     // ---- Write-back to Oracle (two-way sync) ----
     apiWrite: function (endpoint, method, body) {
       var base = AFP.apiBase();
