@@ -430,7 +430,7 @@
       return fetch(base + "/" + endpoint, {
         method: method,
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: (method === "DELETE") ? undefined : JSON.stringify(body || {})
+        body: JSON.stringify(body || {})   // always send at least {} so ORDS can parse it (even DELETE)
       }).then(function (res) {
         return res.text().then(function (txt) {
           var json = {};
