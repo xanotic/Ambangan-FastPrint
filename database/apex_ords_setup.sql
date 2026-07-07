@@ -121,7 +121,8 @@ BEGIN
     p_source => q'~
       SELECT EmployeeID AS employee_id, EmployeeName AS employee_name,
              EmployeePhone AS employee_phone,
-             EmployeeJobPosition AS job_position
+             EmployeeJobPosition AS job_position,
+             EmployeeUsername AS username, EmployeeRole AS role
         FROM EMPLOYEE ORDER BY EmployeeID
     ~');
 
@@ -216,10 +217,192 @@ BEGIN
     p_source_type => ORDS.source_type_plsql,
     p_source      => q'~
       BEGIN
-        INSERT INTO CUSTOMER (CustomerName, CustomerPhoneNum, CustomerEmail)
-        VALUES (:name, :phone, :email)
+        INSERT INTO CUSTOMER (CustomerName, CustomerPhoneNum, CustomerEmail, CustomerPassword)
+        VALUES (:name, :phone, :email, :password)
         RETURNING CustomerID INTO :customer_id;
         :status := 201;
+      END;
+    ~');
+
+  -----------------------------------------------------------------
+  -- CRUD + LOGIN  (customers, employees, services, machines)
+  -----------------------------------------------------------------
+
+  -- POST /afp/customerlogin  -> verify email + password
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'customerlogin');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'customerlogin', p_method => 'POST',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      DECLARE v_id NUMBER; v_name VARCHAR2(100); v_phone VARCHAR2(20);
+      BEGIN
+        SELECT CustomerID, CustomerName, CustomerPhoneNum
+          INTO v_id, v_name, v_phone
+          FROM CUSTOMER
+         WHERE LOWER(CustomerEmail) = LOWER(:email) AND CustomerPassword = :password
+         FETCH FIRST 1 ROWS ONLY;
+        :customer_id := v_id; :name := v_name; :phone := v_phone; :ok := 1; :status := 200;
+      EXCEPTION WHEN NO_DATA_FOUND THEN :ok := 0; :status := 200;
+      END;
+    ~');
+
+  -- POST /afp/stafflogin  -> verify username + password
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'stafflogin');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'stafflogin', p_method => 'POST',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      DECLARE v_id NUMBER; v_name VARCHAR2(100); v_role VARCHAR2(20);
+      BEGIN
+        SELECT EmployeeID, EmployeeName, EmployeeRole
+          INTO v_id, v_name, v_role
+          FROM EMPLOYEE
+         WHERE LOWER(EmployeeUsername) = LOWER(:username) AND EmployeePassword = :password
+         FETCH FIRST 1 ROWS ONLY;
+        :employee_id := v_id; :name := v_name; :role := v_role; :ok := 1; :status := 200;
+      EXCEPTION WHEN NO_DATA_FOUND THEN :ok := 0; :status := 200;
+      END;
+    ~');
+
+  -- PUT/DELETE /afp/customers/:id
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'customers/:id');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'customers/:id', p_method => 'PUT',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        UPDATE CUSTOMER SET
+          CustomerName     = NVL(:name,  CustomerName),
+          CustomerPhoneNum = NVL(:phone, CustomerPhoneNum),
+          CustomerEmail    = NVL(:email, CustomerEmail),
+          CustomerPassword = NVL(:password, CustomerPassword)
+        WHERE CustomerID = :id;
+        :status := 200;
+      END;
+    ~');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'customers/:id', p_method => 'DELETE',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        DELETE FROM CUSTOMER WHERE CustomerID = :id;
+        :status := 200;
+      EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;
+      END;
+    ~');
+
+  -- POST /afp/employees ; PUT/DELETE /afp/employees/:id
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'employees', p_method => 'POST',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        INSERT INTO EMPLOYEE (EmployeeName, EmployeePhone, EmployeeJobPosition,
+                              EmployeeUsername, EmployeePassword, EmployeeRole)
+        VALUES (:name, :phone, :position, :username, NVL(:password,'staff123'), NVL(:role,'Staff'))
+        RETURNING EmployeeID INTO :employee_id;
+        :status := 201;
+      END;
+    ~');
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'employees/:id');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'employees/:id', p_method => 'PUT',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        UPDATE EMPLOYEE SET
+          EmployeeName        = NVL(:name, EmployeeName),
+          EmployeePhone       = NVL(:phone, EmployeePhone),
+          EmployeeJobPosition = NVL(:position, EmployeeJobPosition),
+          EmployeeUsername    = NVL(:username, EmployeeUsername),
+          EmployeePassword    = NVL(:password, EmployeePassword),
+          EmployeeRole        = NVL(:role, EmployeeRole)
+        WHERE EmployeeID = :id;
+        :status := 200;
+      END;
+    ~');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'employees/:id', p_method => 'DELETE',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        DELETE FROM EMPLOYEE WHERE EmployeeID = :id;
+        :status := 200;
+      EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;
+      END;
+    ~');
+
+  -- POST /afp/services ; PUT/DELETE /afp/services/:id
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'services', p_method => 'POST',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        INSERT INTO SERVICE (ServiceType, ServicePrice)
+        VALUES (:service_type, :service_price)
+        RETURNING ServiceID INTO :service_id;
+        :status := 201;
+      END;
+    ~');
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'services/:id');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'services/:id', p_method => 'PUT',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        UPDATE SERVICE SET
+          ServiceType  = NVL(:service_type, ServiceType),
+          ServicePrice = NVL(:service_price, ServicePrice)
+        WHERE ServiceID = :id;
+        :status := 200;
+      END;
+    ~');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'services/:id', p_method => 'DELETE',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        DELETE FROM SERVICE WHERE ServiceID = :id;
+        :status := 200;
+      EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;
+      END;
+    ~');
+
+  -- POST /afp/machines ; PUT/DELETE /afp/machines/:id
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'machines', p_method => 'POST',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        INSERT INTO MACHINE (MachineName, MachineType, MachineBrand, MachineStatus)
+        VALUES (:machine_name, :machine_type, :machine_brand, NVL(:machine_status,'Active'))
+        RETURNING MachineID INTO :machine_id;
+        :status := 201;
+      END;
+    ~');
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'machines/:id');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'machines/:id', p_method => 'PUT',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        UPDATE MACHINE SET
+          MachineName   = NVL(:machine_name, MachineName),
+          MachineType   = NVL(:machine_type, MachineType),
+          MachineBrand  = NVL(:machine_brand, MachineBrand),
+          MachineStatus = NVL(:machine_status, MachineStatus)
+        WHERE MachineID = :id;
+        :status := 200;
+      END;
+    ~');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'machines/:id', p_method => 'DELETE',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        DELETE FROM MACHINE WHERE MachineID = :id;
+        :status := 200;
+      EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;
       END;
     ~');
 

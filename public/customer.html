@@ -125,10 +125,20 @@
 
     <div class="cd-section-title">My Orders</div>
     <div class="my-orders" id="my-orders"></div>
+
+    <div class="cd-section-title">My Profile</div>
+    <div class="glass" style="padding:1.4rem 1.6rem;border-radius:var(--radius-sm);max-width:540px;">
+      <div class="af-field"><label>Full Name</label><input id="pf-name" type="text" /></div>
+      <div class="af-field"><label>Email</label><input id="pf-email" type="email" /></div>
+      <div class="af-field"><label>Phone</label><input id="pf-phone" type="tel" /></div>
+      <div class="af-field"><label>New Password <span style="text-transform:none;color:var(--white-40);">(leave blank to keep current)</span></label><input id="pf-pass" type="password" placeholder="••••••••" autocomplete="new-password" /></div>
+      <div class="auth-err" id="pf-err"></div>
+      <button class="checkout-btn" id="pf-save" style="width:auto;padding:0.75rem 1.5rem;">Save Changes</button>
+    </div>
   </div>
 
-  <script src="afp-config.js?v=8"></script>
-  <script src="afp.js?v=8"></script>
+  <script src="afp-config.js?v=9"></script>
+  <script src="afp.js?v=9"></script>
   <script>
     var authView = document.getElementById('auth-view');
     var dashView = document.getElementById('dash-view');
@@ -160,24 +170,27 @@
     /* ---- LOGIN ---- */
     loginForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      var err = document.getElementById('li-err');
-      var sess = AFP.loginCustomer(document.getElementById('li-email').value, document.getElementById('li-pass').value);
-      if (!sess) { err.textContent = 'Invalid email or password.'; err.style.display = 'block'; return; }
-      enterDash(sess);
+      var err = document.getElementById('li-err'); err.style.display = 'none';
+      AFP.authCustomerLogin(document.getElementById('li-email').value, document.getElementById('li-pass').value)
+        .then(function (sess) {
+          if (!sess) { err.textContent = 'Invalid email or password.'; err.style.display = 'block'; return; }
+          enterDash(sess);
+        });
     });
 
     /* ---- SIGN UP ---- */
     signupForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      var err = document.getElementById('su-err');
-      var res = AFP.registerCustomer({
+      var err = document.getElementById('su-err'); err.style.display = 'none';
+      AFP.authCustomerSignup({
         name: document.getElementById('su-name').value,
         email: document.getElementById('su-email').value,
         phone: document.getElementById('su-phone').value,
         password: document.getElementById('su-pass').value
+      }).then(function (res) {
+        if (res.error) { err.textContent = res.error; err.style.display = 'block'; return; }
+        enterDash(res.customer);
       });
-      if (res.error) { err.textContent = res.error; err.style.display = 'block'; return; }
-      enterDash(res.customer);
     });
 
     document.getElementById('logout-btn').addEventListener('click', function () {
@@ -199,8 +212,42 @@
       document.getElementById('cust-name').textContent = sess.name;
       document.getElementById('cust-contact').textContent = sess.email + (sess.phone ? '  ·  ' + sess.phone : '');
       document.getElementById('my-orders').innerHTML = '<div class="empty glass">Loading your orders…</div>';
+      fillProfile(sess);
       ensureLive().then(function () { renderOrders(sess); });
     }
+
+    function fillProfile(sess) {
+      document.getElementById('pf-name').value = sess.name || '';
+      document.getElementById('pf-email').value = sess.email || '';
+      document.getElementById('pf-phone').value = sess.phone || '';
+      document.getElementById('pf-pass').value = '';
+    }
+
+    document.getElementById('pf-save').addEventListener('click', function () {
+      var sess = AFP.customerSession();
+      var err = document.getElementById('pf-err'); err.style.display = 'none';
+      if (!sess) return;
+      if (!sess.id) { err.textContent = 'Editing needs an Oracle account — please sign up or log in again while online.'; err.style.display = 'block'; return; }
+      var fields = {
+        name: document.getElementById('pf-name').value.trim(),
+        email: document.getElementById('pf-email').value.trim(),
+        phone: document.getElementById('pf-phone').value.trim()
+      };
+      var pw = document.getElementById('pf-pass').value;
+      if (pw) fields.password = pw;
+      var btn = this; btn.disabled = true; btn.textContent = 'Saving…';
+      AFP.updateCustomer(sess.id, fields).then(function () {
+        sess.name = fields.name; sess.email = (fields.email || '').toLowerCase(); sess.phone = fields.phone;
+        sessionStorage.setItem('afp_customer_session', JSON.stringify(sess));
+        document.getElementById('cust-name').textContent = sess.name;
+        document.getElementById('cust-contact').textContent = sess.email + (sess.phone ? '  ·  ' + sess.phone : '');
+        btn.disabled = false; btn.textContent = 'Save Changes';
+        err.style.color = '#34d399'; err.textContent = '✓ Saved to Oracle'; err.style.display = 'block';
+      }).catch(function (e) {
+        btn.disabled = false; btn.textContent = 'Save Changes';
+        err.style.color = '#f87171'; err.textContent = 'Update failed: ' + (e && e.message || e); err.style.display = 'block';
+      });
+    });
 
     function renderOrders(sess) {
       var orders = AFP.ordersForCustomer(sess.email, sess.phone);

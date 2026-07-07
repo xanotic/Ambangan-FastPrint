@@ -87,6 +87,11 @@
     .empty .big { font-size:2.5rem; margin-bottom:1rem; }
 
     /* view tabs */
+    .db-btn { border:1px solid var(--white-10); background:var(--white-5); color:var(--white-70); border-radius:7px; padding:0.3rem 0.55rem; font-size:0.7rem; font-weight:700; cursor:pointer; }
+    .db-btn:hover { color:#fff; border-color:var(--teal-border); }
+    .db-btn.danger:hover { color:#f87171; border-color:rgba(248,113,113,0.4); }
+    .db-inp, .db-addinp { background:var(--white-5); border:1px solid var(--white-10); border-radius:8px; padding:0.35rem 0.55rem; color:#fff; font-size:0.75rem; font-family:inherit; outline:none; }
+    .db-inp:focus, .db-addinp:focus { border-color:var(--teal-border); }
     .view-tabs { display:flex; gap:0.4rem; margin:1.6rem 0 0.2rem; border-bottom:1px solid var(--white-5); }
     .view-tab { background:transparent; border:none; border-bottom:2px solid transparent; color:rgba(255,255,255,0.5); padding:0.75rem 1.1rem; font-size:0.75rem; font-weight:700; letter-spacing:0.04em; cursor:pointer; transition:var(--transition); }
     .view-tab:hover { color:#fff; }
@@ -318,6 +323,7 @@
     <div class="view-tabs" id="view-tabs">
       <button class="view-tab manager-only" data-view="overview">📊 Overview</button>
       <button class="view-tab active" data-view="orders">📋 Orders</button>
+      <button class="view-tab" data-view="profile">👤 My Profile</button>
       <button class="view-tab manager-only" data-view="customers">👥 Customers</button>
       <button class="view-tab manager-only" data-view="reports">📈 Reports</button>
       <button class="view-tab manager-only" data-view="database">🗄️ Database</button>
@@ -355,6 +361,9 @@
 
     <!-- DATABASE VIEW (Owner/Admin only — live raw Oracle tables via ORDS) -->
     <div id="view-database" style="display:none;"></div>
+
+    <!-- PROFILE VIEW (all roles — edit own account) -->
+    <div id="view-profile" style="display:none;"></div>
   </div>
 
   <!-- ════════ ORDER DETAIL DRAWER ════════ -->
@@ -373,8 +382,8 @@
     <div class="drawer-body" id="dr-body"></div>
   </div>
 
-  <script src="afp-config.js?v=8"></script>
-  <script src="afp.js?v=8"></script>
+  <script src="afp-config.js?v=9"></script>
+  <script src="afp.js?v=9"></script>
   <script>
     var loginView = document.getElementById('login-view');
     var dashView  = document.getElementById('dash-view');
@@ -386,9 +395,11 @@
       e.preventDefault();
       var u = document.getElementById('login-user').value.trim();
       var p = document.getElementById('login-pass').value;
-      var sess = AFP.login(u, p);
-      if (!sess) { document.getElementById('login-err').style.display = 'block'; return; }
-      enterDash(sess);
+      document.getElementById('login-err').style.display = 'none';
+      AFP.authStaffLogin(u, p).then(function (sess) {
+        if (!sess) { document.getElementById('login-err').style.display = 'block'; return; }
+        enterDash(sess);
+      });
     });
 
     document.getElementById('logout-btn').addEventListener('click', function () {
@@ -465,51 +476,128 @@
     }
 
     /* ---- DATABASE VIEW: raw Oracle tables straight from ORDS ---- */
+    // Editable table definitions (CRUD straight to Oracle via ORDS).
+    var DB_TABLES = [
+      { ep: 'customers', title: 'CUSTOMER', idKey: 'customer_id', editable: true,
+        cols: [{ k: 'customer_id', l: 'ID' }, { k: 'customer_name', l: 'Name', edit: 1, f: 'name' }, { k: 'customer_phone', l: 'Phone', edit: 1, f: 'phone' }, { k: 'customer_email', l: 'Email', edit: 1, f: 'email' }],
+        add: [{ f: 'name', l: 'Name' }, { f: 'phone', l: 'Phone' }, { f: 'email', l: 'Email' }, { f: 'password', l: 'Password' }],
+        update: function (id, x) { return AFP.updateCustomer(id, x); }, create: function (x) { return AFP.apiWrite('customers', 'POST', x); }, del: function (id) { return AFP.deleteCustomer(id); } },
+      { ep: 'employees', title: 'EMPLOYEE', idKey: 'employee_id', editable: true,
+        cols: [{ k: 'employee_id', l: 'ID' }, { k: 'employee_name', l: 'Name', edit: 1, f: 'name' }, { k: 'employee_phone', l: 'Phone', edit: 1, f: 'phone' }, { k: 'job_position', l: 'Position', edit: 1, f: 'position' }, { k: 'username', l: 'Username', edit: 1, f: 'username' }, { k: 'role', l: 'Role', edit: 1, f: 'role' }],
+        add: [{ f: 'name', l: 'Name' }, { f: 'phone', l: 'Phone' }, { f: 'position', l: 'Position' }, { f: 'username', l: 'Username' }, { f: 'password', l: 'Password' }, { f: 'role', l: 'Role' }],
+        update: function (id, x) { return AFP.updateEmployee(id, x); }, create: function (x) { return AFP.addEmployee(x); }, del: function (id) { return AFP.deleteEmployee(id); } },
+      { ep: 'services', title: 'SERVICE', idKey: 'service_id', editable: true,
+        cols: [{ k: 'service_id', l: 'ID' }, { k: 'service_type', l: 'Type', edit: 1, f: 'service_type' }, { k: 'service_price', l: 'Price (RM)', edit: 1, f: 'service_price' }, { k: 'category', l: 'Category' }],
+        add: [{ f: 'service_type', l: 'Type' }, { f: 'service_price', l: 'Price' }],
+        update: function (id, x) { return AFP.updateService(id, x); }, create: function (x) { return AFP.addService(x); }, del: function (id) { return AFP.deleteService(id); } },
+      { ep: 'machines', title: 'MACHINE', idKey: 'machine_id', editable: true,
+        cols: [{ k: 'machine_id', l: 'ID' }, { k: 'machine_name', l: 'Name', edit: 1, f: 'machine_name' }, { k: 'machine_type', l: 'Type', edit: 1, f: 'machine_type' }, { k: 'machine_brand', l: 'Brand', edit: 1, f: 'machine_brand' }, { k: 'machine_status', l: 'Status', edit: 1, f: 'machine_status' }],
+        add: [{ f: 'machine_name', l: 'Name' }, { f: 'machine_type', l: 'Type' }, { f: 'machine_brand', l: 'Brand' }, { f: 'machine_status', l: 'Status (Active/Maintenance)' }],
+        update: function (id, x) { return AFP.updateMachine(id, x); }, create: function (x) { return AFP.addMachine(x); }, del: function (id) { return AFP.deleteMachine(id); } },
+      { ep: 'deliveries', title: 'DELIVERY', idKey: 'delivery_id', editable: false,
+        cols: [{ k: 'delivery_id', l: 'ID' }, { k: 'order_ref', l: 'Order' }, { k: 'delivery_date', l: 'Date' }, { k: 'address', l: 'Address' }, { k: 'tracking_number', l: 'Tracking' }] },
+      { ep: 'receipts', title: 'RECEIPT', idKey: 'receipt_id', editable: false,
+        cols: [{ k: 'receipt_id', l: 'ID' }, { k: 'order_id', l: 'Order' }, { k: 'payment_method', l: 'Method' }, { k: 'deposit_amount', l: 'Deposit' }, { k: 'total_amount', l: 'Total' }, { k: 'cashier', l: 'Cashier' }] }
+    ];
+    var DB_CACHE = {}, DB_EDIT = { ep: null, id: null }, DB_ADD = {};
+
     function renderDatabase() {
       var host = document.getElementById('view-database');
       if (!AFP.hasLive()) {
-        host.innerHTML = '<div class="pan"><div style="padding:2rem;text-align:center;color:var(--white-60);">No Oracle API is configured (afp-config.js is empty), so the raw database tables are unavailable.</div></div>';
+        host.innerHTML = '<div class="pan"><div style="padding:2rem;text-align:center;color:var(--white-60);">No Oracle API is configured, so the database tables are unavailable.</div></div>';
         return;
       }
-      host.innerHTML = '<div style="margin:1.2rem 0 0.4rem;color:var(--white-60);font-size:0.8rem;">Live tables read directly from your Oracle database through Oracle APEX (ORDS REST). Edit rows in APEX SQL Workshop and refresh to see them change here.</div><div id="db-body">Loading live data from Oracle…</div>';
+      host.innerHTML = '<div style="margin:1.2rem 0 0.4rem;color:var(--white-60);font-size:0.8rem;">Live Oracle tables — <b style="color:var(--teal);">fully editable</b>. Edit, add or delete rows here and it saves straight to Oracle.</div><div id="db-body">Loading live data from Oracle…</div>';
+      reloadAllDb();
+    }
+    function refetchDb(ep) {
+      return AFP.fetchItems(ep).then(function (items) { DB_CACHE[ep] = items; }).catch(function (e) { DB_CACHE[ep] = { __err: e.message }; });
+    }
+    function reloadAllDb() {
+      Promise.all(DB_TABLES.map(function (t) { return refetchDb(t.ep); })).then(renderDbTables);
+    }
+    function renderDbTables() {
       var body = document.getElementById('db-body');
-      var tables = [
-        { ep: 'customers', title: 'CUSTOMER', cols: [['customer_id', 'ID'], ['customer_name', 'Name'], ['customer_phone', 'Phone'], ['customer_email', 'Email']] },
-        { ep: 'employees', title: 'EMPLOYEE', cols: [['employee_id', 'ID'], ['employee_name', 'Name'], ['employee_phone', 'Phone'], ['job_position', 'Position']] },
-        { ep: 'services', title: 'SERVICE', cols: [['service_id', 'ID'], ['service_type', 'Type'], ['service_price', 'Price (RM)'], ['category', 'Category']] },
-        { ep: 'machines', title: 'MACHINE', cols: [['machine_id', 'ID'], ['machine_name', 'Name'], ['machine_type', 'Type'], ['machine_brand', 'Brand'], ['machine_status', 'Status']] },
-        { ep: 'deliveries', title: 'DELIVERY', cols: [['delivery_id', 'ID'], ['order_ref', 'Order'], ['delivery_date', 'Date'], ['address', 'Address'], ['tracking_number', 'Tracking']] },
-        { ep: 'receipts', title: 'RECEIPT', cols: [['receipt_id', 'ID'], ['order_id', 'Order'], ['payment_method', 'Method'], ['deposit_amount', 'Deposit'], ['total_amount', 'Total'], ['cashier', 'Cashier']] }
-      ];
-      Promise.all(tables.map(function (t) {
-        return AFP.fetchItems(t.ep).then(function (items) { return { t: t, items: items }; })
-          .catch(function (e) { return { t: t, err: e.message }; });
-      })).then(function (results) {
-        body.innerHTML = results.map(function (r) { return dbTable(r.t, r.items, r.err); }).join('');
-      });
+      if (body) body.innerHTML = DB_TABLES.map(dbTable).join('');
     }
-    function dbTable(t, items, err) {
-      var h = '<div class="pan" style="margin-bottom:1.2rem;"><div class="pan-head">' + t.title +
-        ' <span style="color:var(--white-40);font-weight:500;">(' + (items ? items.length : '—') + ' rows)</span></div><div style="padding:0.4rem 1rem 1rem;overflow-x:auto;">';
-      if (err) return h + '<div style="color:#f87171;">Failed to load: ' + escHtml(err) + '</div></div></div>';
-      if (!items || !items.length) return h + '<div style="color:var(--white-50);">No rows.</div></div></div>';
-      h += '<table class="afp-table"><thead><tr>' + t.cols.map(function (c) { return '<th>' + c[1] + '</th>'; }).join('') + '</tr></thead><tbody>';
-      h += items.map(function (row) {
-        return '<tr>' + t.cols.map(function (c) {
-          var v = row[c[0]];
-          if ((c[0] === 'delivery_date') && v) v = String(v).replace('T', ' ').slice(0, 16);
-          return '<td>' + (v == null || v === '' ? '—' : escHtml(v)) + '</td>';
-        }).join('') + '</tr>';
+    function dbTable(t) {
+      var data = DB_CACHE[t.ep];
+      var head = '<div class="pan" style="margin-bottom:1.2rem;"><div class="pan-head">' + t.title +
+        ' <span style="color:var(--white-40);font-weight:500;">(' + (Array.isArray(data) ? data.length : '—') + ' rows)</span></div><div style="padding:0.4rem 1rem 1rem;overflow-x:auto;">';
+      if (data && data.__err) return head + '<div style="color:#f87171;">Failed: ' + escHtml(data.__err) + '</div></div></div>';
+      var items = Array.isArray(data) ? data : [];
+      var actCol = t.editable ? '<th style="width:1%;">Actions</th>' : '';
+      var h = head + '<table class="afp-table"><thead><tr>' + t.cols.map(function (c) { return '<th>' + c.l + '</th>'; }).join('') + actCol + '</tr></thead><tbody>';
+      h += items.map(function (row) { return dbRow(t, row); }).join('');
+      h += '</tbody></table>';
+      if (t.editable) {
+        h += DB_ADD[t.ep] ? dbAddForm(t)
+          : '<button class="db-btn" data-act="addtoggle" data-ep="' + t.ep + '" style="margin-top:0.8rem;">＋ Add ' + t.title.toLowerCase() + '</button>';
+      }
+      return h + '</div></div>';
+    }
+    function dbRow(t, row) {
+      var id = row[t.idKey];
+      var editing = t.editable && DB_EDIT.ep === t.ep && String(DB_EDIT.id) === String(id);
+      var cells = t.cols.map(function (c) {
+        var v = row[c.k];
+        if (c.k === 'delivery_date' && v) v = String(v).replace('T', ' ').slice(0, 16);
+        if (editing && c.edit) return '<td><input class="db-inp" data-field="' + c.f + '" value="' + escHtml(v == null ? '' : v) + '" style="width:100%;min-width:90px;"/></td>';
+        return '<td>' + (v == null || v === '' ? '—' : escHtml(v)) + '</td>';
       }).join('');
-      h += '</tbody></table></div></div>';
-      return h;
+      var act = '';
+      if (t.editable) {
+        act = editing
+          ? '<td style="white-space:nowrap;"><button class="db-btn" data-act="save" data-ep="' + t.ep + '" data-id="' + id + '">Save</button> <button class="db-btn" data-act="cancel">Cancel</button></td>'
+          : '<td style="white-space:nowrap;"><button class="db-btn" data-act="edit" data-ep="' + t.ep + '" data-id="' + id + '" title="Edit">✎</button> <button class="db-btn danger" data-act="del" data-ep="' + t.ep + '" data-id="' + id + '" title="Delete">🗑</button></td>';
+      }
+      return '<tr>' + cells + act + '</tr>';
     }
+    function dbAddForm(t) {
+      var inputs = t.add.map(function (a) {
+        return '<label style="display:inline-flex;flex-direction:column;font-size:0.58rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--white-40);gap:0.25rem;">' + a.l +
+          '<input class="db-addinp" data-field="' + a.f + '" style="min-width:120px;"/></label>';
+      }).join('');
+      return '<div data-addform="' + t.ep + '" style="margin-top:0.9rem;display:flex;flex-wrap:wrap;gap:0.7rem;align-items:flex-end;background:var(--white-5);padding:1rem;border-radius:10px;">' +
+        inputs + '<button class="db-btn" data-act="addsub" data-ep="' + t.ep + '">Add row</button>' +
+        '<button class="db-btn" data-act="addcancel" data-ep="' + t.ep + '">Cancel</button></div>';
+    }
+    // One delegated handler for all CRUD buttons in the Database tab.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('[data-act]') : null;
+      if (!btn) return;
+      var act = btn.getAttribute('data-act'), ep = btn.getAttribute('data-ep'), id = btn.getAttribute('data-id');
+      var t = DB_TABLES.filter(function (x) { return x.ep === ep; })[0];
+      if (act === 'edit') { DB_EDIT = { ep: ep, id: id }; renderDbTables(); }
+      else if (act === 'cancel') { DB_EDIT = { ep: null, id: null }; renderDbTables(); }
+      else if (act === 'addtoggle') { DB_ADD[ep] = true; renderDbTables(); }
+      else if (act === 'addcancel') { DB_ADD[ep] = false; renderDbTables(); }
+      else if (act === 'save' && t) {
+        var row = btn.closest('tr'), fields = {};
+        row.querySelectorAll('.db-inp').forEach(function (inp) { fields[inp.getAttribute('data-field')] = inp.value; });
+        btn.disabled = true; btn.textContent = '…';
+        t.update(id, fields).then(function () { DB_EDIT = { ep: null, id: null }; return refetchDb(ep); }).then(renderDbTables)
+          .catch(function (err) { alert('Update failed: ' + err.message); btn.disabled = false; btn.textContent = 'Save'; });
+      }
+      else if (act === 'del' && t) {
+        if (!confirm('Delete this ' + t.title + ' row from Oracle?')) return;
+        t.del(id).then(function () { return refetchDb(ep); }).then(renderDbTables)
+          .catch(function (err) { alert('Delete failed: ' + err.message + '\n\n(Rows referenced by orders can\'t be deleted.)'); });
+      }
+      else if (act === 'addsub' && t) {
+        var form = document.querySelector('[data-addform="' + ep + '"]'), af = {};
+        form.querySelectorAll('.db-addinp').forEach(function (inp) { if (inp.value !== '') af[inp.getAttribute('data-field')] = inp.value; });
+        btn.disabled = true; btn.textContent = '…';
+        t.create(af).then(function () { DB_ADD[ep] = false; return refetchDb(ep); }).then(renderDbTables)
+          .catch(function (err) { alert('Add failed: ' + err.message); btn.disabled = false; btn.textContent = 'Add row'; });
+      }
+    });
 
     /* ---- VIEW SWITCHER ---- */
     var liveTimer = null;
     function switchView(name) {
-      if (!IS_MANAGER && name !== 'orders') name = 'orders';
-      ['overview', 'orders', 'reports', 'customers', 'database'].forEach(function (v) {
+      if (!IS_MANAGER && name !== 'orders' && name !== 'profile') name = 'orders';
+      ['overview', 'orders', 'profile', 'reports', 'customers', 'database'].forEach(function (v) {
         var el = document.getElementById('view-' + v);
         if (el) el.style.display = (v === name) ? '' : 'none';
       });
@@ -529,6 +617,63 @@
       if (name === 'reports') renderReports();
       if (name === 'customers') renderCustomers();
       if (name === 'database') renderDatabase();
+      if (name === 'profile') renderProfile();
+    }
+
+    /* ---- MY PROFILE (all roles — edit own Oracle account) ---- */
+    function renderProfile() {
+      var sess = AFP.session();
+      var host = document.getElementById('view-profile');
+      if (!sess) { host.innerHTML = ''; return; }
+      host.innerHTML = '<div class="pan glass" style="max-width:560px;padding:1.5rem;margin-top:1.4rem;">Loading…</div>';
+      function build(emp) {
+        var canEdit = !!sess.id && AFP.hasLive();
+        function fld(id, label, val, type) {
+          return '<div style="margin-bottom:1rem;"><label style="display:block;font-size:0.6rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#7fd4e8;margin-bottom:0.4rem;">' + label + '</label>' +
+            '<input id="' + id + '" type="' + (type || 'text') + '" value="' + escHtml(val == null ? '' : val) + '" ' + (canEdit ? '' : 'disabled') + ' class="db-inp" style="width:100%;padding:0.7rem 0.9rem;font-size:0.85rem;"/></div>';
+        }
+        host.innerHTML =
+          '<h3 style="font-family:var(--font-serif);font-size:1.4rem;margin:1.4rem 0 0.3rem;">My Profile</h3>' +
+          '<p style="color:var(--white-40);font-size:0.8rem;margin-bottom:1rem;">Signed in as <b style="color:var(--teal);">' + escHtml(sess.role || '') + '</b>. ' +
+            (canEdit ? 'Changes save to Oracle.' : 'You are on a built-in account — log in with an Oracle staff account (e.g. owner / admin123) to edit.') + '</p>' +
+          '<div class="pan glass" style="max-width:560px;padding:1.5rem;">' +
+            fld('pfs-name', 'Full Name', sess.name) +
+            fld('pfs-phone', 'Phone', emp.employee_phone) +
+            fld('pfs-position', 'Job Position', emp.job_position) +
+            fld('pfs-username', 'Username', emp.username || sess.username) +
+            fld('pfs-pass', 'New Password (leave blank to keep)', '', 'password') +
+            '<div id="pfs-err" style="display:none;font-size:0.78rem;font-weight:600;margin-bottom:0.8rem;"></div>' +
+            '<button class="filter-btn active" id="pfs-save" ' + (canEdit ? '' : 'disabled') + ' style="cursor:pointer;padding:0.6rem 1.3rem;">Save Changes</button>' +
+          '</div>';
+        var saveBtn = document.getElementById('pfs-save');
+        if (saveBtn && canEdit) saveBtn.addEventListener('click', function () {
+          var err = document.getElementById('pfs-err'); err.style.display = 'none';
+          var fields = {
+            name: document.getElementById('pfs-name').value.trim(),
+            phone: document.getElementById('pfs-phone').value.trim(),
+            position: document.getElementById('pfs-position').value.trim(),
+            username: document.getElementById('pfs-username').value.trim()
+          };
+          var pw = document.getElementById('pfs-pass').value;
+          if (pw) fields.password = pw;
+          saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+          AFP.updateEmployee(sess.id, fields).then(function () {
+            sess.name = fields.name; sess.username = fields.username;
+            sessionStorage.setItem('afp_staff_session', JSON.stringify(sess));
+            document.getElementById('user-name').textContent = sess.name;
+            saveBtn.disabled = false; saveBtn.textContent = 'Save Changes';
+            err.style.color = '#34d399'; err.textContent = '✓ Saved to Oracle'; err.style.display = 'block';
+          }).catch(function (e) {
+            saveBtn.disabled = false; saveBtn.textContent = 'Save Changes';
+            err.style.color = '#f87171'; err.textContent = 'Update failed: ' + (e && e.message || e); err.style.display = 'block';
+          });
+        });
+      }
+      if (sess.id && AFP.hasLive()) {
+        AFP.fetchItems('employees').then(function (list) {
+          build(list.filter(function (x) { return String(x.employee_id) === String(sess.id); })[0] || {});
+        }).catch(function () { build({}); });
+      } else build({});
     }
     document.querySelectorAll('.view-tab').forEach(function (t) {
       t.addEventListener('click', function () { switchView(t.getAttribute('data-view')); });

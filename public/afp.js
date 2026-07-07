@@ -247,7 +247,7 @@
       customers.push(customer);
       localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
       // Two-way sync: also insert into the Oracle CUSTOMER table.
-      AFP.syncToOracle("customers", "POST", { name: customer.name, phone: customer.phone, email: customer.email });
+      AFP.syncToOracle("customers", "POST", { name: customer.name, phone: customer.phone, email: customer.email, password: customer.password });
       var sess = { id: customer.id, name: customer.name, email: customer.email, phone: customer.phone };
       sessionStorage.setItem(CUST_SESSION_KEY, JSON.stringify(sess));
       return { ok: true, customer: sess };
@@ -430,12 +430,79 @@
       return fetch(base + "/" + endpoint, {
         method: method,
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(body || {})
+        body: (method === "DELETE") ? undefined : JSON.stringify(body || {})
       }).then(function (res) {
-        if (!res.ok) throw new Error(endpoint + " " + method + " → HTTP " + res.status);
-        return res.json().catch(function () { return {}; });
+        return res.text().then(function (txt) {
+          var json = {};
+          try { json = txt ? JSON.parse(txt) : {}; } catch (e) {}
+          if (!res.ok) throw new Error((json && (json.error || json.message)) || (endpoint + " " + method + " → HTTP " + res.status));
+          return json;
+        });
       });
     },
+
+    // ---- Oracle-backed auth (async, with local fallback) ----
+    loginStaffRemote: function (username, password) {
+      if (!AFP.hasLive()) return Promise.resolve(null);
+      return AFP.apiWrite("stafflogin", "POST", { username: username, password: password })
+        .then(function (r) {
+          if (r && r.ok) return { username: username, name: r.name, role: r.role, id: r.employee_id, at: now() };
+          return null;
+        });
+    },
+    authStaffLogin: function (username, password) {
+      return AFP.loginStaffRemote(username, password).then(function (sess) {
+        if (sess) { sessionStorage.setItem(SESSION_KEY, JSON.stringify(sess)); return sess; }
+        return AFP.login(username, password);   // fallback: built-in accounts
+      }).catch(function () { return AFP.login(username, password); });
+    },
+    loginCustomerRemote: function (email, password) {
+      if (!AFP.hasLive()) return Promise.resolve(null);
+      return AFP.apiWrite("customerlogin", "POST", { email: email, password: password })
+        .then(function (r) {
+          if (r && r.ok) return { id: r.customer_id, name: r.name, email: (email || "").trim().toLowerCase(), phone: r.phone };
+          return null;
+        });
+    },
+    authCustomerLogin: function (email, password) {
+      return AFP.loginCustomerRemote(email, password).then(function (sess) {
+        if (sess) { sessionStorage.setItem(CUST_SESSION_KEY, JSON.stringify(sess)); return sess; }
+        return AFP.loginCustomer(email, password);  // fallback: localStorage
+      }).catch(function () { return AFP.loginCustomer(email, password); });
+    },
+    authCustomerSignup: function (data) {
+      data = data || {};
+      if (!data.name || !data.email || !data.phone || !data.password) {
+        return Promise.resolve({ error: "Please fill in all fields." });
+      }
+      if (AFP.hasLive()) {
+        return AFP.apiWrite("customers", "POST", {
+          name: data.name, phone: data.phone, email: data.email, password: data.password
+        }).then(function (r) {
+          var sess = { id: r && r.customer_id, name: data.name, email: (data.email || "").trim().toLowerCase(), phone: data.phone };
+          sessionStorage.setItem(CUST_SESSION_KEY, JSON.stringify(sess));
+          return { ok: true, customer: sess };
+        }).catch(function () {
+          var r = AFP.registerCustomer(data);   // local fallback
+          return r.error ? r : { ok: true, customer: r.customer };
+        });
+      }
+      var r = AFP.registerCustomer(data);
+      return Promise.resolve(r.error ? r : { ok: true, customer: r.customer });
+    },
+
+    // ---- CRUD helpers (all return Promises) ----
+    updateCustomer: function (id, f) { return AFP.apiWrite("customers/" + id, "PUT", f); },
+    deleteCustomer: function (id) { return AFP.apiWrite("customers/" + id, "DELETE"); },
+    addEmployee: function (f) { return AFP.apiWrite("employees", "POST", f); },
+    updateEmployee: function (id, f) { return AFP.apiWrite("employees/" + id, "PUT", f); },
+    deleteEmployee: function (id) { return AFP.apiWrite("employees/" + id, "DELETE"); },
+    addService: function (f) { return AFP.apiWrite("services", "POST", f); },
+    updateService: function (id, f) { return AFP.apiWrite("services/" + id, "PUT", f); },
+    deleteService: function (id) { return AFP.apiWrite("services/" + id, "DELETE"); },
+    addMachine: function (f) { return AFP.apiWrite("machines", "POST", f); },
+    updateMachine: function (id, f) { return AFP.apiWrite("machines/" + id, "PUT", f); },
+    deleteMachine: function (id) { return AFP.apiWrite("machines/" + id, "DELETE"); },
     // Fire-and-forget write to Oracle. The UI stays local-first (instant),
     // and the row is pushed to Oracle in the background when live is configured.
     // Shows a small on-screen toast with the result so no DevTools are needed.
