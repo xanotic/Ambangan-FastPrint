@@ -382,8 +382,8 @@
     <div class="drawer-body" id="dr-body"></div>
   </div>
 
-  <script src="afp-config.js?v=12"></script>
-  <script src="afp.js?v=12"></script>
+  <script src="afp-config.js?v=13"></script>
+  <script src="afp.js?v=13"></script>
   <script>
     var loginView = document.getElementById('login-view');
     var dashView  = document.getElementById('dash-view');
@@ -802,7 +802,8 @@
           }).join('') +
         '</div></div>' +
 
-        '<button class="invoice-btn" id="gen-invoice">🧾 Generate Invoice</button>';
+        '<button class="invoice-btn" id="gen-invoice">🧾 Generate Invoice</button>' +
+        '<button class="invoice-btn" id="del-order" style="margin-top:0.6rem;border-color:rgba(248,113,113,0.3);color:#f87171;">🗑 Delete Order</button>';
 
       // wire status buttons
       document.querySelectorAll('#dr-body .sa-btn').forEach(function (b) {
@@ -821,6 +822,15 @@
         });
       });
       document.getElementById('gen-invoice').addEventListener('click', function () { printInvoice(o.id); });
+      document.getElementById('del-order').addEventListener('click', function () {
+        if (!confirm('Permanently delete order ' + o.id + ' and its receipt, line items and delivery from Oracle?\n\nThis cannot be undone.')) return;
+        var b = this; b.disabled = true; b.textContent = 'Deleting…';
+        AFP.deleteOrder(o.id).then(function () {
+          closeDrawer();
+          return AFP.hasLive() ? AFP.loadLiveOrders() : Promise.resolve();
+        }).then(function () { refreshCurrent(); })
+          .catch(function (e) { b.disabled = false; b.textContent = '🗑 Delete Order'; alert('Delete failed: ' + (e && e.message || e)); });
+      });
 
       drawer.classList.add('show');
       drawerOverlay.classList.add('show');

@@ -495,6 +495,18 @@
     },
 
     // ---- CRUD helpers (all return Promises) ----
+    deleteOrder: function (id) {
+      var num = orderNum(id);
+      if (AFP.hasLive()) {
+        return AFP.apiWrite("orders/" + num, "DELETE").then(function (r) {
+          if (LIVE.on && LIVE.orders) LIVE.orders = LIVE.orders.filter(function (x) { return x.id !== id; });
+          else { var o = read().filter(function (x) { return x.id !== id; }); write(o); }
+          return r;
+        });
+      }
+      var o = read().filter(function (x) { return x.id !== id; }); write(o);
+      return Promise.resolve({});
+    },
     updateCustomer: function (id, f) { return AFP.apiWrite("customers/" + id, "PUT", f); },
     deleteCustomer: function (id) { return AFP.apiWrite("customers/" + id, "DELETE"); },
     addEmployee: function (f) { return AFP.apiWrite("employees", "POST", f); },

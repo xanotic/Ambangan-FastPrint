@@ -291,6 +291,23 @@ BEGIN
       END;
     ~');
 
+  -- DELETE /afp/orders/:id  -> delete an order + its children (cascade-safe)
+  ORDS.DEFINE_TEMPLATE(p_module_name => 'afp', p_pattern => 'orders/:id');
+  ORDS.DEFINE_HANDLER(
+    p_module_name => 'afp', p_pattern => 'orders/:id', p_method => 'DELETE',
+    p_source_type => ORDS.source_type_plsql,
+    p_source => q'~
+      BEGIN
+        UPDATE ORDERS SET ReceiptID = NULL WHERE OrderID = :id;  -- break circular FK
+        DELETE FROM DELIVERY     WHERE OrderID = :id;
+        DELETE FROM ORDERSERVICE WHERE OrderID = :id;
+        DELETE FROM RECEIPT      WHERE OrderID = :id;
+        DELETE FROM ORDERS       WHERE OrderID = :id;
+        :status := 200;
+      EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;
+      END;
+    ~');
+
   -- POST /afp/employees ; PUT/DELETE /afp/employees/:id
   ORDS.DEFINE_HANDLER(
     p_module_name => 'afp', p_pattern => 'employees', p_method => 'POST',
