@@ -382,8 +382,8 @@
     <div class="drawer-body" id="dr-body"></div>
   </div>
 
-  <script src="afp-config.js?v=9"></script>
-  <script src="afp.js?v=9"></script>
+  <script src="afp-config.js?v=10"></script>
+  <script src="afp.js?v=10"></script>
   <script>
     var loginView = document.getElementById('login-view');
     var dashView  = document.getElementById('dash-view');
@@ -626,8 +626,8 @@
       var host = document.getElementById('view-profile');
       if (!sess) { host.innerHTML = ''; return; }
       host.innerHTML = '<div class="pan glass" style="max-width:560px;padding:1.5rem;margin-top:1.4rem;">Loading…</div>';
-      function build(emp) {
-        var canEdit = !!sess.id && AFP.hasLive();
+      function build(emp, empId) {
+        var canEdit = !!empId && AFP.hasLive();
         function fld(id, label, val, type) {
           return '<div style="margin-bottom:1rem;"><label style="display:block;font-size:0.6rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#7fd4e8;margin-bottom:0.4rem;">' + label + '</label>' +
             '<input id="' + id + '" type="' + (type || 'text') + '" value="' + escHtml(val == null ? '' : val) + '" ' + (canEdit ? '' : 'disabled') + ' class="db-inp" style="width:100%;padding:0.7rem 0.9rem;font-size:0.85rem;"/></div>';
@@ -657,7 +657,8 @@
           var pw = document.getElementById('pfs-pass').value;
           if (pw) fields.password = pw;
           saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
-          AFP.updateEmployee(sess.id, fields).then(function () {
+          AFP.updateEmployee(empId, fields).then(function () {
+            sess.id = empId;
             sess.name = fields.name; sess.username = fields.username;
             sessionStorage.setItem('afp_staff_session', JSON.stringify(sess));
             document.getElementById('user-name').textContent = sess.name;
@@ -669,11 +670,15 @@
           });
         });
       }
-      if (sess.id && AFP.hasLive()) {
+      if (AFP.hasLive()) {
         AFP.fetchItems('employees').then(function (list) {
-          build(list.filter(function (x) { return String(x.employee_id) === String(sess.id); })[0] || {});
-        }).catch(function () { build({}); });
-      } else build({});
+          var emp = list.filter(function (x) {
+            return (sess.id && String(x.employee_id) === String(sess.id)) ||
+                   (sess.username && (x.username || '').toLowerCase() === (sess.username || '').toLowerCase());
+          })[0] || {};
+          build(emp, emp.employee_id || sess.id);
+        }).catch(function () { build({}, sess.id); });
+      } else build({}, sess.id);
     }
     document.querySelectorAll('.view-tab').forEach(function (t) {
       t.addEventListener('click', function () { switchView(t.getAttribute('data-view')); });

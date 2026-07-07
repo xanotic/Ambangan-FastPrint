@@ -137,8 +137,8 @@
     </div>
   </div>
 
-  <script src="afp-config.js?v=9"></script>
-  <script src="afp.js?v=9"></script>
+  <script src="afp-config.js?v=10"></script>
+  <script src="afp.js?v=10"></script>
   <script>
     var authView = document.getElementById('auth-view');
     var dashView = document.getElementById('dash-view');
@@ -223,29 +223,49 @@
       document.getElementById('pf-pass').value = '';
     }
 
-    document.getElementById('pf-save').addEventListener('click', function () {
+    // Resolve the Oracle CustomerID even if the session lacks one (e.g. an
+    // older session) by matching the logged-in email against the CUSTOMER table.
+    function ensureCustomerId() {
       var sess = AFP.customerSession();
+      if (sess && sess.id && String(sess.id).indexOf('C-') !== 0) return Promise.resolve(sess.id);
+      if (!AFP.hasLive() || !sess || !sess.email) return Promise.resolve(null);
+      return AFP.fetchItems('customers').then(function (list) {
+        var m = list.filter(function (c) { return (c.customer_email || '').toLowerCase() === (sess.email || '').toLowerCase(); })[0];
+        if (m) { sess.id = m.customer_id; sessionStorage.setItem('afp_customer_session', JSON.stringify(sess)); return m.customer_id; }
+        return null;
+      }).catch(function () { return null; });
+    }
+
+    document.getElementById('pf-save').addEventListener('click', function () {
+      var btn = this;
       var err = document.getElementById('pf-err'); err.style.display = 'none';
-      if (!sess) return;
-      if (!sess.id) { err.textContent = 'Editing needs an Oracle account — please sign up or log in again while online.'; err.style.display = 'block'; return; }
-      var fields = {
-        name: document.getElementById('pf-name').value.trim(),
-        email: document.getElementById('pf-email').value.trim(),
-        phone: document.getElementById('pf-phone').value.trim()
-      };
-      var pw = document.getElementById('pf-pass').value;
-      if (pw) fields.password = pw;
-      var btn = this; btn.disabled = true; btn.textContent = 'Saving…';
-      AFP.updateCustomer(sess.id, fields).then(function () {
-        sess.name = fields.name; sess.email = (fields.email || '').toLowerCase(); sess.phone = fields.phone;
-        sessionStorage.setItem('afp_customer_session', JSON.stringify(sess));
-        document.getElementById('cust-name').textContent = sess.name;
-        document.getElementById('cust-contact').textContent = sess.email + (sess.phone ? '  ·  ' + sess.phone : '');
-        btn.disabled = false; btn.textContent = 'Save Changes';
-        err.style.color = '#34d399'; err.textContent = '✓ Saved to Oracle'; err.style.display = 'block';
-      }).catch(function (e) {
-        btn.disabled = false; btn.textContent = 'Save Changes';
-        err.style.color = '#f87171'; err.textContent = 'Update failed: ' + (e && e.message || e); err.style.display = 'block';
+      ensureCustomerId().then(function (cid) {
+        if (!cid) {
+          err.style.color = '#f87171';
+          err.textContent = 'Could not find your account in Oracle. Make sure you are online and the APEX scripts are applied, then log out and log in again.';
+          err.style.display = 'block';
+          return;
+        }
+        var sess = AFP.customerSession();
+        var fields = {
+          name: document.getElementById('pf-name').value.trim(),
+          email: document.getElementById('pf-email').value.trim(),
+          phone: document.getElementById('pf-phone').value.trim()
+        };
+        var pw = document.getElementById('pf-pass').value;
+        if (pw) fields.password = pw;
+        btn.disabled = true; btn.textContent = 'Saving…';
+        AFP.updateCustomer(cid, fields).then(function () {
+          sess.name = fields.name; sess.email = (fields.email || '').toLowerCase(); sess.phone = fields.phone;
+          sessionStorage.setItem('afp_customer_session', JSON.stringify(sess));
+          document.getElementById('cust-name').textContent = sess.name;
+          document.getElementById('cust-contact').textContent = sess.email + (sess.phone ? '  ·  ' + sess.phone : '');
+          btn.disabled = false; btn.textContent = 'Save Changes';
+          err.style.color = '#34d399'; err.textContent = '✓ Saved to Oracle'; err.style.display = 'block';
+        }).catch(function (e) {
+          btn.disabled = false; btn.textContent = 'Save Changes';
+          err.style.color = '#f87171'; err.textContent = 'Update failed: ' + (e && e.message || e); err.style.display = 'block';
+        });
       });
     });
 
