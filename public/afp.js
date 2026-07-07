@@ -427,11 +427,14 @@
     apiWrite: function (endpoint, method, body) {
       var base = AFP.apiBase();
       if (!base) return Promise.reject(new Error("No Oracle API configured"));
-      return fetch(base + "/" + endpoint, {
-        method: method,
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(body || {})   // always send at least {} so ORDS can parse it (even DELETE)
-      }).then(function (res) {
+      var opts = { method: method, headers: { Accept: "application/json" } };
+      if (method !== "DELETE") {
+        // Only send a JSON body/content-type for POST/PUT. DELETE carries no
+        // body, so ORDS must not try to parse one (that caused the EOF error).
+        opts.headers["Content-Type"] = "application/json";
+        opts.body = JSON.stringify(body || {});
+      }
+      return fetch(base + "/" + endpoint, opts).then(function (res) {
         return res.text().then(function (txt) {
           var json = {};
           try { json = txt ? JSON.parse(txt) : {}; } catch (e) {}
