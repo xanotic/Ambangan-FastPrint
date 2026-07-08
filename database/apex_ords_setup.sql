@@ -285,6 +285,14 @@ BEGIN
     p_source_type => ORDS.source_type_plsql,
     p_source => q'~
       BEGIN
+        -- cascade: remove this customer's orders (and each order's children)
+        FOR o IN (SELECT OrderID FROM ORDERS WHERE CustomerID = :id) LOOP
+          UPDATE ORDERS SET ReceiptID = NULL WHERE OrderID = o.OrderID;
+          DELETE FROM DELIVERY     WHERE OrderID = o.OrderID;
+          DELETE FROM ORDERSERVICE WHERE OrderID = o.OrderID;
+          DELETE FROM RECEIPT      WHERE OrderID = o.OrderID;
+          DELETE FROM ORDERS       WHERE OrderID = o.OrderID;
+        END LOOP;
         DELETE FROM CUSTOMER WHERE CustomerID = :id;
         :status := 200;
       EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;
@@ -342,7 +350,15 @@ BEGIN
     p_module_name => 'afp', p_pattern => 'employees/:id', p_method => 'DELETE',
     p_source_type => ORDS.source_type_plsql,
     p_source => q'~
+      DECLARE v_other NUMBER;
       BEGIN
+        -- reassign this employee's orders/receipts to another employee so
+        -- history stays valid, then delete.
+        SELECT MIN(EmployeeID) INTO v_other FROM EMPLOYEE WHERE EmployeeID <> :id;
+        IF v_other IS NOT NULL THEN
+          UPDATE ORDERS  SET EmployeeID = v_other WHERE EmployeeID = :id;
+          UPDATE RECEIPT SET EmployeeID = v_other WHERE EmployeeID = :id;
+        END IF;
         DELETE FROM EMPLOYEE WHERE EmployeeID = :id;
         :status := 200;
       EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;
@@ -379,7 +395,14 @@ BEGIN
     p_source_type => ORDS.source_type_plsql,
     p_source => q'~
       BEGIN
-        DELETE FROM SERVICE WHERE ServiceID = :id;
+        -- remove subtype detail rows + any order lines using this service
+        DELETE FROM PRINT            WHERE ServiceID = :id;
+        DELETE FROM BUSINESSCARD     WHERE ServiceID = :id;
+        DELETE FROM RUBBERSTAMP      WHERE ServiceID = :id;
+        DELETE FROM NAMETAG          WHERE ServiceID = :id;
+        DELETE FROM BANNERANDBUNTING WHERE ServiceID = :id;
+        DELETE FROM ORDERSERVICE     WHERE ServiceID = :id;
+        DELETE FROM SERVICE          WHERE ServiceID = :id;
         :status := 200;
       EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;
       END;
@@ -417,6 +440,7 @@ BEGIN
     p_source_type => ORDS.source_type_plsql,
     p_source => q'~
       BEGIN
+        UPDATE ORDERSERVICE SET MachineID = NULL WHERE MachineID = :id;  -- unlink order lines
         DELETE FROM MACHINE WHERE MachineID = :id;
         :status := 200;
       EXCEPTION WHEN OTHERS THEN :error := SQLERRM; :status := 409;

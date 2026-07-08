@@ -382,8 +382,8 @@
     <div class="drawer-body" id="dr-body"></div>
   </div>
 
-  <script src="afp-config.js?v=13"></script>
-  <script src="afp.js?v=13"></script>
+  <script src="afp-config.js?v=14"></script>
+  <script src="afp.js?v=14"></script>
   <script>
     var loginView = document.getElementById('login-view');
     var dashView  = document.getElementById('dash-view');
@@ -580,7 +580,10 @@
           .catch(function (err) { alert('Update failed: ' + err.message); btn.disabled = false; btn.textContent = 'Save'; });
       }
       else if (act === 'del' && t) {
-        if (!confirm('Delete this ' + t.title + ' row from Oracle?')) return;
+        var warn = ep === 'customers' ? '\n\nThis also deletes ALL of their orders.' :
+                   ep === 'services' ? '\n\nThis also removes it from any orders.' :
+                   ep === 'employees' ? '\n\nTheir orders/receipts will be reassigned to another employee.' : '';
+        if (!confirm('Delete this ' + t.title + ' from Oracle?' + warn)) return;
         t.del(id).then(function () { return refetchDb(ep); }).then(renderDbTables)
           .catch(function (err) { alert('Delete failed: ' + err.message + '\n\n(Rows referenced by orders can\'t be deleted.)'); });
       }
